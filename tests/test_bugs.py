@@ -1,7 +1,7 @@
 from bugzilla import Bug
 from bugzilla import BugException
 
-example_bug = {u'faults': [], u'bugs': [{u'cf_tracking_firefox29': u'---', u'classification': u'Other', u'creator': u'jgriffin@mozilla.com', u'cf_status_firefox30':
+example_return = {u'faults': [], u'bugs': [{u'cf_tracking_firefox29': u'---', u'classification': u'Other', u'creator': u'jgriffin@mozilla.com', u'cf_status_firefox30':
 u'---', u'depends_on': [], u'cf_status_firefox32': u'---', u'creation_time': u'2014-05-28T23:57:58Z', u'product': u'Release Engineering', u'cf_user_story': u'', u'dupe_of': None, u'cf_tracking_firefox_relnote': u'---', u'keywords': [], u'cf_tracking_b2g18': u'---', u'summary': u'Schedule Mn tests on o\
 pt Linux builds on cedar', u'id': 1017315, u'assigned_to_detail': {u'id': 347295, u'email': u'jgriffin@mozilla.com', u'name': u'jgriffin@mozilla.com',
 u'real_name': u'Jonathan Griffin (:jgriffin)'}, u'severity': u'normal', u'is_confirmed': True, u'is_creator_accessible': True, u'cf_status_b2g_1_1_hd':
@@ -33,3 +33,9 @@ def test_we_cant_set_status_unless_there_is_a_bug_id():
         bug.status = 'RESOLVED'
     except BugException as e:
         assert str(e) == "Message: Can not set status unless there is a bug id. Please call Update() before setting"
+
+def test_we_can_pass_in_dict_and_get_a_bug():
+    bug = Bug(**example_return['bugs'][0])
+    assert bug.id == 1017315
+    assert bug.status == 'RESOLVED'
+    assert bug.summary == 'Schedule Mn tests on opt Linux builds on cedar'

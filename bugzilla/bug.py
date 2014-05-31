@@ -13,6 +13,7 @@ class Bug(object):
     _bug = {'id':None}
 
     def __init__(self, **kwargs):
+        self._bug['id'] = kwargs.get('id', None)
         self._bug['summary'] = kwargs.get('summary', '')
         self._bug['status'] = kwargs.get('status', '')
 
