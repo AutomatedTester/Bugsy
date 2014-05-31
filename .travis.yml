@@ -3,5 +3,5 @@ python:
   - 2.6
   - 2.7
   - 3.3
-install: pip install pytest selenium
-script: python setup.py develop && py.test test
+install: pip install -r requirements.txt
+script: python setup.py develop && py.test tests
