@@ -1,1 +1,1 @@
-from bug import Bug
+from bug import Bug, BugException
