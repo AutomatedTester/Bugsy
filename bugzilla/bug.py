@@ -8,11 +8,16 @@ class BugException(Exception):
 
 
 class Bug(object):
-    """This represents a bug"""
+    """This represents a Bugzilla Bug"""
 
     _bug = {'id':None}
 
     def __init__(self, **kwargs):
+        """
+            Defaults are set if there are no kwargs passed in. To pass in
+            a dict create the Bug object like the following
+              bug = Bug(**myDict)
+        """
         self._bug['id'] = kwargs.get('id', None)
         self._bug['summary'] = kwargs.get('summary', '')
         self._bug['status'] = kwargs.get('status', '')
