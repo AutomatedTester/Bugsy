@@ -34,6 +34,14 @@ def test_we_cant_set_status_unless_there_is_a_bug_id():
     except BugException as e:
         assert str(e) == "Message: Can not set status unless there is a bug id. Please call Update() before setting"
 
+def test_we_throw_an_error_for_invalid_status_types():
+    bug = Bug(**example_return['bugs'][0])
+    try:
+        bug.status = "foo"
+        assert 1 == 0, "Should have thrown an error about invalid type"
+    except BugException as e:
+        assert str(e) == "Message: Invalid status type was used"
+
 def test_we_can_pass_in_dict_and_get_a_bug():
     bug = Bug(**example_return['bugs'][0])
     assert bug.id == 1017315

@@ -1,3 +1,7 @@
+VALID_STATUS = ["RESOLVED", "ASSIGNED", "NEW", "UNCONFIRMED"]
+
+
+
 class BugException(Exception):
     """If trying to do something to a Bug this will be thrown"""
     def __init__(self, msg):
@@ -39,7 +43,10 @@ class Bug(object):
             return self._bug['status']
         def fset(self, value):
             if self._bug['id']:
-                self._bug['status'] = value
+                if value in VALID_STATUS:
+                    self._bug['status'] = value
+                else:
+                    raise BugException("Invalid status type was used")
             else:
                 raise BugException("Can not set status unless there is a bug id. Please call Update() before setting")
         def fdel(self):
