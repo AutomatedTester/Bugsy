@@ -46,6 +46,11 @@ def test_we_can_get_the_resolution():
     bug = Bug(**example_return['bugs'][0])
     assert "FIXED" == bug.resolution
 
+def test_we_can_set_the_resolution():
+    bug = Bug(**example_return['bugs'][0])
+    bug.resolution = 'INVALID'
+    assert bug.resolution == 'INVALID'
+
 def test_we_can_pass_in_dict_and_get_a_bug():
     bug = Bug(**example_return['bugs'][0])
     assert bug.id == 1017315

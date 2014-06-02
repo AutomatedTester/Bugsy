@@ -67,8 +67,8 @@ class Bug(object):
         def fget(self):
             return self._bug['resolution']
         def fset(self, value):
-            self._resolution = value
+            self._bug['resolution'] = value
         def fdel(self):
-            del self._resolution
+            del self._bug['resolution']
         return locals()
     resolution = property(**resolution())
