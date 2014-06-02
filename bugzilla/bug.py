@@ -16,6 +16,13 @@ class Bug(object):
 
     _bug = {'id':None}
 
+    def id():
+        doc = "The id property."
+        def fget(self):
+            return self._bug['id']
+        return locals()
+    id = property(**id())
+
     def __init__(self, **kwargs):
         """
             Defaults are set if there are no kwargs passed in. To pass in
@@ -53,10 +60,3 @@ class Bug(object):
             del self._bug['status']
         return locals()
     status = property(**status())
-
-    def id():
-        doc = "The id property."
-        def fget(self):
-            return self._bug['id']
-        return locals()
-    id = property(**id())
