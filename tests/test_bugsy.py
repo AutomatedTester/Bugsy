@@ -40,3 +40,10 @@ def test_we_cant_post_without_passing_a_bug_object():
     except BugsyException as e:
         assert str(e) == "Message: Please pass in a Bug object when posting to Bugzilla"
 
+def test_we_can_get_a_bug():
+    bugzilla = Bugsy()
+    bug = bugzilla.get(1017315)
+    assert bug.id == 1017315
+    assert bug.status == 'RESOLVED'
+    assert bug.summary == 'Schedule Mn tests on opt Linux builds on cedar'
+

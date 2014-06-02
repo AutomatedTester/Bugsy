@@ -17,7 +17,8 @@ class Bugsy(object):
         self.bugzilla_url = bugzilla_url
 
     def get(self, bug_number):
-        pass
+        bug = requests.get(self.bugzilla_url + "/bug/%s" % bug_number).json()
+        return Bug(**bug['bugs'][0])
 
     def put(self, bug):
         if not self.username or not self.password:
