@@ -51,6 +51,14 @@ def test_we_can_set_the_resolution():
     bug.resolution = 'INVALID'
     assert bug.resolution == 'INVALID'
 
+def test_we_cant_set_the_resolution_when_not_in_bandq():
+    bug = Bug(**example_return['bugs'][0])
+    try:
+        bug.resolution = 'FOO'
+        assert 1==0, "Should thrown an error"
+    except BugException as e:
+        assert str(e) == "Message: Invalid resolution type was used"
+
 def test_we_can_pass_in_dict_and_get_a_bug():
     bug = Bug(**example_return['bugs'][0])
     assert bug.id == 1017315

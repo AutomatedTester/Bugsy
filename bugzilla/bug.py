@@ -1,4 +1,5 @@
 VALID_STATUS = ["RESOLVED", "ASSIGNED", "NEW", "UNCONFIRMED"]
+VALID_RESOLUTION = ["FIXED", "INCOMPLETE", "INVALID", "WORKSFORME", "DUPLICATE", "WONTFIX"]
 
 
 
@@ -67,7 +68,10 @@ class Bug(object):
         def fget(self):
             return self._bug['resolution']
         def fset(self, value):
-            self._bug['resolution'] = value
+            if value in VALID_RESOLUTION:
+                self._bug['resolution'] = value
+            else:
+                raise BugException("Invalid resolution type was used")
         def fdel(self):
             del self._bug['resolution']
         return locals()
