@@ -1,5 +1,5 @@
 import requests
-
+from bug import Bug
 
 class BugsyException(Exception):
     """If trying to do something to a Bug this will be thrown"""
@@ -20,4 +20,8 @@ class Bugsy(object):
         pass
 
     def put(self, bug):
-        pass
+        if not self.username or not self.password:
+            raise BugsyException("Unfortunately you can't put bugs in Bugzilla without credentials")
+
+        if not isinstance(bug, Bug):
+            raise BugsyException("Please pass in a Bug object when posting to Bugzilla")

@@ -28,6 +28,15 @@ def test_we_cant_post_without_a_username_or_password():
     bugzilla = Bugsy()
     try:
         bugzilla.put("foo")
-    except BugsyException:
-        pass
+        assert 1 == 0, "Should have thrown when calling put"
+    except BugsyException as e:
+        assert str(e) == "Message: Unfortunately you can't put bugs in Bugzilla without credentials"
+
+def test_we_cant_post_without_passing_a_bug_object():
+    bugzilla = Bugsy("foo", "bar")
+    try:
+        bugzilla.put("foo")
+        assert 1 == 0, "Should have thrown an error about type when calling put"
+    except BugsyException as e:
+        assert str(e) == "Message: Please pass in a Bug object when posting to Bugzilla"
 
