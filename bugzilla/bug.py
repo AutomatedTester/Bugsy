@@ -32,6 +32,7 @@ class Bug(object):
         self._bug['id'] = kwargs.get('id', None)
         self._bug['summary'] = kwargs.get('summary', '')
         self._bug['status'] = kwargs.get('status', '')
+        self._bug['resolution'] = kwargs.get('resolution', '')
 
     def summary():
         doc = "The summary property."
@@ -60,3 +61,14 @@ class Bug(object):
             del self._bug['status']
         return locals()
     status = property(**status())
+
+    def resolution():
+        doc = "The resolution property."
+        def fget(self):
+            return self._bug['resolution']
+        def fset(self, value):
+            self._resolution = value
+        def fdel(self):
+            del self._resolution
+        return locals()
+    resolution = property(**resolution())
