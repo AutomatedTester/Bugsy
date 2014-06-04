@@ -18,7 +18,9 @@ class Bugsy(object):
         self.bugzilla_url = bugzilla_url
         if self.username and self.password:
             result = requests.get(bugzilla_url + '/login?login=%s&password=%s' % (self.username, self.password)).json()
-            self.token = result['token']
+            if not result.get('error', True):
+                self.token = result['token']
+
 
     def get(self, bug_number):
         bug = requests.get(self.bugzilla_url + "/bug/%s" % bug_number).json()
