@@ -1,5 +1,5 @@
 import bugzilla
-from bugzilla import Bugsy, BugsyException
+from bugzilla import Bugsy, BugsyException, LoginException
 try:
     from unittest.mock import MagicMock, patch
 except:
@@ -32,7 +32,14 @@ def test_we_cant_post_without_a_username_or_password():
     except BugsyException as e:
         assert str(e) == "Message: Unfortunately you can't put bugs in Bugzilla without credentials"
 
-def test_we_cant_post_without_passing_a_bug_object():
+def test_we_get_a_login_exception_when_details_are_wrong():
+    try:
+        Bugsy("foo", "bar")
+        assert 1 == 0, "Should have thrown an error"
+    except LoginException as e:
+        assert str(e) == "Message: The username or password you entered is not valid."
+
+def _test_we_cant_post_without_passing_a_bug_object():
     bugzilla = Bugsy("foo", "bar")
     try:
         bugzilla.put("foo")

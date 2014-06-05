@@ -9,6 +9,14 @@ class BugsyException(Exception):
     def __str__(self):
         return "Message: %s" % self.msg
 
+class LoginException(Exception):
+    """If trying to do something to a Bug this will be thrown"""
+    def __init__(self, msg):
+        self.msg = msg
+
+    def __str__(self):
+        return "Message: %s" % self.msg
+
 class Bugsy(object):
     """docstring for Bugsy"""
     def __init__(self, username=None, password=None, bugzilla_url='https://bugzilla.mozilla.org/rest'):
@@ -20,6 +28,9 @@ class Bugsy(object):
             result = requests.get(bugzilla_url + '/login?login=%s&password=%s' % (self.username, self.password)).json()
             if not result.get('error', True):
                 self.token = result['token']
+            else:
+                raise LoginException(result['message'])
+
 
 
     def get(self, bug_number):
