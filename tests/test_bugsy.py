@@ -32,6 +32,7 @@ def test_we_cant_post_without_a_username_or_password():
     except BugsyException as e:
         assert str(e) == "Message: Unfortunately you can't put bugs in Bugzilla without credentials"
 
+@responses.activate
 def test_we_get_a_login_exception_when_details_are_wrong():
     responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login?login=foo&password=bar',
                       body='{"message": "The username or password you entered is not valid."}', status=200,
