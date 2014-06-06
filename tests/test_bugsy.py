@@ -5,6 +5,7 @@ try:
 except:
     from mock import Mock, MagicMock, patch
 import responses
+import json
 
 example_return = {u'faults': [], u'bugs': [{u'cf_tracking_firefox29': u'---', u'classification': u'Other', u'creator': u'jgriffin@mozilla.com', u'cf_status_firefox30':
 u'---', u'depends_on': [], u'cf_status_firefox32': u'---', u'creation_time': u'2014-05-28T23:57:58Z', u'product': u'Release Engineering', u'cf_user_story': u'', u'dupe_of': None, u'cf_tracking_firefox_relnote': u'---', u'keywords': [], u'cf_tracking_b2g18': u'---', u'summary': u'Schedule Mn tests on o\
@@ -54,8 +55,11 @@ def test_we_cant_post_without_passing_a_bug_object():
         assert 1 == 0, "Should have thrown an error about type when calling put"
     except BugsyException as e:
         assert str(e) == "Message: Please pass in a Bug object when posting to Bugzilla"
-
+@responses.activate
 def test_we_can_get_a_bug():
+    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/bug/1017315',
+                      body=json.dumps(example_return), status=200,
+                      content_type='application/json', match_querystring=True)
     bugzilla = Bugsy()
     bug = bugzilla.get(1017315)
     assert bug.id == 1017315
