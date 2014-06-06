@@ -38,7 +38,7 @@ class Bugsy(object):
         return Bug(**bug['bugs'][0])
 
     def put(self, bug):
-        if not self.username or not self.password:
+        if (not self.username or not self.password) or not self.token:
             raise BugsyException("Unfortunately you can't put bugs in Bugzilla without credentials")
 
         if not isinstance(bug, Bug):

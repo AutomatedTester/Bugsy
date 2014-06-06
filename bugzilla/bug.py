@@ -76,3 +76,6 @@ class Bug(object):
             del self._bug['resolution']
         return locals()
     resolution = property(**resolution())
+
+    def to_dict(self):
+        return self._bug
