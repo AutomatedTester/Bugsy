@@ -1,10 +1,10 @@
 import bugzilla
 from bugzilla import Bugsy, BugsyException, LoginException
 try:
-    from unittest.mock import MagicMock, patch
+    from unittest.mock import Mock, MagicMock, patch
 except:
-    from mock import MagicMock, patch
-import requests
+    from mock import Mock, MagicMock, patch
+import responses
 
 example_return = {u'faults': [], u'bugs': [{u'cf_tracking_firefox29': u'---', u'classification': u'Other', u'creator': u'jgriffin@mozilla.com', u'cf_status_firefox30':
 u'---', u'depends_on': [], u'cf_status_firefox32': u'---', u'creation_time': u'2014-05-28T23:57:58Z', u'product': u'Release Engineering', u'cf_user_story': u'', u'dupe_of': None, u'cf_tracking_firefox_relnote': u'---', u'keywords': [], u'cf_tracking_b2g18': u'---', u'summary': u'Schedule Mn tests on o\
@@ -33,13 +33,20 @@ def test_we_cant_post_without_a_username_or_password():
         assert str(e) == "Message: Unfortunately you can't put bugs in Bugzilla without credentials"
 
 def test_we_get_a_login_exception_when_details_are_wrong():
+    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login?login=foo&password=bar',
+                      body='{"message": "The username or password you entered is not valid."}', status=200,
+                      content_type='application/json', match_querystring=True)
     try:
         Bugsy("foo", "bar")
         assert 1 == 0, "Should have thrown an error"
     except LoginException as e:
         assert str(e) == "Message: The username or password you entered is not valid."
 
-def _test_we_cant_post_without_passing_a_bug_object():
+@responses.activate
+def test_we_cant_post_without_passing_a_bug_object():
+    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login?login=foo&password=bar',
+                      body='{"token": "foobar"}', status=200,
+                      content_type='application/json', match_querystring=True)
     bugzilla = Bugsy("foo", "bar")
     try:
         bugzilla.put("foo")

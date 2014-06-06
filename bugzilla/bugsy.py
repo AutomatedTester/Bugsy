@@ -26,7 +26,7 @@ class Bugsy(object):
         self.bugzilla_url = bugzilla_url
         if self.username and self.password:
             result = requests.get(bugzilla_url + '/login?login=%s&password=%s' % (self.username, self.password)).json()
-            if not result.get('error', True):
+            if result.has_key('token'):
                 self.token = result['token']
             else:
                 raise LoginException(result['message'])
