@@ -55,6 +55,7 @@ def test_we_cant_post_without_passing_a_bug_object():
         assert 1 == 0, "Should have thrown an error about type when calling put"
     except BugsyException as e:
         assert str(e) == "Message: Please pass in a Bug object when posting to Bugzilla"
+
 @responses.activate
 def test_we_can_get_a_bug():
     responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/bug/1017315',
