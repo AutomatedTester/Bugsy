@@ -1,5 +1,6 @@
 import bugzilla
 from bugzilla import Bugsy, BugsyException, LoginException
+from bugzilla import Bug
 try:
     from unittest.mock import Mock, MagicMock, patch
 except:
@@ -66,4 +67,20 @@ def test_we_can_get_a_bug():
     assert bug.id == 1017315
     assert bug.status == 'RESOLVED'
     assert bug.summary == 'Schedule Mn tests on opt Linux builds on cedar'
+
+@responses.activate
+def test_we_can_create_a_new_remote_bug():
+    bug = Bug()
+    bug.summary = "I like foo"
+    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login?login=foo&password=bar',
+                      body='{"token": "foobar"}', status=200,
+                      content_type='application/json', match_querystring=True)
+    bug_dict = bug.to_dict().copy()
+    bug_dict['id'] = 123123
+    responses.add(responses.POST, 'https://bugzilla.mozilla.org/rest/bug',
+                      body=json.dumps(bug_dict), status=200,
+                      content_type='application/json', match_querystring=True)
+    bugzilla = Bugsy("foo", "bar")
+    bugzilla.put(bug)
+    assert bug.id != None
 

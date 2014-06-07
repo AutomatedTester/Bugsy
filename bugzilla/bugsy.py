@@ -1,3 +1,5 @@
+import json
+
 import requests
 from bug import Bug
 
@@ -43,3 +45,10 @@ class Bugsy(object):
 
         if not isinstance(bug, Bug):
             raise BugsyException("Please pass in a Bug object when posting to Bugzilla")
+
+        if not bug.id:
+            result = requests.post(self.bugzilla_url + "/bug", bug.to_dict())
+            bug._bug['id'] = json.loads(result.content)['id']
+        else:
+            requests.post(self.bugzilla_url + "/bug/%s" % bug.id, bug.to_dict())
+
