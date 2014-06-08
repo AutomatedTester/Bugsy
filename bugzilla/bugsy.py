@@ -47,8 +47,8 @@ class Bugsy(object):
             raise BugsyException("Please pass in a Bug object when posting to Bugzilla")
 
         if not bug.id:
-            result = requests.post(self.bugzilla_url + "/bug", bug.to_dict())
+            result = requests.post(self.bugzilla_url + "/bug?token=%s" % self.token, bug.to_dict())
             bug._bug['id'] = json.loads(result.content)['id']
         else:
-            requests.post(self.bugzilla_url + "/bug/%s" % bug.id, bug.to_dict())
+            requests.post(self.bugzilla_url + "/bug/%s?token=%s" % (bug.id, self.token), bug.to_dict())
 

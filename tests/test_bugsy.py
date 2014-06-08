@@ -79,7 +79,7 @@ def test_we_can_create_a_new_remote_bug():
     bug_dict['id'] = 123123
     responses.add(responses.POST, 'https://bugzilla.mozilla.org/rest/bug',
                       body=json.dumps(bug_dict), status=200,
-                      content_type='application/json', match_querystring=True)
+                      content_type='application/json')
     bugzilla = Bugsy("foo", "bar")
     bugzilla.put(bug)
     assert bug.id != None
