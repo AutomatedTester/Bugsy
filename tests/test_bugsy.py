@@ -84,3 +84,20 @@ def test_we_can_create_a_new_remote_bug():
     bugzilla.put(bug)
     assert bug.id != None
 
+@responses.activate
+def test_we_can_put_a_current_bug():
+    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login?login=foo&password=bar',
+                      body='{"token": "foobar"}', status=200,
+                      content_type='application/json', match_querystring=True)
+    bug_dict = example_return.copy()
+    bug_dict['summary'] = 'I love foo but hate bar'
+    responses.add(responses.POST, 'https://bugzilla.mozilla.org/rest/bug/1017315',
+                      body=json.dumps(bug_dict), status=200,
+                      content_type='application/json')
+    bugzilla = Bugsy("foo", "bar")
+    bug = Bug(**example_return['bugs'][0])
+    bug.summary = 'I love foo but hate bar'
+
+
+    bugzilla.put(bug)
+    assert bug.summary == 'I love foo but hate bar'
