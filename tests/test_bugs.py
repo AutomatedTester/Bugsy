@@ -89,3 +89,10 @@ def test_we_can_update_a_bug_from_bugzilla():
                       content_type='application/json')
     bug.update()
     assert bug.status == 'REOPENED'
+
+def test_we_cant_update_unless_we_have_a_bug_id():
+    bug = Bug()
+    try:
+        bug.update()
+    except BugException as e:
+        assert str(e) == "Message: Unable to update bug that isn't in Bugzilla"
