@@ -6,7 +6,10 @@ VALID_RESOLUTION = ["FIXED", "INCOMPLETE", "INVALID", "WORKSFORME", "DUPLICATE",
 
 
 class BugException(Exception):
-    """If trying to do something to a Bug this will be thrown"""
+    """
+        If we try do something that is not allowed to a bug then
+        this error is raised
+    """
     def __init__(self, msg):
         self.msg = msg
 
@@ -23,21 +26,37 @@ class Bug(object):
         """
             Defaults are set if there are no kwargs passed in. To pass in
             a dict create the Bug object like the following
-              bug = Bug(**myDict)
+
+            :param bugzilla_url: This is the Bugzilla REST URL endpoint. Defaults to None
+            :param token: Login token generated when instantiating a Bugsy() object with
+                          a valid username and password
+
+            >>> bug = Bug(**myDict)
         """
         self.bugzilla_url = bugzilla_url
         self.token = token
         self._bug = dict(**kwargs)
 
     def id():
-        doc = "The id property."
+        doc = """
+            Property for getting the ID of a bug.
+
+            >>> bug.id
+            123456
+        """
         def fget(self):
             return self._bug.get('id', None)
         return locals()
     id = property(**id())
 
     def summary():
-        doc = "The summary property."
+        doc = """
+            Property for getting and setting the bug summary
+
+            >>> bug.summary = "I like cheese"
+            >>> bug.summary
+            "I like cheese"
+        """
         def fget(self):
             return self._bug.get('summary', '')
         def fset(self, value):
@@ -48,7 +67,13 @@ class Bug(object):
     summary = property(**summary())
 
     def status():
-        doc = "The status property."
+        doc = """
+            Property for getting or setting the bug status
+
+            >>> bug.status = "REOPENED"
+            >>> bug.status
+            "REOPENED"
+        """
         def fget(self):
             return self._bug.get('status', '')
         def fset(self, value):
@@ -58,14 +83,20 @@ class Bug(object):
                 else:
                     raise BugException("Invalid status type was used")
             else:
-                raise BugException("Can not set status unless there is a bug id. Please call Update() before setting")
+                raise BugException("Can not set status unless there is a bug id. Please call Update() or before setting")
         def fdel(self):
             del self._bug['status']
         return locals()
     status = property(**status())
 
     def resolution():
-        doc = "The resolution property."
+        doc = """
+            Property for getting or setting the bug resolution
+
+            >>> bug.resolution = "FIXED"
+            >>> bug.resolution
+            "FIXED"
+        """
         def fget(self):
             return self._bug['resolution']
         def fset(self, value):
@@ -79,9 +110,22 @@ class Bug(object):
     resolution = property(**resolution())
 
     def to_dict(self):
+        """
+            Return the raw dict that is used inside this object
+        """
         return self._bug
 
     def update(self):
+        """
+            Update this object with the latest changes from Bugzilla
+
+            >>> bug.status
+            'NEW'
+            #Changes happen on Bugzilla
+            >>> bug.update()
+            >>> bug.status
+            'FIXED'
+        """
         if self._bug.has_key('id'):
             result = requests.get(self.bugzilla_url + "/bug/%s" % self._bug['id']).json()
             self._bug = dict(**result['bugs'][0])
