@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-setup(name='bugzilla',
+setup(name='bugsy',
       version='0.1.0',
       description='A library for interacting Bugzilla Native REST API',
       author='David Burns',
