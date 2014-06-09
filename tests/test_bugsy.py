@@ -1,6 +1,6 @@
-import bugzilla
-from bugzilla import Bugsy, BugsyException, LoginException
-from bugzilla import Bug
+import bugsy
+from bugsy import Bugsy, BugsyException, LoginException
+from bugsy import Bug
 try:
     from unittest.mock import Mock, MagicMock, patch
 except:
