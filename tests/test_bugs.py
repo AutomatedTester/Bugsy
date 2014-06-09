@@ -1,4 +1,7 @@
-from bugzilla import Bug
+import responses
+import json
+
+from bugzilla import Bugsy, Bug
 from bugzilla import BugException
 
 example_return = {u'faults': [], u'bugs': [{u'cf_tracking_firefox29': u'---', u'classification': u'Other', u'creator': u'jgriffin@mozilla.com', u'cf_status_firefox30':
@@ -69,3 +72,20 @@ def test_we_can_get_a_dict_version_of_the_bug():
     bug = Bug(**example_return['bugs'][0])
     result = bug.to_dict()
     assert example_return['bugs'][0]['id'] == result['id']
+
+@responses.activate
+def test_we_can_update_a_bug_from_bugzilla():
+    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/bug/1017315',
+                      body=json.dumps(example_return), status=200,
+                      content_type='application/json', match_querystring=True)
+    bugzilla = Bugsy()
+    bug = bugzilla.get(1017315)
+    import copy
+    bug_dict = copy.deepcopy(example_return)
+    bug_dict['bugs'][0]['status'] = "REOPENED"
+    responses.reset()
+    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/bug/1017315',
+                      body=json.dumps(bug_dict), status=200,
+                      content_type='application/json')
+    bug.update()
+    assert bug.status == 'REOPENED'

@@ -37,7 +37,7 @@ class Bugsy(object):
 
     def get(self, bug_number):
         bug = requests.get(self.bugzilla_url + "/bug/%s" % bug_number).json()
-        return Bug(**bug['bugs'][0])
+        return Bug(self.bugzilla_url, self.token, **bug['bugs'][0])
 
     def put(self, bug):
         if (not self.username or not self.password) or not self.token:

@@ -1,3 +1,6 @@
+import requests
+
+
 VALID_STATUS = ["RESOLVED", "ASSIGNED", "NEW", "UNCONFIRMED"]
 VALID_RESOLUTION = ["FIXED", "INCOMPLETE", "INVALID", "WORKSFORME", "DUPLICATE", "WONTFIX"]
 
@@ -17,28 +20,27 @@ class Bug(object):
 
     _bug = {'id':None}
 
-    def __init__(self, **kwargs):
+    def __init__(self, bugzilla_url=None, token=None, **kwargs):
         """
             Defaults are set if there are no kwargs passed in. To pass in
             a dict create the Bug object like the following
               bug = Bug(**myDict)
         """
-        self._bug['id'] = kwargs.get('id', None)
-        self._bug['summary'] = kwargs.get('summary', '')
-        self._bug['status'] = kwargs.get('status', '')
-        self._bug['resolution'] = kwargs.get('resolution', '')
+        self.bugzilla_url = bugzilla_url
+        self.token = token
+        self._bug = dict(**kwargs)
 
     def id():
         doc = "The id property."
         def fget(self):
-            return self._bug['id']
+            return self._bug.get('id', None)
         return locals()
     id = property(**id())
 
     def summary():
         doc = "The summary property."
         def fget(self):
-            return self._bug['summary']
+            return self._bug.get('summary', '')
         def fset(self, value):
             self._bug['summary'] = value
         def fdel(self):
@@ -49,9 +51,9 @@ class Bug(object):
     def status():
         doc = "The status property."
         def fget(self):
-            return self._bug['status']
+            return self._bug.get('status', '')
         def fset(self, value):
-            if self._bug['id']:
+            if self._bug.get('id', None):
                 if value in VALID_STATUS:
                     self._bug['status'] = value
                 else:
@@ -79,3 +81,7 @@ class Bug(object):
 
     def to_dict(self):
         return self._bug
+
+    def update(self):
+        result = requests.get(self.bugzilla_url + "/bug/%s" % self._bug['id']).json()
+        self._bug = dict(**result['bugs'][0])
