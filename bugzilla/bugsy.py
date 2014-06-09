@@ -33,8 +33,6 @@ class Bugsy(object):
             else:
                 raise LoginException(result['message'])
 
-
-
     def get(self, bug_number):
         bug = requests.get(self.bugzilla_url + "/bug/%s" % bug_number).json()
         return Bug(self.bugzilla_url, self.token, **bug['bugs'][0])
