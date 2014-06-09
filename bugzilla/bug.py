@@ -5,7 +5,6 @@ VALID_STATUS = ["RESOLVED", "ASSIGNED", "NEW", "UNCONFIRMED"]
 VALID_RESOLUTION = ["FIXED", "INCOMPLETE", "INVALID", "WORKSFORME", "DUPLICATE", "WONTFIX"]
 
 
-
 class BugException(Exception):
     """If trying to do something to a Bug this will be thrown"""
     def __init__(self, msg):
