@@ -83,7 +83,7 @@ class Bug(object):
                 else:
                     raise BugException("Invalid status type was used")
             else:
-                raise BugException("Can not set status unless there is a bug id. Please call Update() or before setting")
+                raise BugException("Can not set status unless there is a bug id. Please call Update() before setting")
         def fdel(self):
             del self._bug['status']
         return locals()
