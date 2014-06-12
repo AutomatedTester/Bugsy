@@ -127,7 +127,10 @@ class Bug(object):
             'FIXED'
         """
         if self._bug.has_key('id'):
-            result = requests.get(self.bugzilla_url + "/bug/%s" % self._bug['id']).json()
+            url = self.bugzilla_url + "/bug/%s" % self._bug['id']
+            if self.token:
+                url = url + '?token=%s' % self.token
+            result = requests.get(url).json()
             self._bug = dict(**result['bugs'][0])
         else:
             raise BugException("Unable to update bug that isn't in Bugzilla")
