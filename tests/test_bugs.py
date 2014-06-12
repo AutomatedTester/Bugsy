@@ -37,6 +37,14 @@ def test_we_cant_set_status_unless_there_is_a_bug_id():
     except BugException as e:
         assert str(e) == "Message: Can not set status unless there is a bug id. Please call Update() before setting"
 
+def test_we_can_get_OS_set_from_default():
+    bug = Bug()
+    assert bug.OS == "All"
+
+def test_we_can_get_OS_we_set():
+    bug = Bug(OS="Linux")
+    assert bug.OS == "Linux"
+
 def test_we_throw_an_error_for_invalid_status_types():
     bug = Bug(**example_return['bugs'][0])
     try:
@@ -54,7 +62,7 @@ def test_we_can_set_the_resolution():
     bug.resolution = 'INVALID'
     assert bug.resolution == 'INVALID'
 
-def test_we_cant_set_the_resolution_when_not_in_bandq():
+def test_we_cant_set_the_resolution_when_not_valid():
     bug = Bug(**example_return['bugs'][0])
     try:
         bug.resolution = 'FOO'

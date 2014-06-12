@@ -20,8 +20,6 @@ class BugException(Exception):
 class Bug(object):
     """This represents a Bugzilla Bug"""
 
-    _bug = {'id':None}
-
     def __init__(self, bugzilla_url=None, token=None, **kwargs):
         """
             Defaults are set if there are no kwargs passed in. To pass in
@@ -36,6 +34,7 @@ class Bug(object):
         self.bugzilla_url = bugzilla_url
         self.token = token
         self._bug = dict(**kwargs)
+        self._bug['OS'] = kwargs.get('OS', 'All')
 
     def id():
         doc = """
@@ -88,6 +87,21 @@ class Bug(object):
             del self._bug['status']
         return locals()
     status = property(**status())
+
+    def OS():
+        doc = """
+            Property for getting or setting the OS that the bug occured on
+
+            >>> bug.OS
+            "All"
+            >>> bug.OS = "Linux"
+        """
+        def fget(self):
+            return self._bug['OS']
+        def fset(self, value):
+            self._bug['OS'] = value
+        return locals()
+    OS = property(**OS())
 
     def resolution():
         doc = """
