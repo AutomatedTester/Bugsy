@@ -64,7 +64,11 @@ class Bugsy(object):
             >>> bugzilla = Bugsy()
             >>> bug = bugzilla.get(123456)
         """
-        bug = requests.get(self.bugzilla_url + "/bug/%s" % bug_number).json()
+        url = self.bugzilla_url + "/bug/%s" % bug_number
+        if self.token:
+            url = url + "?token=%s" % self.token
+
+        bug = requests.get(url).json()
         return Bug(self.bugzilla_url, self.token, **bug['bugs'][0])
 
     def put(self, bug):

@@ -69,6 +69,21 @@ def test_we_can_get_a_bug():
     assert bug.summary == 'Schedule Mn tests on opt Linux builds on cedar'
 
 @responses.activate
+def test_we_can_get_a_bug_with_login_token():
+  responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login?login=foo&password=bar',
+                        body='{"token": "foobar"}', status=200,
+                        content_type='application/json', match_querystring=True)
+
+  responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/bug/1017315?token=foobar',
+                    body=json.dumps(example_return), status=200,
+                    content_type='application/json', match_querystring=True)
+  bugzilla = Bugsy("foo", "bar")
+  bug = bugzilla.get(1017315)
+  assert bug.id == 1017315
+  assert bug.status == 'RESOLVED'
+  assert bug.summary == 'Schedule Mn tests on opt Linux builds on cedar'
+
+@responses.activate
 def test_we_can_create_a_new_remote_bug():
     bug = Bug()
     bug.summary = "I like foo"
