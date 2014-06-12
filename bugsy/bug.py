@@ -34,7 +34,7 @@ class Bug(object):
         self.bugzilla_url = bugzilla_url
         self.token = token
         self._bug = dict(**kwargs)
-        self._bug['OS'] = kwargs.get('OS', 'All')
+        self._bug['op_sys'] = kwargs.get('op_sys', 'All')
 
     def id():
         doc = """
