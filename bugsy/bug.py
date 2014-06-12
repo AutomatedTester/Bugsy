@@ -35,6 +35,7 @@ class Bug(object):
         self.token = token
         self._bug = dict(**kwargs)
         self._bug['op_sys'] = kwargs.get('op_sys', 'All')
+        self._bug['product'] = kwargs.get('product', 'core')
 
     def id():
         doc = """
@@ -97,9 +98,9 @@ class Bug(object):
             >>> bug.OS = "Linux"
         """
         def fget(self):
-            return self._bug['OS']
+            return self._bug['op_sys']
         def fset(self, value):
-            self._bug['OS'] = value
+            self._bug['op_sys']
         return locals()
     OS = property(**OS())
 
@@ -122,6 +123,20 @@ class Bug(object):
             del self._bug['resolution']
         return locals()
     resolution = property(**resolution())
+
+    def product():
+        doc = """
+            Property for getting the bug product
+
+            >>> bug.product
+            Core
+        """
+        def fget(self):
+            return self._bug['product']
+        def fset(self, value):
+            self._product = value
+        return locals()
+    product = property(**product())
 
     def to_dict(self):
         """
