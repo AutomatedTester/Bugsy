@@ -95,7 +95,10 @@ class Bugsy(object):
 
         if not bug.id:
             result = requests.post(self.bugzilla_url + "/bug?token=%s" % self.token, bug.to_dict()).json()
-            bug._bug['id'] = result['id']
+            if not result.has_key('error'):
+                bug._bug['id'] = result['id']
+            else:
+                raise BugsyException(result['message'])
         else:
             requests.post(self.bugzilla_url + "/bug/%s?token=%s" % (bug.id, self.token), bug.to_dict())
 

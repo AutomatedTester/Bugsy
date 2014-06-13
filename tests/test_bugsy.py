@@ -116,3 +116,38 @@ def test_we_can_put_a_current_bug():
 
     bugzilla.put(bug)
     assert bug.summary == 'I love foo but hate bar'
+
+@responses.activate
+def test_we_handle_errors_from_bugzilla_when_posting():
+  responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login?login=foo&password=bar',
+                    body='{"token": "foobar"}', status=200,
+                    content_type='application/json', match_querystring=True)
+  responses.add(responses.POST, 'https://bugzilla.mozilla.org/rest/bug',
+                    body='{"error":true,"code":50,"message":"You must select/enter a component."}', status=200,
+                    content_type='application/json')
+
+  bugzilla = Bugsy("foo", "bar")
+  bug = Bug()
+  try:
+      bugzilla.put(bug)
+      assert 1 == 0, "Put should have raised an error"
+  except BugsyException as e:
+      assert str(e) == "Message: You must select/enter a component."
+
+@responses.activate
+def test_we_handle_errors_from_bugzilla_when_updating_a_bug():
+  responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login?login=foo&password=bar',
+                    body='{"token": "foobar"}', status=200,
+                    content_type='application/json', match_querystring=True)
+  responses.add(responses.POST, 'https://bugzilla.mozilla.org/rest/bug/1017315',
+                    body='{"error":true,"code":50,"message":"You must select/enter a component."}', status=200,
+                    content_type='application/json')
+  bugzilla = Bugsy("foo", "bar")
+
+  bug_dict = example_return.copy()
+  bug_dict['summary'] = 'I love foo but hate bar'
+  bug = Bug(**bug_dict['bugs'][0])
+  try:
+      bugzilla.put(bug)
+  except BugsyException as e:
+      assert str(e) == "Message: You must select/enter a component."
