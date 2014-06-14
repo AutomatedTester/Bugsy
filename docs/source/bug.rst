@@ -1,8 +1,10 @@
 .. toctree::
    :maxdepth: 2
 
-:mod:`Bug` Package
+:mod:`Bug`
 ---------------------
 .. automodule:: bugsy
 .. autoclass:: Bug
+   :members:
+.. autoclass:: BugException
    :members:
