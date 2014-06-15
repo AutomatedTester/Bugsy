@@ -19,6 +19,33 @@ To use you will do
     bug123456.resolution = 'FIXED'
     bugzilla.put(bug123456)
 
+Getting a bug from Bugzilla
+---------------------------
+Getting a bug is quite simple. Create a Bugsy object and then get the bug
+number that you want.
+
+.. code-block:: python
+
+    import bugsy
+    bugzilla = bugsy.Bugsy()
+    bug = bugzilla.get(123456)
+
+Creating a new bug
+------------------
+
+To create a new bug, create a Bug object, populate it with the items that you need and then
+use the Bugsy object to put the bug into Bugzilla
+
+.. code-block:: python
+
+    import bugsy
+    bug = bugsy.Bug()
+    bug.summary = "I really realy love cheese"
+    bug.add_comment("and I really want sausages with it!")
+
+    bugzilla = bugsy.Bugsy("username", "password")
+    bugzilla.put(bug)
+    bug.id #returns the bug id from Bugzilla
 
 To see further details look at:
 
@@ -36,3 +63,4 @@ Indices and tables
 * :ref:`modindex`
 * :ref:`search`
 
+.. _Bugsy:

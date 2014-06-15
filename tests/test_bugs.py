@@ -135,3 +135,21 @@ def test_we_can_update_a_bug_with_login_token():
   assert bug.id == 1017315
   assert bug.status == 'REOPENED'
   assert bug.summary == 'Schedule Mn tests on opt Linux builds on cedar'
+
+@responses.activate
+def test_that_we_can_add_a_comment_to_a_bug():
+    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login?login=foo&password=bar',
+                          body='{"token": "foobar"}', status=200,
+                          content_type='application/json', match_querystring=True)
+
+    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/bug/1017315?token=foobar',
+                      body=json.dumps(example_return), status=200,
+                      content_type='application/json', match_querystring=True)
+    bugzilla = Bugsy("foo", "bar")
+    bug = bugzilla.get(1017315)
+    bug.add_comment("I like sausages")
+
+    responses.add(responses.POST, 'https://bugzilla.mozilla.org/rest/bug/1017315?token=foobar',
+                      body=json.dumps(example_return), status=200,
+                      content_type='application/json', match_querystring=True)
+    bugzilla.put(bug)

@@ -166,3 +166,19 @@ class Bug(object):
             self._bug = dict(**result['bugs'][0])
         else:
             raise BugException("Unable to update bug that isn't in Bugzilla")
+
+    def add_comment(self, comment):
+        """
+            Adds a comment to a bug. Once you have added it you will need to
+            call put on the Bugsy object
+
+            >>> bug.add_comment("I like sausages")
+            >>> bugzilla.put(bug)
+        """
+        self._bug['comment'] = comment
+
+    def to_dict(self):
+        """
+            Return the raw dict that is used inside this object
+        """
+        return self._bug
