@@ -141,6 +141,48 @@ class Bug(object):
         return locals()
     product = property(**product())
 
+    def component():
+        doc = """
+            Property for getting the bug component
+
+            >>> bug.component
+            General
+        """
+        def fget(self):
+            return self._bug['component']
+        def fset(self, value):
+            self._bug['component'] = value
+        return locals()
+    component = property(**component())
+
+    def platform():
+        doc = """
+            Property for getting the bug platform
+
+            >>> bug.platform
+            "ARM"
+        """
+        def fget(self):
+            return self._bug['platform']
+        def fset(self, value):
+            self._bug['platform'] = value
+        return locals()
+    platform = property(**platform())
+
+    def version():
+        doc = """
+            Property for getting the bug platform
+
+            >>> bug.version
+            "TRUNK"
+        """
+        def fget(self):
+            return self._bug['version']
+        def fset(self, value):
+            self._bug['version'] = value
+        return locals()
+    version = property(**version())
+
     def to_dict(self):
         """
             Return the raw dict that is used inside this object
