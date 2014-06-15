@@ -36,6 +36,9 @@ class Bug(object):
         self._bug = dict(**kwargs)
         self._bug['op_sys'] = kwargs.get('op_sys', 'All')
         self._bug['product'] = kwargs.get('product', 'core')
+        self._bug['component'] = kwargs.get('component', 'general')
+        self._bug['platform'] = kwargs.get('platform', 'All')
+        self._bug['version'] = kwargs.get('version', 'unspecified')
 
     def id():
         doc = """
