@@ -19,6 +19,24 @@ To use you will do
     bug123456.resolution = 'FIXED'
     bugzilla.put(bug123456)
 
+Installing Bugsy
+----------------
+
+To install Bugsy, simply use pip or easy install
+
+Pip
+
+.. code-block:: bash
+
+    pip install bugsy
+
+
+easy_install
+
+.. code-block:: bash
+
+    easy_install bugsy
+
 Getting a bug from Bugzilla
 ---------------------------
 Getting a bug is quite simple. Create a Bugsy object and then get the bug
