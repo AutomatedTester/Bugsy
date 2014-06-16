@@ -37,8 +37,11 @@ easy_install
 
     easy_install bugsy
 
+Using Bugsy
+-----------
+
 Getting a bug from Bugzilla
----------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Getting a bug is quite simple. Create a Bugsy object and then get the bug
 number that you want.
 
@@ -49,7 +52,7 @@ number that you want.
     bug = bugzilla.get(123456)
 
 Creating a new bug
-------------------
+~~~~~~~~~~~~~~~~~~
 
 To create a new bug, create a Bug object, populate it with the items that you need and then
 use the Bugsy object to put the bug into Bugzilla
