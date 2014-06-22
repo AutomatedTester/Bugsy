@@ -2,6 +2,7 @@ import json
 
 import requests
 from bug import Bug
+from search import Search
 
 
 class BugsyException(Exception):
@@ -101,4 +102,11 @@ class Bugsy(object):
                 raise BugsyException(result['message'])
         else:
             requests.post(self.bugzilla_url + "/bug/%s?token=%s" % (bug.id, self.token), bug.to_dict())
+
+    def search_for():
+        doc = "The search_for property."
+        def fget(self):
+            return Search(self.bugzilla_url, self.token)
+        return locals()
+    search_for = property(**search_for())
 

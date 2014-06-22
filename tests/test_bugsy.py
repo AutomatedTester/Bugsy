@@ -151,3 +151,27 @@ def test_we_handle_errors_from_bugzilla_when_updating_a_bug():
       bugzilla.put(bug)
   except BugsyException as e:
       assert str(e) == "Message: You must select/enter a component."
+
+@responses.activate
+def test_we_only_ask_for_the_include_fields():
+  include_return = {
+   "bugs" : [
+      {
+         "product" : "MozillaClassic",
+         "summary" : "Bookmark properties leads to an Assert  failed"
+      }
+   ],
+   "faults" : []
+  }
+  responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest?include_fields=product',
+                    body=json.dumps(include_return), status=200,
+                    content_type='application/json', match_querystring=True)
+
+  bugzilla = Bugsy()
+  bugs = bugzilla.search_for\
+          .include_fields('product')\
+          .search()
+
+  assert len(responses.calls) == 1
+  assert len(bugs) == 1
+  assert bugs[0].product == include_return['bugs'][0]['product']
