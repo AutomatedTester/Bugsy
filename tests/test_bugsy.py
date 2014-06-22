@@ -175,3 +175,51 @@ def test_we_only_ask_for_the_include_fields():
   assert len(responses.calls) == 1
   assert len(bugs) == 1
   assert bugs[0].product == include_return['bugs'][0]['product']
+
+@responses.activate
+def test_we_can_return_keyword_search():
+    keyword_return = {
+      "bugs" : [
+      {
+         "component" : "Networking: HTTP",
+         "product" : "Core",
+         "summary" : "IsPending broken for requests without Content-Type"
+      },
+      {
+         "component" : "Developer Tools: Graphic Commandline and Toolbar",
+         "product" : "Firefox",
+         "summary" : "GCLI Command to open Profile Directory"
+      },
+      {
+         "component" : "Video/Audio Controls",
+         "product" : "Toolkit",
+         "summary" : "Fullscreen video should disable screensaver during playback on Linux"
+      },
+      {
+         "component" : "Reader Mode",
+         "product" : "Firefox for Android",
+         "summary" : "Article showing twice in reader mode"
+      },
+      {
+         "component" : "Message Reader UI",
+         "product" : "Thunderbird",
+         "summary" : "Make \"visited link\" coloring work in thunderbird"
+      }]
+    }
+
+    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest?include_fields=product&include_fields=component&keywords=checkin-needed&',
+                    body=json.dumps(keyword_return), status=200,
+                    content_type='application/json', match_querystring=True)
+
+    bugzilla = Bugsy()
+    bugs = bugzilla.search_for\
+            .include_fields('product', "component")\
+            .keywords('checkin-needed')\
+            .search()
+
+    assert len(responses.calls) == 1
+    assert len(bugs) == 5
+    assert bugs[0].product == keyword_return['bugs'][0]['product']
+    assert bugs[0].component == keyword_return['bugs'][0]['component']
+
+

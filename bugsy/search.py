@@ -9,14 +9,25 @@ class Search(object):
     def __init__(self, bugzilla_url, token):
         self.bugzilla_url = bugzilla_url
         self.token = token
+        self.includefields = []
+        self.keywrds = []
 
     def include_fields(self, *args):
-        self.include_fields = list(args)
+        self.includefields = list(args)
+        return self
+
+    def keywords(self, *args):
+        self.keywrds = list(args)
         return self
 
     def search(self):
         include_fields = ""
-        for field in self.include_fields:
-            include_fields = include_fields + "include_fields=%s" % field
-        results = requests.get(self.bugzilla_url +"?" + include_fields).json()
+        for field in self.includefields:
+            include_fields = include_fields + "include_fields=%s&" % field
+
+        keywrds = ""
+        for word in self.keywrds:
+            keywrds = keywrds + "keywords=%s&" % word
+
+        results = requests.get(self.bugzilla_url +"?" + include_fields + keywrds).json()
         return [Bug(self.bugzilla_url, self.token, **bug) for bug in results['bugs']]
