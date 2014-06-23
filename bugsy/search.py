@@ -28,6 +28,8 @@ class Search(object):
         keywrds = ""
         for word in self.keywrds:
             keywrds = keywrds + "keywords=%s&" % word
-
-        results = requests.get(self.bugzilla_url +"?" + include_fields + keywrds).json()
+        url = self.bugzilla_url +"?" + include_fields + keywrds
+        if self.token:
+            url = url + "token=%s" % self.token
+        results = requests.get(url).json()
         return [Bug(self.bugzilla_url, self.token, **bug) for bug in results['bugs']]

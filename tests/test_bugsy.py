@@ -177,6 +177,34 @@ def test_we_only_ask_for_the_include_fields():
   assert bugs[0].product == include_return['bugs'][0]['product']
 
 @responses.activate
+def test_we_only_ask_for_the_include_fields_while_logged_in():
+  include_return = {
+   "bugs" : [
+      {
+         "product" : "MozillaClassic",
+         "summary" : "Bookmark properties leads to an Assert  failed"
+      }
+   ],
+   "faults" : []
+  }
+  responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login?login=foo&password=bar',
+                    body='{"token": "foobar"}', status=200,
+                    content_type='application/json', match_querystring=True)
+
+  responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest?include_fields=product&token=foobar',
+                    body=json.dumps(include_return), status=200,
+                    content_type='application/json', match_querystring=True)
+
+  bugzilla = Bugsy('foo', 'bar')
+  bugs = bugzilla.search_for\
+          .include_fields('product')\
+          .search()
+
+  assert len(responses.calls) == 2
+  assert len(bugs) == 1
+  assert bugs[0].product == include_return['bugs'][0]['product']
+
+@responses.activate
 def test_we_can_return_keyword_search():
     keyword_return = {
       "bugs" : [
