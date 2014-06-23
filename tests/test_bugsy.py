@@ -163,7 +163,7 @@ def test_we_only_ask_for_the_include_fields():
    ],
    "faults" : []
   }
-  responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest?include_fields=product',
+  responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/bug?include_fields=product',
                     body=json.dumps(include_return), status=200,
                     content_type='application/json', match_querystring=True)
 
@@ -191,7 +191,7 @@ def test_we_only_ask_for_the_include_fields_while_logged_in():
                     body='{"token": "foobar"}', status=200,
                     content_type='application/json', match_querystring=True)
 
-  responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest?include_fields=product&token=foobar',
+  responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/bug?include_fields=product&token=foobar',
                     body=json.dumps(include_return), status=200,
                     content_type='application/json', match_querystring=True)
 
@@ -235,7 +235,7 @@ def test_we_can_return_keyword_search():
       }]
     }
 
-    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest?include_fields=product&include_fields=component&keywords=checkin-needed&',
+    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/bug?include_fields=product&include_fields=component&keywords=checkin-needed&',
                     body=json.dumps(keyword_return), status=200,
                     content_type='application/json', match_querystring=True)
 
@@ -250,4 +250,40 @@ def test_we_can_return_keyword_search():
     assert bugs[0].product == keyword_return['bugs'][0]['product']
     assert bugs[0].component == keyword_return['bugs'][0]['component']
 
+@responses.activate
+def test_that_we_can_search_for_a_specific_user():
+    user_return = {
+        "bugs" : [
+            {
+              "product" : "addons.mozilla.org",
+               "summary" : "Add Selenium tests to the repository"
+            },
+            {
+               "product" : "addons.mozilla.org",
+               "summary" : "Add Ids to links to help with testability"
+            },
+            {
+               "product" : "addons.mozilla.org",
+               "summary" : "Add a name for AMO Themes sort links for testability"
+            },
+            {
+               "product" : "addons.mozilla.org",
+               "summary" : "Missing ID for div with class \"feature ryff\" (Mobile Add-on: Foursquare)"
+            }
+           ]
+        }
+    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/bug?include_fields=product&include_fields=summary&assigned_to=dburns@mozilla.com&',
+                    body=json.dumps(user_return), status=200,
+                    content_type='application/json', match_querystring=True)
+
+    bugzilla = Bugsy()
+    bugs = bugzilla.search_for\
+            .include_fields('product', "summary")\
+            .assigned_to('dburns@mozilla.com')\
+            .search()
+
+    assert len(responses.calls) == 1
+    assert len(bugs) == 4
+    assert bugs[0].product == user_return['bugs'][0]['product']
+    assert bugs[0].summary == user_return['bugs'][0]['summary']
 

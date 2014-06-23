@@ -11,6 +11,7 @@ class Search(object):
         self.token = token
         self.includefields = []
         self.keywrds = []
+        self.assigned = []
 
     def include_fields(self, *args):
         self.includefields = list(args)
@@ -18,6 +19,10 @@ class Search(object):
 
     def keywords(self, *args):
         self.keywrds = list(args)
+        return self
+
+    def assigned_to(self, *args):
+        self.assigned = list(args)
         return self
 
     def search(self):
@@ -28,7 +33,12 @@ class Search(object):
         keywrds = ""
         for word in self.keywrds:
             keywrds = keywrds + "keywords=%s&" % word
-        url = self.bugzilla_url +"?" + include_fields + keywrds
+
+        assigned = ""
+        for assign in self.assigned:
+            assigned = assigned + "assigned_to=%s&" % assign
+
+        url = self.bugzilla_url +"/bug?" + include_fields + keywrds + assigned
         if self.token:
             url = url + "token=%s" % self.token
         results = requests.get(url).json()
