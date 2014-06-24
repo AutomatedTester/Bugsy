@@ -75,6 +75,7 @@ To see further details look at:
 
    bugsy.rst
    bug.rst
+   search_bug.rst
 
 
 Indices and tables
