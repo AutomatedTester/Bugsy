@@ -19,14 +19,14 @@ class Search(object):
         self.includefields = []
         self.keywrds = []
         self.assigned = []
+        self.summs = []
 
     def include_fields(self, *args):
         """
             Include fields is the fields that you want to be returned when searching
 
-            :param args:
-            :return self: return the original object you were using allowing for fluent
-                          searches
+            :param args: items passed in will be turned into a list
+            :returns: :class:`Search`
 
             >>> bugzilla.search_for.include_fields("summary", "product")
         """
@@ -37,9 +37,8 @@ class Search(object):
         """
             When search() is called it will search for the keywords passed in here
 
-            :param args:
-            :return self: return the original object you were using allowing for fluent
-                          searches
+            :param args: items passed in will be turned into a list
+            :returns: :class:`Search`
 
             >>> bugzilla.search_for.keywords("checkin-needed")
         """
@@ -47,16 +46,30 @@ class Search(object):
         return self
 
     def assigned_to(self, *args):
-        """
+        r"""
             When search() is called it will search for bugs assigned to these users
-            :param args:
-            :return self: return the original object you were using allowing for fluent
-            searches
+
+            :param args: items passed in will be turned into a list
+            :returns: :class:`Search`
 
             >>> bugzilla.search_for.assigned_to("dburns@mozilla.com")
         """
         self.assigned = list(args)
         return self
+
+    def summary(self, *args):
+        """
+            When search is called it will search for bugs with the words passed into the
+            methods
+
+            :param args: items passed in will be turned into a list
+            :returns: :class:`Search`
+
+            >>> bugzilla.search_for.summary("663399")
+        """
+        self.summs = list(args)
+        return self
+
 
     def search(self):
         r"""
@@ -81,7 +94,11 @@ class Search(object):
         for assign in self.assigned:
             assigned = assigned + "assigned_to=%s&" % assign
 
-        url = self.bugzilla_url +"/bug?" + include_fields + keywrds + assigned
+        sumary = ""
+        for sums in self.summs:
+            sumary = sumary + "short_desc=%s&short_desc_type=allwordssubstr&" % sums
+
+        url = self.bugzilla_url +"/bug?" + include_fields + keywrds + assigned + sumary
         if self.token:
             url = url + "token=%s" % self.token
         results = requests.get(url).json()

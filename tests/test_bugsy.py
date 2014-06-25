@@ -287,3 +287,31 @@ def test_that_we_can_search_for_a_specific_user():
     assert bugs[0].product == user_return['bugs'][0]['product']
     assert bugs[0].summary == user_return['bugs'][0]['summary']
 
+@responses.activate
+def test_we_can_search_summary_fields():
+    summary_return = {
+     "bugs" : [
+        {
+           "component" : "CSS Parsing and Computation",
+           "product" : "Core",
+           "summary" : "Map \"rebeccapurple\" to #663399 in named color list."
+        }
+      ]
+    }
+
+
+    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/bug?assigned_to=dburns@mozilla.com&short_desc=rebecca&short_desc_type=allwordssubstr&include_fields=summary&include_fields=product&include_fields=component&',
+                    body=json.dumps(summary_return), status=200,
+                    content_type='application/json', match_querystring=True)
+
+    bugzilla = Bugsy()
+    bugs = bugzilla.search_for\
+            .include_fields("summary", 'product', "component")\
+            .assigned_to('dburns@mozilla.com')\
+            .summary("rebecca")\
+            .search()
+
+    assert len(responses.calls) == 1
+    assert len(bugs) == 1
+    assert bugs[0].product == summary_return['bugs'][0]['product']
+    assert bugs[0].summary == summary_return['bugs'][0]['summary']
