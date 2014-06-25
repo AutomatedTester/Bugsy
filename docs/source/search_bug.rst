@@ -3,6 +3,7 @@
 
 :mod:`Search`
 ---------------------
+.. versionchanged:: 0.2
 .. automodule:: bugsy
 .. autoclass:: Search
    :members:
