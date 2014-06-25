@@ -59,15 +59,15 @@ class Search(object):
         return self
 
     def search(self):
-        """
+        r"""
             Call the Bugzilla endpoint that will do the search. It will take the information
             used in other methods on the Search object and build up the query string. If no
-            bugs are found then an empty list is returned.::
+            bugs are found then an empty list is returned.
 
             >>> bugs = bugzilla.search_for\
-            ...            .keywords("checkin-needed")\
-            ...            .include_fields("product", "Summary")\
-            ...            .search()
+            ...                .keywords("checkin-needed")\
+            ...                .include_fields("product", "Summary")\
+            ...                .search()
         """
         include_fields = ""
         for field in self.includefields:
