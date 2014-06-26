@@ -8,53 +8,117 @@ import json
 @responses.activate
 def test_we_only_ask_for_the_include_fields():
   include_return = {
-   "bugs" : [
-      {
-         "product" : "MozillaClassic",
-         "summary" : "Bookmark properties leads to an Assert  failed"
+         "bugs" : [
+            {
+               "component" : "Marionette",
+               "flags" : [],
+               "id" : 861874,
+               "op_sys" : "Gonk (Firefox OS)",
+               "platform" : "Other",
+               "product" : "Testing",
+               "resolution" : "",
+               "status" : "REOPENED",
+               "summary" : "Tracking bug for uplifting is_displayed issue fix for WebDriver",
+               "version" : "unspecified"
+            },
+            {
+               "component" : "Marionette",
+               "flags" : [
+                  {
+                     "creation_date" : "2013-11-26T14:16:09Z",
+                     "id" : 758758,
+                     "modification_date" : "2013-11-26T14:16:09Z",
+                     "name" : "needinfo",
+                     "requestee" : "dkuo@mozilla.com",
+                     "setter" : "bob.silverberg@gmail.com",
+                     "status" : "?",
+                     "type_id" : 800
+                  }
+               ],
+               "id" : 862156,
+               "op_sys" : "Gonk (Firefox OS)",
+               "platform" : "ARM",
+               "product" : "Testing",
+               "resolution" : "",
+               "status" : "NEW",
+               "summary" : "Marionette thinks that the play button in the music app is not displayed",
+               "version" : "unspecified"
+            }
+         ]
       }
-   ],
-   "faults" : []
-  }
-  responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/bug?include_fields=product',
+
+
+  responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/bug?assigned_to=dburns@mozilla.com&whiteboard=affects&short_desc_type=allwordssubstr&include_fields=version&include_fields=id&include_fields=summary&include_fields=status&include_fields=op_sys&include_fields=resolution&include_fields=product&include_fields=component&include_fields=platform&include_fields=flags',
                     body=json.dumps(include_return), status=200,
                     content_type='application/json', match_querystring=True)
 
   bugzilla = Bugsy()
   bugs = bugzilla.search_for\
-          .include_fields('product')\
+          .include_fields('flags')\
+          .assigned_to("dburns@mozilla.com")\
+          .whiteboard("affects")\
           .search()
 
   assert len(responses.calls) == 1
-  assert len(bugs) == 1
-  assert bugs[0].product == include_return['bugs'][0]['product']
+  assert len(bugs) == 2
+  assert bugs[0].to_dict()['flags'] == include_return['bugs'][0]['flags']
 
 @responses.activate
 def test_we_only_ask_for_the_include_fields_while_logged_in():
   include_return = {
-   "bugs" : [
-      {
-         "product" : "MozillaClassic",
-         "summary" : "Bookmark properties leads to an Assert  failed"
+         "bugs" : [
+            {
+               "component" : "Marionette",
+               "flags" : [],
+               "id" : 861874,
+               "op_sys" : "Gonk (Firefox OS)",
+               "platform" : "Other",
+               "product" : "Testing",
+               "resolution" : "",
+               "status" : "REOPENED",
+               "summary" : "Tracking bug for uplifting is_displayed issue fix for WebDriver",
+               "version" : "unspecified"
+            },
+            {
+               "component" : "Marionette",
+               "flags" : [
+                  {
+                     "creation_date" : "2013-11-26T14:16:09Z",
+                     "id" : 758758,
+                     "modification_date" : "2013-11-26T14:16:09Z",
+                     "name" : "needinfo",
+                     "requestee" : "dkuo@mozilla.com",
+                     "setter" : "bob.silverberg@gmail.com",
+                     "status" : "?",
+                     "type_id" : 800
+                  }
+               ],
+               "id" : 862156,
+               "op_sys" : "Gonk (Firefox OS)",
+               "platform" : "ARM",
+               "product" : "Testing",
+               "resolution" : "",
+               "status" : "NEW",
+               "summary" : "Marionette thinks that the play button in the music app is not displayed",
+               "version" : "unspecified"
+            }
+         ]
       }
-   ],
-   "faults" : []
-  }
   responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login?login=foo&password=bar',
                     body='{"token": "foobar"}', status=200,
                     content_type='application/json', match_querystring=True)
 
-  responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/bug?include_fields=product&token=foobar',
+  responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/bug?include_fields=version&include_fields=id&include_fields=summary&include_fields=status&include_fields=op_sys&include_fields=resolution&include_fields=product&include_fields=component&include_fields=platform&include_fields=flags&token=foobar',
                     body=json.dumps(include_return), status=200,
                     content_type='application/json', match_querystring=True)
 
   bugzilla = Bugsy('foo', 'bar')
   bugs = bugzilla.search_for\
-          .include_fields('product')\
+          .include_fields('flags')\
           .search()
 
   assert len(responses.calls) == 2
-  assert len(bugs) == 1
+  assert len(bugs) == 2
   assert bugs[0].product == include_return['bugs'][0]['product']
 
 @responses.activate
@@ -88,13 +152,12 @@ def test_we_can_return_keyword_search():
       }]
     }
 
-    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/bug?include_fields=product&include_fields=component&keywords=checkin-needed&',
+    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/bug?include_fields=version&include_fields=id&include_fields=summary&include_fields=status&include_fields=op_sys&include_fields=resolution&include_fields=product&include_fields=component&include_fields=platform&keywords=checkin-needed&',
                     body=json.dumps(keyword_return), status=200,
                     content_type='application/json', match_querystring=True)
 
     bugzilla = Bugsy()
     bugs = bugzilla.search_for\
-            .include_fields('product', "component")\
             .keywords('checkin-needed')\
             .search()
 
@@ -125,13 +188,12 @@ def test_that_we_can_search_for_a_specific_user():
             }
            ]
         }
-    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/bug?include_fields=product&include_fields=summary&assigned_to=dburns@mozilla.com&',
+    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/bug?include_fields=version&include_fields=id&include_fields=summary&include_fields=status&include_fields=op_sys&include_fields=resolution&include_fields=product&include_fields=component&include_fields=platform&assigned_to=dburns@mozilla.com&',
                     body=json.dumps(user_return), status=200,
                     content_type='application/json', match_querystring=True)
 
     bugzilla = Bugsy()
     bugs = bugzilla.search_for\
-            .include_fields('product', "summary")\
             .assigned_to('dburns@mozilla.com')\
             .search()
 
@@ -153,13 +215,12 @@ def test_we_can_search_summary_fields():
     }
 
 
-    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/bug?assigned_to=dburns@mozilla.com&short_desc=rebecca&short_desc_type=allwordssubstr&include_fields=summary&include_fields=product&include_fields=component&',
+    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/bug?assigned_to=dburns@mozilla.com&short_desc=rebecca&short_desc_type=allwordssubstr&include_fields=version&include_fields=id&include_fields=summary&include_fields=status&include_fields=op_sys&include_fields=resolution&include_fields=product&include_fields=component&include_fields=platform&',
                     body=json.dumps(summary_return), status=200,
                     content_type='application/json', match_querystring=True)
 
     bugzilla = Bugsy()
     bugs = bugzilla.search_for\
-            .include_fields("summary", 'product', "component")\
             .assigned_to('dburns@mozilla.com')\
             .summary("rebecca")\
             .search()
@@ -188,13 +249,12 @@ def test_we_can_search_whiteboard_fields():
     }
 
 
-    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/bug?assigned_to=dburns@mozilla.com&whiteboard=affects&short_desc_type=allwordssubstr&include_fields=summary&include_fields=product&include_fields=component&',
+    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/bug?assigned_to=dburns@mozilla.com&whiteboard=affects&short_desc_type=allwordssubstr&include_fields=version&include_fields=id&include_fields=summary&include_fields=status&include_fields=op_sys&include_fields=resolution&include_fields=product&include_fields=component&include_fields=platform&',
                     body=json.dumps(whiteboard_return), status=200,
                     content_type='application/json', match_querystring=True)
 
     bugzilla = Bugsy()
     bugs = bugzilla.search_for\
-            .include_fields("summary", 'product', "component")\
             .assigned_to('dburns@mozilla.com')\
             .whiteboard("affects")\
             .search()

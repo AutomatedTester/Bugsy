@@ -16,7 +16,8 @@ class Search(object):
         """
         self.bugzilla_url = bugzilla_url
         self.token = token
-        self.includefields = []
+        self.includefields = ['version', 'id', 'summary', 'status', 'op_sys',
+                              'resolution', 'product', 'component', 'platform']
         self.keywrds = []
         self.assigned = []
         self.summs = []
@@ -24,14 +25,20 @@ class Search(object):
 
     def include_fields(self, *args):
         r"""
-            Include fields is the fields that you want to be returned when searching
+            Include fields is the fields that you want to be returned when searching. These
+            are in addition to the fields that are always included below.
 
             :param args: items passed in will be turned into a list
             :returns: :class:`Search`
 
             >>> bugzilla.search_for.include_fields("summary", "product")
+
+            The following fields are always included in search:
+                'version', 'id', 'summary', 'status', 'op_sys',
+                'resolution', 'product', 'component', 'platform'
         """
-        self.includefields = list(args)
+        for arg in args:
+            self.includefields.append(arg)
         return self
 
     def keywords(self, *args):
