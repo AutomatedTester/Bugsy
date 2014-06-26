@@ -22,7 +22,7 @@ class Search(object):
         self.summs = []
 
     def include_fields(self, *args):
-        """
+        r"""
             Include fields is the fields that you want to be returned when searching
 
             :param args: items passed in will be turned into a list
@@ -34,7 +34,7 @@ class Search(object):
         return self
 
     def keywords(self, *args):
-        """
+        r"""
             When search() is called it will search for the keywords passed in here
 
             :param args: items passed in will be turned into a list
@@ -58,7 +58,7 @@ class Search(object):
         return self
 
     def summary(self, *args):
-        """
+        r"""
             When search is called it will search for bugs with the words passed into the
             methods
 
