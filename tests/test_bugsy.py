@@ -315,3 +315,38 @@ def test_we_can_search_summary_fields():
     assert len(bugs) == 1
     assert bugs[0].product == summary_return['bugs'][0]['product']
     assert bugs[0].summary == summary_return['bugs'][0]['summary']
+
+
+@responses.activate
+def test_we_can_search_whiteboard_fields():
+    whiteboard_return = {
+       "bugs" : [
+          {
+             "component" : "Marionette",
+             "product" : "Testing",
+             "summary" : "Tracking bug for uplifting is_displayed issue fix for WebDriver"
+          },
+          {
+             "component" : "Marionette",
+             "product" : "Testing",
+             "summary" : "Marionette thinks that the play button in the music app is not displayed"
+          }
+       ]
+    }
+
+
+    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/bug?assigned_to=dburns@mozilla.com&whiteboard=affects&short_desc_type=allwordssubstr&include_fields=summary&include_fields=product&include_fields=component&',
+                    body=json.dumps(whiteboard_return), status=200,
+                    content_type='application/json', match_querystring=True)
+
+    bugzilla = Bugsy()
+    bugs = bugzilla.search_for\
+            .include_fields("summary", 'product', "component")\
+            .assigned_to('dburns@mozilla.com')\
+            .whiteboard("affects")\
+            .search()
+
+    assert len(responses.calls) == 1
+    assert len(bugs) == 2
+    assert bugs[0].product == whiteboard_return['bugs'][0]['product']
+    assert bugs[0].summary == whiteboard_return['bugs'][0]['summary']

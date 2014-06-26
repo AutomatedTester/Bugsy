@@ -20,6 +20,7 @@ class Search(object):
         self.keywrds = []
         self.assigned = []
         self.summs = []
+        self.whitebord = []
 
     def include_fields(self, *args):
         r"""
@@ -70,6 +71,18 @@ class Search(object):
         self.summs = list(args)
         return self
 
+    def whiteboard(self, *args):
+        r"""
+            When search is called it will search for bugs with the words passed into the
+            methods
+
+            :param args: items passed in will be turned into a list
+            :returns: :class:`Search`
+
+            >>> bugzilla.search_for.whiteboard("affects")
+        """
+        self.whitebord = list(args)
+        return self
 
     def search(self):
         r"""
@@ -98,7 +111,12 @@ class Search(object):
         for sums in self.summs:
             sumary = sumary + "short_desc=%s&short_desc_type=allwordssubstr&" % sums
 
-        url = self.bugzilla_url +"/bug?" + include_fields + keywrds + assigned + sumary
+        whiteb = ""
+        for white in self.whitebord:
+            whiteb = whiteb + "whiteboard=%s&short_desc_type=allwordssubstr&" % white
+
+
+        url = self.bugzilla_url +"/bug?" + include_fields + keywrds + assigned + sumary + whiteb
         if self.token:
             url = url + "token=%s" % self.token
         results = requests.get(url).json()
