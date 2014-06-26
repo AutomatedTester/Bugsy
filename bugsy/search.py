@@ -31,7 +31,7 @@ class Search(object):
             :param args: items passed in will be turned into a list
             :returns: :class:`Search`
 
-            >>> bugzilla.search_for.include_fields("summary", "product")
+            >>> bugzilla.search_for.include_fields("flags")
 
             The following fields are always included in search:
                 'version', 'id', 'summary', 'status', 'op_sys',
@@ -99,7 +99,7 @@ class Search(object):
 
             >>> bugs = bugzilla.search_for\
             ...                .keywords("checkin-needed")\
-            ...                .include_fields("product", "Summary")\
+            ...                .include_fields("flags")\
             ...                .search()
         """
         include_fields = ""
