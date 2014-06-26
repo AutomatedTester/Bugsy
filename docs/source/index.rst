@@ -68,6 +68,26 @@ use the Bugsy object to put the bug into Bugzilla
     bugzilla.put(bug)
     bug.id #returns the bug id from Bugzilla
 
+
+Searching Bugzilla
+~~~~~~~~~~~~~~~~~~
+
+To search for bugs you will need to create a :class:`Bugsy` object and then you can call
+`search_for` and chain the search. The :class:`Search` API is a `Fluent API <https://en.wikipedia.org/wiki/Fluent_interface>`_
+o you just chain the items that you need and then call `search` when the search is complete.
+
+.. code-block:: python
+
+    import bugsy
+    bugzilla = bugsy.Bugsy()
+    bugs = bugzilla.search_for\
+                    .keywords("checkin-needed")\
+                    .include_fields("flags")\
+                    .search()
+
+More details can be found in from the :class:`Search` class
+
+
 To see further details look at:
 
 .. toctree::
