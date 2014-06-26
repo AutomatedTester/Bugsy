@@ -1,10 +1,7 @@
 import bugsy
 from bugsy import Bugsy, BugsyException, LoginException
 from bugsy import Bug
-try:
-    from unittest.mock import Mock, MagicMock, patch
-except:
-    from mock import Mock, MagicMock, patch
+
 import responses
 import json
 
