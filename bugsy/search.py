@@ -13,12 +13,12 @@ class Search(object):
             :param bugsy: Bugsy instance to use to connect to Bugzilla.
         """
         self._bugsy = bugsy
-        self.includefields = ['version', 'id', 'summary', 'status', 'op_sys',
+        self._includefields = ['version', 'id', 'summary', 'status', 'op_sys',
                               'resolution', 'product', 'component', 'platform']
-        self.keywrds = []
-        self.assigned = []
-        self.summs = []
-        self.whitebord = []
+        self._keywords = []
+        self._assigned = []
+        self._summaries = []
+        self._whiteboard = []
 
     def include_fields(self, *args):
         r"""
@@ -35,7 +35,7 @@ class Search(object):
                 'resolution', 'product', 'component', 'platform'
         """
         for arg in args:
-            self.includefields.append(arg)
+            self._includefields.append(arg)
         return self
 
     def keywords(self, *args):
@@ -47,7 +47,7 @@ class Search(object):
 
             >>> bugzilla.search_for.keywords("checkin-needed")
         """
-        self.keywrds = list(args)
+        self._keywords = list(args)
         return self
 
     def assigned_to(self, *args):
@@ -59,7 +59,7 @@ class Search(object):
 
             >>> bugzilla.search_for.assigned_to("dburns@mozilla.com")
         """
-        self.assigned = list(args)
+        self._assigned = list(args)
         return self
 
     def summary(self, *args):
@@ -72,7 +72,7 @@ class Search(object):
 
             >>> bugzilla.search_for.summary("663399")
         """
-        self.summs = list(args)
+        self._summaries = list(args)
         return self
 
     def whiteboard(self, *args):
@@ -85,7 +85,7 @@ class Search(object):
 
             >>> bugzilla.search_for.whiteboard("affects")
         """
-        self.whitebord = list(args)
+        self._whiteboard = list(args)
         return self
 
     def search(self):
@@ -100,18 +100,18 @@ class Search(object):
             ...                .search()
         """
         params = {}
-        if self.includefields:
-            params['include_fields'] = list(self.includefields)
-        if self.keywrds:
-            params['keywords'] = list(self.keywrds)
-        if self.assigned:
-            params['assigned_to'] = list(self.assigned)
-        if self.summs:
+        if self._includefields:
+            params['include_fields'] = list(self._includefields)
+        if self._keywords:
+            params['keywords'] = list(self._keywords)
+        if self._assigned:
+            params['assigned_to'] = list(self._assigned)
+        if self._summaries:
             params['short_desc_type'] = 'allwordssubstr'
-            params['short_desc'] = list(self.summs)
-        if self.whitebord:
+            params['short_desc'] = list(self._summaries)
+        if self._whiteboard:
             params['short_desc_type'] = 'allwordssubstr'
-            params['whiteboard'] = list(self.whitebord)
+            params['whiteboard'] = list(self._whiteboard)
 
         results = self._bugsy.request('bug', params=params).json()
         return [Bug(self._bugsy, **bug) for bug in results['bugs']]
