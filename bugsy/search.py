@@ -99,27 +99,19 @@ class Search(object):
             ...                .include_fields("flags")\
             ...                .search()
         """
-        include_fields = ""
-        for field in self.includefields:
-            include_fields = include_fields + "include_fields=%s&" % field
+        params = {}
+        if self.includefields:
+            params['include_fields'] = list(self.includefields)
+        if self.keywrds:
+            params['keywords'] = list(self.keywrds)
+        if self.assigned:
+            params['assigned_to'] = list(self.assigned)
+        if self.summs:
+            params['short_desc_type'] = 'allwordssubstr'
+            params['short_desc'] = list(self.summs)
+        if self.whitebord:
+            params['short_desc_type'] = 'allwordssubstr'
+            params['whiteboard'] = list(self.whitebord)
 
-        keywrds = ""
-        for word in self.keywrds:
-            keywrds = keywrds + "keywords=%s&" % word
-
-        assigned = ""
-        for assign in self.assigned:
-            assigned = assigned + "assigned_to=%s&" % assign
-
-        sumary = ""
-        for sums in self.summs:
-            sumary = sumary + "short_desc=%s&short_desc_type=allwordssubstr&" % sums
-
-        whiteb = ""
-        for white in self.whitebord:
-            whiteb = whiteb + "whiteboard=%s&short_desc_type=allwordssubstr&" % white
-
-
-        results = self._bugsy.request('bug?' + include_fields + keywrds +
-                assigned + sumary + whiteb).json()
+        results = self._bugsy.request('bug', params=params).json()
         return [Bug(self._bugsy, **bug) for bug in results['bugs']]
