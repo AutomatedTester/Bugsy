@@ -46,11 +46,15 @@ class Bugsy(object):
         """
         self.username = username
         self.password = password
-        self.token = None
         self.bugzilla_url = bugzilla_url
+        self.token = None
+        self.session = requests.Session()
+
         if self.username and self.password:
-            result = requests.get(bugzilla_url + '/login?login=%s&password=%s' % (self.username, self.password)).json()
+            result = self.session.get('%s/login' % bugzilla_url,
+                params={'login': username, 'password': password}).json()
             if result.has_key('token'):
+                self.session.params['token'] = result['token']
                 self.token = result['token']
             else:
                 raise LoginException(result['message'])
@@ -65,11 +69,9 @@ class Bugsy(object):
             >>> bugzilla = Bugsy()
             >>> bug = bugzilla.get(123456)
         """
-        url = self.bugzilla_url + "/bug/%s" % bug_number
-        if self.token:
-            url = url + "?token=%s" % self.token
+        bug = self.session.get('%s/bug/%s' % (self.bugzilla_url, bug_number))
+        bug = bug.json()
 
-        bug = requests.get(url).json()
         return Bug(self.bugzilla_url, self.token, **bug['bugs'][0])
 
     def put(self, bug):
@@ -95,13 +97,15 @@ class Bugsy(object):
             raise BugsyException("Please pass in a Bug object when posting to Bugzilla")
 
         if not bug.id:
-            result = requests.post(self.bugzilla_url + "/bug?token=%s" % self.token, bug.to_dict()).json()
+            result = self.session.post('%s/bug' % self.bugzilla_url,
+                data=bug.to_dict()).json()
             if not result.has_key('error'):
                 bug._bug['id'] = result['id']
             else:
                 raise BugsyException(result['message'])
         else:
-            requests.post(self.bugzilla_url + "/bug/%s?token=%s" % (bug.id, self.token), bug.to_dict())
+            self.session.post('%s/bug/%s' % (self.bugzilla_url, bug.id),
+                data=bug.to_dict())
 
     def search_for():
         doc = "The search_for property."
