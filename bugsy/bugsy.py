@@ -71,7 +71,7 @@ class Bugsy(object):
             >>> bug = bugzilla.get(123456)
         """
         bug = self.request('bug/%s' % bug_number).json()
-        return Bug(self.bugzilla_url, self.token, **bug['bugs'][0])
+        return Bug(self, **bug['bugs'][0])
 
     def put(self, bug):
         """
@@ -108,7 +108,7 @@ class Bugsy(object):
     def search_for():
         doc = "The search_for property."
         def fget(self):
-            return Search(self.bugzilla_url, self.token)
+            return Search(self)
         return locals()
     search_for = property(**search_for())
 

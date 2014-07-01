@@ -20,19 +20,16 @@ class BugException(Exception):
 class Bug(object):
     """This represents a Bugzilla Bug"""
 
-    def __init__(self, bugzilla_url=None, token=None, **kwargs):
+    def __init__(self, bugsy=None, **kwargs):
         """
             Defaults are set if there are no kwargs passed in. To pass in
             a dict create the Bug object like the following
 
-            :param bugzilla_url: This is the Bugzilla REST URL endpoint. Defaults to None
-            :param token: Login token generated when instantiating a Bugsy() object with
-                          a valid username and password
+            :param bugsy: Bugsy instance to use to connect to Bugzilla.
 
             >>> bug = Bug(**myDict)
         """
-        self.bugzilla_url = bugzilla_url
-        self.token = token
+        self._bugsy = bugsy
         self._bug = dict(**kwargs)
         self._bug['op_sys'] = kwargs.get('op_sys', 'All')
         self._bug['product'] = kwargs.get('product', 'core')
@@ -201,10 +198,7 @@ class Bug(object):
             'FIXED'
         """
         if self._bug.has_key('id'):
-            url = self.bugzilla_url + "/bug/%s" % self._bug['id']
-            if self.token:
-                url = url + '?token=%s' % self.token
-            result = requests.get(url).json()
+            result = self._bugsy.request('bug/%s' % self._bug['id']).json()
             self._bug = dict(**result['bugs'][0])
         else:
             raise BugException("Unable to update bug that isn't in Bugzilla")

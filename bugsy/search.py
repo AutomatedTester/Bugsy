@@ -6,16 +6,13 @@ class Search(object):
     """
         This allows searching for bugs in Bugzilla
     """
-    def __init__(self, bugzilla_url, token):
+    def __init__(self, bugsy):
         """
             Initialises the search object
 
-            :param bugzilla_url: This is the Bugzilla REST URL endpoint. Defaults to None
-            :param token: Login token generated when instantiating a Bugsy() object with
-                          a valid username and password
+            :param bugsy: Bugsy instance to use to connect to Bugzilla.
         """
-        self.bugzilla_url = bugzilla_url
-        self.token = token
+        self._bugsy = bugsy
         self.includefields = ['version', 'id', 'summary', 'status', 'op_sys',
                               'resolution', 'product', 'component', 'platform']
         self.keywrds = []
@@ -123,8 +120,6 @@ class Search(object):
             whiteb = whiteb + "whiteboard=%s&short_desc_type=allwordssubstr&" % white
 
 
-        url = self.bugzilla_url +"/bug?" + include_fields + keywrds + assigned + sumary + whiteb
-        if self.token:
-            url = url + "token=%s" % self.token
-        results = requests.get(url).json()
-        return [Bug(self.bugzilla_url, self.token, **bug) for bug in results['bugs']]
+        results = self._bugsy.request('bug?' + include_fields + keywrds +
+                assigned + sumary + whiteb).json()
+        return [Bug(self._bugsy, **bug) for bug in results['bugs']]
