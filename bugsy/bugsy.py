@@ -51,8 +51,9 @@ class Bugsy(object):
         self.session = requests.Session()
 
         if self.username and self.password:
-            result = self.session.get('%s/login' % bugzilla_url,
-                params={'login': username, 'password': password}).json()
+            result = self.request('login',
+                params={'login': username, 'password': password})
+            result = result.json()
             if result.has_key('token'):
                 self.session.params['token'] = result['token']
                 self.token = result['token']
@@ -69,9 +70,7 @@ class Bugsy(object):
             >>> bugzilla = Bugsy()
             >>> bug = bugzilla.get(123456)
         """
-        bug = self.session.get('%s/bug/%s' % (self.bugzilla_url, bug_number))
-        bug = bug.json()
-
+        bug = self.request('bug/%s' % bug_number).json()
         return Bug(self.bugzilla_url, self.token, **bug['bugs'][0])
 
     def put(self, bug):
@@ -97,8 +96,7 @@ class Bugsy(object):
             raise BugsyException("Please pass in a Bug object when posting to Bugzilla")
 
         if not bug.id:
-            result = self.session.post('%s/bug' % self.bugzilla_url,
-                data=bug.to_dict()).json()
+            result = self.request('bug', 'POST', data=bug.to_dict()).json()
             if not result.has_key('error'):
                 bug._bug['id'] = result['id']
             else:
@@ -113,4 +111,14 @@ class Bugsy(object):
             return Search(self.bugzilla_url, self.token)
         return locals()
     search_for = property(**search_for())
+
+    def request(self, path, method='GET', **kwargs):
+        """Perform a HTTP request.
+
+        Given a relative Bugzilla URL path, an optional request method,
+        and arguments suitable for requests.Request(), perform a
+        HTTP request.
+        """
+        url = '%s/%s' % (self.bugzilla_url, path)
+        return self.session.request(method, url, **kwargs)
 
