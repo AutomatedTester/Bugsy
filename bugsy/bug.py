@@ -1,9 +1,12 @@
+import datetime
 import requests
 
 
 VALID_STATUS = ["RESOLVED", "ASSIGNED", "NEW", "UNCONFIRMED"]
 VALID_RESOLUTION = ["FIXED", "INCOMPLETE", "INVALID", "WORKSFORME", "DUPLICATE", "WONTFIX"]
 
+def str2datetime(s):
+    return datetime.datetime.strptime(s, '%Y-%m-%dT%H:%M:%SZ')
 
 class BugException(Exception):
     """
@@ -203,6 +206,17 @@ class Bug(object):
         else:
             raise BugException("Unable to update bug that isn't in Bugzilla")
 
+    def get_comments(self):
+        """
+            Obtain comments for this bug.
+
+            Returns a list of Comment instances.
+        """
+        bug = unicode(self._bug['id'])
+        res = self._bugsy.request('bug/%s/comment' % bug).json()
+
+        return [Comment.from_json(c) for c in res['bugs'][bug]['comments']]
+
     def add_comment(self, comment):
         """
             Adds a comment to a bug. Once you have added it you will need to
@@ -218,3 +232,28 @@ class Bug(object):
             Return the raw dict that is used inside this object
         """
         return self._bug
+
+
+class Comment(object):
+    """
+        Represents a single Bugzilla comment.
+    """
+
+    @staticmethod
+    def from_json(j):
+        c = Comment()
+
+        c.attachment_id = j['attachment_id']
+        c.author = j['author']
+        c.bug_id = j['bug_id']
+        c.creation_time = str2datetime(j['creation_time'])
+        c.creator = j['creator']
+        c.id = j['id']
+        c.is_private = j['is_private']
+        c.text = j['text']
+        c.time = str2datetime(j['time'])
+
+        if 'tags' in j:
+            c.tags = set(j['tags'])
+
+        return c
