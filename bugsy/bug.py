@@ -215,7 +215,7 @@ class Bug(object):
         bug = unicode(self._bug['id'])
         res = self._bugsy.request('bug/%s/comment' % bug).json()
 
-        return [Comment.from_json(c) for c in res['bugs'][bug]['comments']]
+        return [Comment(**comments) for comments in res['bugs'][bug]['comments']]
 
     def add_comment(self, comment):
         """
@@ -239,21 +239,18 @@ class Comment(object):
         Represents a single Bugzilla comment.
     """
 
-    @staticmethod
-    def from_json(j):
-        c = Comment()
+    def __init__(self, **kwargs):
 
-        c.attachment_id = j['attachment_id']
-        c.author = j['author']
-        c.bug_id = j['bug_id']
-        c.creation_time = str2datetime(j['creation_time'])
-        c.creator = j['creator']
-        c.id = j['id']
-        c.is_private = j['is_private']
-        c.text = j['text']
-        c.time = str2datetime(j['time'])
+        self.attachment_id = kwargs['attachment_id']
+        self.author = kwargs['author']
+        self.bug_id = kwargs['bug_id']
+        self.creation_time = str2datetime(kwargs['creation_time'])
+        self.creator = kwargs['creator']
+        self.id = kwargs['id']
+        self.is_private = kwargs['is_private']
+        self.text = kwargs['text']
+        self.time = str2datetime(kwargs['time'])
 
-        if 'tags' in j:
-            c.tags = set(j['tags'])
+        if 'tags' in kwargs:
+            self.tags = set(kwargs['tags'])
 
-        return c
