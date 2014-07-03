@@ -105,12 +105,9 @@ class Bugsy(object):
             self.session.post('%s/bug/%s' % (self.bugzilla_url, bug.id),
                 data=bug.to_dict())
 
-    def search_for():
-        doc = "The search_for property."
-        def fget(self):
-            return Search(self)
-        return locals()
-    search_for = property(**search_for())
+    @property
+    def search_for(self):
+        return Search(self)
 
     def request(self, path, method='GET', **kwargs):
         """Perform a HTTP request.
