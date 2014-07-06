@@ -152,7 +152,7 @@ class Bug(object):
 
             >>> bug.product = "DOM"
         """
-        self._product = value
+        self._bug['product'] = value
 
     @property
     def component(self):
