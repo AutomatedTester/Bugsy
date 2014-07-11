@@ -253,7 +253,12 @@ class Bug(object):
             >>> bug.add_comment("I like sausages")
             >>> bugzilla.put(bug)
         """
-        self._bug['comment'] = comment
+        # If we have a key post immediately otherwise hold onto it until put(bug)
+        # is called
+        if self._bug.has_key('id'):
+            self._bugsy.session.post('%s/bug/%s/comment' % (self._bugsy.bugzilla_url, self._bug['id']), data={"comment": comment}, )
+        else:
+            self._bug['comment'] = comment
 
     def to_dict(self):
         """

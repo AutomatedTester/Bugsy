@@ -75,7 +75,7 @@ class Bugsy(object):
             >>> bugzilla = Bugsy()
             >>> bug = bugzilla.get(123456)
         """
-        bug = self.request('bug/%s' % bug_number, params={"include_fields" : self.DEFAULT_SEARCH}).json()
+        bug = self.request('bug/%s' % bug_number, params={"include_fields" : self. DEFAULT_SEARCH}).json()
         return Bug(self, **bug['bugs'][0])
 
     def put(self, bug):
@@ -104,6 +104,7 @@ class Bugsy(object):
             result = self.request('bug', 'POST', data=bug.to_dict()).json()
             if not result.has_key('error'):
                 bug._bug['id'] = result['id']
+                bug._bugsy = self
             else:
                 raise BugsyException(result['message'])
         else:

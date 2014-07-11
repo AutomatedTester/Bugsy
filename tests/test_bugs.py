@@ -173,7 +173,29 @@ def test_we_can_update_a_bug_with_login_token():
   assert bug.summary == 'Schedule Mn tests on opt Linux builds on cedar'
 
 @responses.activate
-def test_that_we_can_add_a_comment_to_a_bug():
+def test_that_we_can_add_a_comment_to_a_bug_before_it_is_put():
+    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login?login=foo&password=bar',
+                          body='{"token": "foobar"}', status=200,
+                          content_type='application/json', match_querystring=True)
+
+    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/bug/1017315?token=foobar&include_fields=version&include_fields=id&include_fields=summary&include_fields=status&include_fields=op_sys&include_fields=resolution&include_fields=product&include_fields=component&include_fields=platform',
+                      body=json.dumps(example_return), status=200,
+                      content_type='application/json', match_querystring=True)
+    bugzilla = Bugsy("foo", "bar")
+    bug = Bug()
+    bug.summary = "I like cheese"
+    bug.add_comment("I like sausages")
+
+    bug_dict = bug.to_dict().copy()
+    bug_dict['id'] = 123123
+
+    responses.add(responses.POST, 'https://bugzilla.mozilla.org/rest/bug?token=foobar',
+                      body=json.dumps(bug_dict), status=200,
+                      content_type='application/json', match_querystring=True)
+    bugzilla.put(bug)
+
+@responses.activate
+def test_that_we_can_add_a_comment_to_an_existing_bug():
     responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login?login=foo&password=bar',
                           body='{"token": "foobar"}', status=200,
                           content_type='application/json', match_querystring=True)
@@ -183,12 +205,14 @@ def test_that_we_can_add_a_comment_to_a_bug():
                       content_type='application/json', match_querystring=True)
     bugzilla = Bugsy("foo", "bar")
     bug = bugzilla.get(1017315)
+
+    responses.add(responses.POST, 'https://bugzilla.mozilla.org/rest/bug/1017315/comment?token=foobar',
+                      body=json.dumps({}), status=200,
+                      content_type='application/json', match_querystring=True)
+
     bug.add_comment("I like sausages")
 
-    responses.add(responses.POST, 'https://bugzilla.mozilla.org/rest/bug/1017315?token=foobar',
-                      body=json.dumps(example_return), status=200,
-                      content_type='application/json', match_querystring=True)
-    bugzilla.put(bug)
+    assert len(responses.calls) == 3
 
 @responses.activate
 def test_comment_retrieval():
@@ -217,3 +241,4 @@ def test_comment_retrieval():
     assert c1.text == u'text 1'
     assert c1.tags == set([u'tag1', u'tag2'])
     assert c1.time == datetime.datetime(2014, 03, 27, 23, 47, 45)
+
