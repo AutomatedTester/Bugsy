@@ -5,6 +5,8 @@ from bug import Bug
 from search import Search
 
 
+
+
 class BugsyException(Exception):
     """
         If while interacting with Bugzilla and we try do something that is not
@@ -31,6 +33,9 @@ class Bugsy(object):
     """
         Bugsy allows easy getting and putting of Bugzilla bugs
     """
+
+    DEFAULT_SEARCH = ['version', 'id', 'summary', 'status', 'op_sys',
+                      'resolution', 'product', 'component', 'platform']
 
     def __init__(self, username=None, password=None, bugzilla_url='https://bugzilla.mozilla.org/rest'):
         """
@@ -70,7 +75,7 @@ class Bugsy(object):
             >>> bugzilla = Bugsy()
             >>> bug = bugzilla.get(123456)
         """
-        bug = self.request('bug/%s' % bug_number).json()
+        bug = self.request('bug/%s' % bug_number, params={"include_fields" : self.DEFAULT_SEARCH}).json()
         return Bug(self, **bug['bugs'][0])
 
     def put(self, bug):

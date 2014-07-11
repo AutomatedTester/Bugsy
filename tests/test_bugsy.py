@@ -56,7 +56,7 @@ def test_we_cant_post_without_passing_a_bug_object():
 
 @responses.activate
 def test_we_can_get_a_bug():
-    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/bug/1017315',
+    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/bug/1017315?include_fields=version&include_fields=id&include_fields=summary&include_fields=status&include_fields=op_sys&include_fields=resolution&include_fields=product&include_fields=component&include_fields=platform',
                       body=json.dumps(example_return), status=200,
                       content_type='application/json', match_querystring=True)
     bugzilla = Bugsy()
@@ -71,7 +71,7 @@ def test_we_can_get_a_bug_with_login_token():
                         body='{"token": "foobar"}', status=200,
                         content_type='application/json', match_querystring=True)
 
-  responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/bug/1017315?token=foobar',
+  responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/bug/1017315?token=foobar&include_fields=version&include_fields=id&include_fields=summary&include_fields=status&include_fields=op_sys&include_fields=resolution&include_fields=product&include_fields=component&include_fields=platform',
                     body=json.dumps(example_return), status=200,
                     content_type='application/json', match_querystring=True)
   bugzilla = Bugsy("foo", "bar")

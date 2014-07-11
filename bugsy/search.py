@@ -1,5 +1,8 @@
+import copy
+
 import requests
 from bug import Bug
+import bugsy as Bugsy
 
 
 class Search(object):
@@ -13,8 +16,7 @@ class Search(object):
             :param bugsy: Bugsy instance to use to connect to Bugzilla.
         """
         self._bugsy = bugsy
-        self._includefields = ['version', 'id', 'summary', 'status', 'op_sys',
-                              'resolution', 'product', 'component', 'platform']
+        self._includefields = copy.copy(bugsy.DEFAULT_SEARCH)
         self._keywords = []
         self._assigned = []
         self._summaries = []
