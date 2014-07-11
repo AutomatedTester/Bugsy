@@ -247,11 +247,15 @@ class Bug(object):
 
     def add_comment(self, comment):
         """
-            Adds a comment to a bug. Once you have added it you will need to
-            call put on the Bugsy object
+            Adds a comment to a bug. If a bug does not have a bug ID then you need
+            call `put` on the :class:`Bugsy` class.
 
             >>> bug.add_comment("I like sausages")
             >>> bugzilla.put(bug)
+
+            If it does have a bug id then this will do a post to the server
+
+            >>> bug.add_comment("I like eggs too")
         """
         # If we have a key post immediately otherwise hold onto it until put(bug)
         # is called
