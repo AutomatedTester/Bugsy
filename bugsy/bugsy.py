@@ -122,6 +122,8 @@ class Bugsy(object):
         and arguments suitable for requests.Request(), perform a
         HTTP request.
         """
+        headers = {"User-Agent": "Bugsy"}
+        kwargs['headers'] = headers
         url = '%s/%s' % (self.bugzilla_url, path)
         return self.session.request(method, url, **kwargs)
 

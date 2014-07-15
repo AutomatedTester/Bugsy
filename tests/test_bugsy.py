@@ -148,3 +148,13 @@ def test_we_handle_errors_from_bugzilla_when_updating_a_bug():
       bugzilla.put(bug)
   except BugsyException as e:
       assert str(e) == "Message: You must select/enter a component."
+
+@responses.activate
+def test_we_can_set_the_user_agent_to_bugsy():
+  responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login?login=foo&password=bar',
+                    body='{"token": "foobar"}', status=200,
+                    content_type='application/json', match_querystring=True)
+  Bugsy("foo", "bar")
+  assert responses.calls[0].request.headers['User-Agent'] == "Bugsy"
+
+
