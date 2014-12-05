@@ -23,6 +23,7 @@ class Search(object):
         self._whiteboard = []
         self._bug_numbers = []
         self._time_frame = {}
+        self._change_history = {"fields": []}
 
     def include_fields(self, *args):
         r"""
@@ -118,6 +119,19 @@ class Search(object):
             self._time_frame['chfieldto'] = end
         return self
 
+    def change_history_fields(self, fields, value=None):
+        r"""
+
+        """
+        if not isinstance(fields, list):
+            raise Exception('fields should be a list')
+
+        self._change_history['fields'] = fields
+        if value:
+            self._change_history['value'] = value
+
+        return self
+
     def search(self):
         r"""
             Call the Bugzilla endpoint that will do the search. It will take the information
@@ -152,6 +166,10 @@ class Search(object):
             if self._whiteboard:
                 params['short_desc_type'] = 'allwordssubstr'
                 params['whiteboard'] = list(self._whiteboard)
+            if self._change_history['fields']:
+                params['chfield'] = self._change_history['fields']
+            if self._change_history.get('value', None):
+                params['chfieldvalue'] = self._change_history['value']
 
             results = self._bugsy.request('bug', params=params).json()
             return [Bug(self._bugsy, **bug) for bug in results['bugs']]
