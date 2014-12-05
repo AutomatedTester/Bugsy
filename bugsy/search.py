@@ -22,6 +22,7 @@ class Search(object):
         self._summaries = []
         self._whiteboard = []
         self._bug_numbers = []
+        self._time_frame = {}
 
     def include_fields(self, *args):
         r"""
@@ -103,6 +104,20 @@ class Search(object):
         self._bug_numbers = list(bug_numbers)
         return self
 
+    def timeframe(self, start, end):
+        r"""
+            When you want to search bugs for a certain time frame.
+
+            :param start:
+            :param end:
+            :returns: :class:`Search`
+        """
+        if start:
+            self._time_frame['chfieldfrom'] = start
+        if end:
+            self._time_frame['chfieldto'] = end
+        return self
+
     def search(self):
         r"""
             Call the Bugzilla endpoint that will do the search. It will take the information
@@ -115,6 +130,8 @@ class Search(object):
             ...                .search()
         """
         params = {}
+        params = dict(params.items() + self._time_frame.items())
+
         if self._includefields:
             params['include_fields'] = list(self._includefields)
         if self._bug_numbers:

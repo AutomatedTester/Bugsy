@@ -300,3 +300,29 @@ def test_we_can_search_for_a_list_of_bug_numbers():
     assert len(bugs) == 2
     assert bugs[0].product == return_1['bugs'][0]['product']
     assert bugs[0].summary == return_1['bugs'][0]['summary']
+
+@responses.activate
+def test_we_can_search_for_a_list_of_bug_numbers_with_start_finish_dates():
+    return_1 = {
+     "bugs" : [
+        {
+           "component" : "CSS Parsing and Computation",
+           "product" : "Core",
+           "summary" : "Map \"rebeccapurple\" to #663399 in named color list."
+        }
+      ]
+    }
+
+    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/bug?chfieldfrom=2014-12-01&chfieldto=2014-12-05&include_fields=version&include_fields=id&include_fields=summary&include_fields=status&include_fields=op_sys&include_fields=resolution&include_fields=product&include_fields=component&include_fields=platform',
+                      body=json.dumps(return_1), status=200,
+                      content_type='application/json', match_querystring=True)
+
+    bugzilla = Bugsy()
+    bugs = bugzilla.search_for\
+            .timeframe('2014-12-01', '2014-12-05')\
+            .search()
+
+    assert len(responses.calls) == 1
+    assert len(bugs) == 1
+    assert bugs[0].product == return_1['bugs'][0]['product']
+    assert bugs[0].summary == return_1['bugs'][0]['summary']
