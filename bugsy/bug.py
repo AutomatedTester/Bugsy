@@ -285,9 +285,13 @@ class Comment(object):
         self.creator = kwargs['creator']
         self.id = kwargs['id']
         self.is_private = kwargs['is_private']
-        self.text = kwargs['text']
+        self._text = kwargs['text']
         self.time = str2datetime(kwargs['time'])
 
         if 'tags' in kwargs:
             self.tags = set(kwargs['tags'])
+
+    @property
+    def text(self):
+        return self._text
 
