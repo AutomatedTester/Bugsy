@@ -1,6 +1,7 @@
 import bugsy
 from bugsy import Bugsy, BugsyException, LoginException
 from bugsy import Bug
+from bugsy.search import SearchException
 
 import responses
 import json
@@ -380,3 +381,25 @@ def test_we_can_search_with_change_history_field_gets_bugs():
     assert len(bugs) == 1
     assert bugs[0].product == return_1['bugs'][0]['product']
     assert bugs[0].summary == return_1['bugs'][0]['summary']
+
+@responses.activate
+def test_we_can_handle_errors_coming_back_from_search():
+    error_return = {
+        "code" : 108,
+        "documentation" : "http://www.bugzilla.org/docs/tip/en/html/api/",
+        "error" : True,
+        "message" : "Can't use [Bug Creation] as a field name."
+    }
+
+    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/bug?chfield=%5BBug+Creation%5D&chfield=Alias&chfieldvalue=foo&chfieldfrom=2014-12-01&chfieldto=2014-12-05&include_fields=version&include_fields=id&include_fields=summary&include_fields=status&include_fields=op_sys&include_fields=resolution&include_fields=product&include_fields=component&include_fields=platform',
+                      body=json.dumps(error_return), status=200,
+                      content_type='application/json', match_querystring=True)
+
+    bugzilla = Bugsy()
+    try:
+        bugzilla.search_for\
+                .change_history_fields(['[Bug Creation]', 'Alias'], 'foo')\
+                .timeframe('2014-12-01', '2014-12-05')\
+                .search()
+    except SearchException as e:
+        assert str(e) == "Can't use [Bug Creation] as a field name."
