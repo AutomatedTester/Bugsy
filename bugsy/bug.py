@@ -283,7 +283,7 @@ class Comment(object):
         self.bug_id = kwargs['bug_id']
         self.creation_time = str2datetime(kwargs['creation_time'])
         self.creator = kwargs['creator']
-        self.id = kwargs['id']
+        self._id = kwargs['id']
         self.is_private = kwargs['is_private']
         self._text = kwargs['text']
         self.time = str2datetime(kwargs['time'])
@@ -295,3 +295,6 @@ class Comment(object):
     def text(self):
         return self._text
 
+    @property
+    def id(self):
+        return self._id
