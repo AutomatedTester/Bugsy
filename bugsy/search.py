@@ -1,8 +1,6 @@
 import copy
 
-import requests
 from bug import Bug
-import bugsy as Bugsy
 
 
 class Search(object):
