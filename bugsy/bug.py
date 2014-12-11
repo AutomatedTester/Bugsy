@@ -274,6 +274,12 @@ class Bug(object):
 class Comment(object):
     """
         Represents a single Bugzilla comment.
+
+        To get comments you need to do the following
+
+        >>> bugs = bugzilla.search_for.keywords("checkin-needed").search()
+        >>> comments = bugs[0].get_comments()
+        >>> comments[0].text # Returns the comment 0 of the first checkin-needed bug
     """
 
     def __init__(self, **kwargs):
@@ -293,8 +299,17 @@ class Comment(object):
 
     @property
     def text(self):
+        r"""
+            Return the text that is in this comment
+
+            >>> comment.text # David really likes cheese apparently
+
+        """
         return self._text
 
     @property
     def id(self):
+        r"""
+            Return the comment id that is associated with Bugzilla.
+        """
         return self._id
