@@ -366,7 +366,7 @@ def test_we_can_search_with_change_history_field_gets_bugs():
       ]
     }
 
-    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/bug?chfield=%5BBug+Creation%5D&chfield=Alias&chfieldvalue=foo&chfieldfrom=2014-12-01&chfieldto=2014-12-05&include_fields=version&include_fields=id&include_fields=summary&include_fields=status&include_fields=op_sys&include_fields=resolution&include_fields=product&include_fields=component&include_fields=platform',
+    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/bug?chfield=%5BBug+creation%5D&chfield=Alias&chfieldvalue=foo&chfieldfrom=2014-12-01&chfieldto=2014-12-05&include_fields=version&include_fields=id&include_fields=summary&include_fields=status&include_fields=op_sys&include_fields=resolution&include_fields=product&include_fields=component&include_fields=platform',
                       body=json.dumps(return_1), status=200,
                       content_type='application/json', match_querystring=True)
 
