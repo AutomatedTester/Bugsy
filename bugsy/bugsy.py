@@ -90,6 +90,21 @@ class Bugsy(object):
                 else:
                     raise LoginException(result['message'])
 
+    def bug_url(self, bug_number):
+        """
+            Get the public URL to a bug.  This is the HTTP accessible URL, not
+            the REST accessible URL which the Bugzilla REST API uses.
+
+            :param bug_number: Bug Number to get URL for.
+
+            >>> bugzilla = Bugsy(bugzilla_url="https://test_bugzilla.mozilla.org/test/rest")
+            >>> bugzilla.bug_url(123456)
+            "https://test_bugzilla.mozilla.org/test/showbug.cgi?id=123456"
+        """
+        import urllib
+        url, _ = self.bugzilla_url.rsplit('/rest', 1)
+        return '%s/showbug.cgi?%s' % (url, urllib.urlencode({'id': bug_number}))
+
     def get(self, bug_number):
         """
             Get a bug from Bugzilla. If there is a login token created during object initialisation
