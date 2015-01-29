@@ -166,4 +166,8 @@ def test_we_can_set_the_user_agent_to_bugsy():
   Bugsy("foo", "bar")
   assert responses.calls[0].request.headers['User-Agent'] == "Bugsy"
 
-
+def test_bug_url():
+  bugzilla = Bugsy()
+  assert bugzilla.bug_url(123456) == 'https://bugzilla.mozilla.org/showbug.cgi?id=123456'
+  assert bugzilla.bug_url('alias') == 'https://bugzilla.mozilla.org/showbug.cgi?id=alias'
+  assert bugzilla.bug_url('alias with spaces') == 'https://bugzilla.mozilla.org/showbug.cgi?id=alias+with+spaces'
