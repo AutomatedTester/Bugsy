@@ -133,8 +133,9 @@ class Bugsy(object):
             else:
                 raise BugsyException(result['message'])
         else:
-            self.session.post('%s/bug/%s' % (self.bugzilla_url, bug.id),
-                data=bug.to_dict())
+            result = self.request('bug/%s' % bug.id, 'PUT', data=bug.to_dict()).json()
+            if "error" in result:
+                raise BugsyException(result['message'])
 
     @property
     def search_for(self):
@@ -151,4 +152,3 @@ class Bugsy(object):
         kwargs['headers'] = headers
         url = '%s/%s' % (self.bugzilla_url, path)
         return self.session.request(method, url, **kwargs)
-

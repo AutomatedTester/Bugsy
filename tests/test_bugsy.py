@@ -112,7 +112,7 @@ def test_we_can_put_a_current_bug():
                       content_type='application/json', match_querystring=True)
     bug_dict = example_return.copy()
     bug_dict['summary'] = 'I love foo but hate bar'
-    responses.add(responses.POST, 'https://bugzilla.mozilla.org/rest/bug/1017315',
+    responses.add(responses.PUT, 'https://bugzilla.mozilla.org/rest/bug/1017315',
                       body=json.dumps(bug_dict), status=200,
                       content_type='application/json')
     bugzilla = Bugsy("foo", "bar")
@@ -145,7 +145,7 @@ def test_we_handle_errors_from_bugzilla_when_updating_a_bug():
   responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login?login=foo&password=bar',
                     body='{"token": "foobar"}', status=200,
                     content_type='application/json', match_querystring=True)
-  responses.add(responses.POST, 'https://bugzilla.mozilla.org/rest/bug/1017315',
+  responses.add(responses.PUT, 'https://bugzilla.mozilla.org/rest/bug/1017315',
                     body='{"error":true,"code":50,"message":"You must select/enter a component."}', status=200,
                     content_type='application/json')
   bugzilla = Bugsy("foo", "bar")
@@ -165,5 +165,3 @@ def test_we_can_set_the_user_agent_to_bugsy():
                     content_type='application/json', match_querystring=True)
   Bugsy("foo", "bar")
   assert responses.calls[0].request.headers['User-Agent'] == "Bugsy"
-
-
