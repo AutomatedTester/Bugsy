@@ -283,19 +283,13 @@ class Comment(object):
     """
 
     def __init__(self, **kwargs):
-
-        self.attachment_id = kwargs['attachment_id']
-        self.author = kwargs['author']
-        self.bug_id = kwargs['bug_id']
-        self.creation_time = str2datetime(kwargs['creation_time'])
-        self.creator = kwargs['creator']
-        self._id = kwargs['id']
-        self.is_private = kwargs['is_private']
-        self._text = kwargs['text']
-        self.time = str2datetime(kwargs['time'])
-
+        kwargs['time'] = str2datetime(kwargs['time'])
+        kwargs['creation_time'] = str2datetime(kwargs['creation_time'])
         if 'tags' in kwargs:
-            self.tags = set(kwargs['tags'])
+            kwargs['tags'] = set(kwargs['tags'])
+        else:
+            kwargs['tags'] = set()
+        self._comment = kwargs
 
     @property
     def text(self):
@@ -305,11 +299,75 @@ class Comment(object):
             >>> comment.text # David really likes cheese apparently
 
         """
-        return self._text
+        return self._comment['text']
 
     @property
     def id(self):
         r"""
             Return the comment id that is associated with Bugzilla.
         """
-        return self._id
+        return self._comment['id']
+
+    @property
+    def attachment_id(self):
+        """
+            If the comment was made on an attachment, return the ID of that
+            attachment. Otherwise it will return None.
+        """
+        return self._comment['attachment_id']
+
+    @property
+    def author(self):
+        """
+            Return the login name of the comment's author.
+        """
+        return self._comment['author']
+
+    @property
+    def creator(self):
+        """
+            Return the login name of the comment's author.
+        """
+        return self._comment['creator']
+
+    @property
+    def bug_id(self):
+        """
+            Return the ID of the bug that this comment is on.
+        """
+        return self._comment['bug_id']
+
+    @property
+    def time(self):
+        """
+            This is exactly same as :attr:`creation_time`.
+
+            For compatibility, time is still usable. However, please note
+            that time may be deprecated and removed in a future release.
+
+            Prefer :attr:`creation_time` instead.
+        """
+        return self._comment['time']
+
+    @property
+    def creation_time(self):
+        """
+            Return the time (in Bugzilla's timezone) that the comment was
+            added.
+        """
+        return self._comment['creation_time']
+
+    @property
+    def is_private(self):
+        """
+            Return True if this comment is private (only visible to a certain
+            group called the "insidergroup").
+        """
+        return self._comment['is_private']
+
+    @property
+    def tags(self):
+        """
+            Return a set of comment tags currently set for the comment.
+        """
+        return self._comment['tags']
