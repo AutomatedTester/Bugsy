@@ -33,7 +33,8 @@ class Bugsy(object):
     """
 
     DEFAULT_SEARCH = ['version', 'id', 'summary', 'status', 'op_sys',
-                      'resolution', 'product', 'component', 'platform']
+                      'resolution', 'product', 'component', 'platform',
+                      'whiteboard']
 
     def __init__(
             self,
