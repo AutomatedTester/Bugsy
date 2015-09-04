@@ -42,6 +42,7 @@ class Bugsy(object):
             password=None,
             userid=None,
             cookie=None,
+            api_key=None,
             bugzilla_url='https://bugzilla.mozilla.org/rest'
     ):
         """
@@ -51,8 +52,15 @@ class Bugsy(object):
             :param password: Password to login with. Defaults to None
             :param userid: User ID to login with. Defaults to None
             :param cookie: Cookie to login with. Defaults to None
+            :param apikey: API key to use. Defaults to None.
             :param bugzilla_url: URL endpoint to interact with. Defaults to
             https://bugzilla.mozilla.org/rest
+
+            If a api_key is passed in, Bugsy will use this for authenticating
+            requests. While not required to perform requests, if a username is
+            passed in along with api_key, we will validate that the api key is
+            valid for this username. Otherwise the api key is blindly used
+            later.
 
             If a username AND password are passed in Bugsy will try get a login
             token from Bugzilla. If we can't login then a LoginException will
@@ -63,6 +71,7 @@ class Bugsy(object):
             If no username was passed in it will then try to get the username
             from Bugzilla.
         """
+        self.api_key = api_key
         self.username = username
         self.password = password
         self.userid = userid
@@ -70,8 +79,22 @@ class Bugsy(object):
         self.bugzilla_url = bugzilla_url
         self.token = None
         self.session = requests.Session()
+        self._have_auth = False
 
-        if self.username and self.password:
+        # Prefer API keys over all other auth methods.
+        if self.api_key:
+            if self.username:
+                result = self.request(
+                    'valid_login',
+                    params={'login': username, 'api_key': api_key}
+                )
+
+                if result.json() is not True:
+                    raise LoginException(result.json()['message'])
+
+            self.session.params['api_key'] = self.api_key
+            self._have_auth = True
+        elif self.username and self.password:
             result = self.request(
                 'login',
                 params={'login': username, 'password': password}
@@ -82,6 +105,7 @@ class Bugsy(object):
                 self.token = result['token']
             else:
                 raise LoginException(result['message'])
+            self._have_auth = True
         elif self.userid and self.cookie:
             # The token is crafted from the userid and cookie.
             self.token = '%s-%s' % (self.userid, self.cookie)
@@ -92,6 +116,8 @@ class Bugsy(object):
                     self.username = result['users'][0]['name']
                 else:
                     raise LoginException(result['message'])
+
+            self._have_auth = True
 
     def get(self, bug_number):
         """
@@ -129,7 +155,7 @@ class Bugsy(object):
             >>> bugzilla.put(bug)
 
         """
-        if not self.token:
+        if not self._have_auth:
             raise BugsyException("Unfortunately you can't put bugs in Bugzilla"
                                  " without credentials")
 
