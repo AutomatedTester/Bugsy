@@ -44,6 +44,27 @@ def test_we_get_a_login_exception_when_details_are_wrong():
         assert str(e) == "Message: The username or password you entered is not valid."
 
 @responses.activate
+def test_bad_api_key():
+    responses.add(responses.GET,
+                  'https://bugzilla.mozilla.org/rest/valid_login?login=foo&api_key=badkey',
+                  body='{"documentation":"http://www.bugzilla.org/docs/tip/en/html/api/","error":true,"code":306,"message":"The API key you specified is invalid. Please check that you typed it correctly."}',
+                  status=400,
+                  content_type='application/json', match_querystring=True)
+    try:
+        Bugsy(username='foo', api_key='badkey')
+        assert False, 'Should have thrown'
+    except LoginException as e:
+        assert str(e) == 'Message: The API key you specified is invalid. Please check that you typed it correctly.'
+
+@responses.activate
+def test_validate_api_key():
+    responses.add(responses.GET,
+                  'https://bugzilla.mozilla.org/rest/valid_login?login=foo&api_key=goodkey',
+                  body='true', status=200, content_type='application/json',
+                  match_querystring=True)
+    Bugsy(username='foo', api_key='goodkey')
+
+@responses.activate
 def test_we_cant_post_without_passing_a_bug_object():
     responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login?login=foo&password=bar',
                       body='{"token": "foobar"}', status=200,
