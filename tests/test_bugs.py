@@ -120,6 +120,7 @@ def test_we_can_pass_in_dict_and_get_a_bug():
     assert bug.id == 1017315
     assert bug.status == 'RESOLVED'
     assert bug.summary == 'Schedule Mn tests on opt Linux builds on cedar'
+    assert bug.assigned_to == "jgriffin@mozilla.com"
 
 def test_we_can_get_a_dict_version_of_the_bug():
     bug = Bug(**example_return['bugs'][0])

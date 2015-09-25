@@ -140,10 +140,11 @@ def test_we_can_put_a_current_bug():
     bugzilla = Bugsy("foo", "bar")
     bug = Bug(**example_return['bugs'][0])
     bug.summary = 'I love foo but hate bar'
-
+    bug.assigned_to = "automatedtester@mozilla.com"
 
     bugzilla.put(bug)
     assert bug.summary == 'I love foo but hate bar'
+    assert bug.assigned_to == "automatedtester@mozilla.com"
 
 @responses.activate
 def test_we_handle_errors_from_bugzilla_when_posting():

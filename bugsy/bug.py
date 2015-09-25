@@ -214,6 +214,25 @@ class Bug(object):
         """
         self._bug['version'] = value
 
+    @property
+    def assigned_to(self):
+        """
+            Property for getting the bug assignee
+
+            >>> bug.assigned_to
+            "automatedtester@mozilla.com"
+        """
+        return self._bug['assigned_to']
+
+    @assigned_to.setter
+    def assigned_to(self, value):
+        """
+            Property to set the bug assignee
+
+            >>> bug.assigned_to = "automatedtester@mozilla.com"
+        """
+        self._bug['assigned_to'] = value
+
     def to_dict(self):
         """
             Return the raw dict that is used inside this object
