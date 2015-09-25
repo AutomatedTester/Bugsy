@@ -1,12 +1,24 @@
 
-n.n.n / 2015-06-01
+0.5.0 / 2015-09-26
 ==================
 
- * add test coverage link in README.md
- * Add unit test coverage report on coveralls
- * create documented properties for available comment data
- * run flake8 on travis and ask contributors to do so
- * flake8 fixes in bugsy package
+  * Add the ability to set tags on comments. Fixes #5
+  * Add the ability to set and get assignee on a bug. Fixes #17
+  * Raise an error when posting a comment and we get a error back from Bugzilla. Fixes #25
+  * Raise an exception when `get()` is called and Bugzilla can not return it. Fixes #24
+  * Add configuration for flake8
+  * Improve the docs & examples for add_comment()
+  * Make sure the docs index page is listed in the sidebar table of contents
+  * Make sure Sphinx autodoc generates docs for Class __init__ methods
+  * Make the Bugsy PyPI page link to GitHub
+  * Add Bugzilla API keys support
+  * fix unit tests by using all defaults include_fields into requests
+  * include whiteboard when pulling bug data from bugzilla
+  * add test coverage link in README.md
+  * Add unit test coverage report on coveralls
+  * create documented properties for available comment data
+  * run flake8 on travis and ask contributors to do so
+  * flake8 fixes in bugsy package
 
 0.4.1 / 2014-05-26
 ==================
