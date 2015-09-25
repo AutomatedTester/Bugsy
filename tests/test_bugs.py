@@ -243,3 +243,31 @@ def test_comment_retrieval():
     assert c1.tags == set([u'tag1', u'tag2'])
     assert c1.time == datetime.datetime(2014, 03, 27, 23, 47, 45)
 
+@responses.activate
+def test_we_raise_an_exception_if_commenting_on_a_bug_that_returns_an_error():
+    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login?login=foo&password=bar',
+                          body='{"token": "foobar"}', status=200,
+                          content_type='application/json', match_querystring=True)
+
+    responses.add(responses.GET, rest_url('bug', 1017315, token='foobar'),
+                      body=json.dumps(example_return), status=200,
+                      content_type='application/json', match_querystring=True)
+    bugzilla = Bugsy("foo", "bar")
+    bug = bugzilla.get(1017315)
+
+    # will now return the following error. This could happen if the bug was open
+    # when we did a `get()` but is now hidden
+    error_response = {'code': 101,
+                      'message': 'Bug 1017315 does not exist.',
+                      'documentation': 'http://www.bugzilla.org/docs/tip/en/html/api/',
+                      'error': True}
+    responses.add(responses.POST, 'https://bugzilla.mozilla.org/rest/bug/1017315/comment?token=foobar',
+                      body=json.dumps(error_response), status=404,
+                      content_type='application/json', match_querystring=True)
+    try:
+        bug.add_comment("I like sausages")
+        assert False, "Should have raised an BugException for the bug not existing"
+    except BugException as e:
+        assert str(e) == "Message: Bug 1017315 does not exist."
+
+    assert len(responses.calls) == 3
