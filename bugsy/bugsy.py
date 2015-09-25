@@ -135,6 +135,8 @@ class Bugsy(object):
             'bug/%s' % bug_number,
             params={"include_fields": self. DEFAULT_SEARCH}
         ).json()
+        if "error" in bug:
+            raise BugsyException(bug["message"])
         return Bug(self, **bug['bugs'][0])
 
     def put(self, bug):

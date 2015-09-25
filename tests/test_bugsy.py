@@ -187,3 +187,23 @@ def test_we_can_set_the_user_agent_to_bugsy():
                     content_type='application/json', match_querystring=True)
   Bugsy("foo", "bar")
   assert responses.calls[0].request.headers['User-Agent'] == "Bugsy"
+
+@responses.activate
+def test_we_can_handle_errors_when_retrieving_bugs():
+    error_response = {
+    "code" : 101,
+    "documentation" : "http://www.bugzilla.org/docs/tip/en/html/api/",
+    "error" : True,
+    "message" : "Bug 111111111111 does not exist."
+    }
+    responses.add(responses.GET, rest_url('bug', 111111111),
+                      body=json.dumps(error_response), status=200,
+                      content_type='application/json', match_querystring=True)
+    bugzilla = Bugsy()
+    try:
+        bug = bugzilla.get(111111111)
+        assert False, "A BugsyException should have been thrown"
+    except BugsyException as e:
+        assert str(e) == "Message: Bug 111111111111 does not exist."
+    except Exception as e:
+        assert False, "Wrong type of exception was thrown"
