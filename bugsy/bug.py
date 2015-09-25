@@ -265,7 +265,7 @@ class Bug(object):
         bug = unicode(self._bug['id'])
         res = self._bugsy.request('bug/%s/comment' % bug).json()
 
-        return [Comment(**comments) for comments
+        return [Comment(bugsy=self._bugsy, **comments) for comments
                 in res['bugs'][bug]['comments']]
 
     def add_comment(self, comment):
@@ -311,7 +311,8 @@ class Comment(object):
         >>> comments[0].text
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, bugsy=None, **kwargs):
+        self._bugsy = bugsy
         kwargs['time'] = str2datetime(kwargs['time'])
         kwargs['creation_time'] = str2datetime(kwargs['creation_time'])
         if 'tags' in kwargs:
@@ -400,3 +401,31 @@ class Comment(object):
             Return a set of comment tags currently set for the comment.
         """
         return self._comment['tags']
+
+    def add_tags(self, tags):
+        """
+            Add tags to the comments
+        """
+        if not isinstance(tags, list):
+            tags = [tags]
+        result = self._bugsy.session.put(
+            '%s/bug/comment/%s/tags' % (self._bugsy.bugzilla_url,
+                                        self._comment['id']),
+                                        data={"add":tags}
+        ).json()
+        if "error" in result:
+            raise BugException(result["message"])
+
+    def remove_tags(self, tags):
+        """
+            Add tags to the comments
+        """
+        if not isinstance(tags, list):
+            tags = [tags]
+        result = self._bugsy.session.put(
+            '%s/bug/comment/%s/tags' % (self._bugsy.bugzilla_url,
+                                        self._comment['id']),
+                                        data={"remove":tags}
+        ).json()
+        if "error" in result:
+            raise BugException(result["message"])
