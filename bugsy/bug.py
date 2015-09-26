@@ -410,9 +410,7 @@ class Comment(object):
             tags = [tags]
         result = self._bugsy.session.put(
             '%s/bug/comment/%s/tags' % (self._bugsy.bugzilla_url,
-                                        self._comment['id']),
-                                        data={"add":tags}
-        ).json()
+                                        self._comment['id']), data={"add": tags}).json()
         if "error" in result:
             raise BugException(result["message"])
 
@@ -424,8 +422,6 @@ class Comment(object):
             tags = [tags]
         result = self._bugsy.session.put(
             '%s/bug/comment/%s/tags' % (self._bugsy.bugzilla_url,
-                                        self._comment['id']),
-                                        data={"remove":tags}
-        ).json()
+                                        self._comment['id']), data={"remove": tags}).json()
         if "error" in result:
             raise BugException(result["message"])
