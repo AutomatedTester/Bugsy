@@ -3,6 +3,8 @@ from . import rest_url
 from bugsy import Bugsy, BugsyException, LoginException
 from bugsy import Bug
 
+import pytest
+import requests
 import responses
 import json
 
@@ -43,6 +45,17 @@ def test_we_get_a_login_exception_when_details_are_wrong():
     except LoginException as e:
         assert str(e) == "Message: The username or password you entered is not valid."
 
+
+# Currently returns a ValueError instead - see issue #27.
+@pytest.mark.xfail
+@responses.activate
+def test_httperror_raised_for_http_500_when_verifying_password():
+    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login',
+                  body='Internal Server Error', status=500, content_type='text/html')
+    with pytest.raises(requests.exceptions.HTTPError):
+        Bugsy("foo", "bar")
+
+
 @responses.activate
 def test_bad_api_key():
     responses.add(responses.GET,
@@ -55,6 +68,17 @@ def test_bad_api_key():
         assert False, 'Should have thrown'
     except LoginException as e:
         assert str(e) == 'Message: The API key you specified is invalid. Please check that you typed it correctly.'
+
+
+# Currently returns a ValueError instead - see issue #27.
+@pytest.mark.xfail
+@responses.activate
+def test_httperror_raised_for_http_500_when_verifying_api_key():
+    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/valid_login',
+                  body='Internal Server Error', status=500, content_type='text/html')
+    with pytest.raises(requests.exceptions.HTTPError):
+        Bugsy(username='foo', api_key='goodkey')
+
 
 @responses.activate
 def test_validate_api_key():
@@ -208,3 +232,50 @@ def test_we_can_handle_errors_when_retrieving_bugs():
         assert str(e) == "Message: Bug 111111111111 does not exist."
     except Exception as e:
         assert False, "Wrong type of exception was thrown"
+
+
+# Currently returns a ValueError instead - see issue #27.
+@pytest.mark.xfail
+@responses.activate
+def test_httperror_raised_for_http_500_when_retrieving_bugs():
+    responses.add(responses.GET, rest_url('bug', 123456),
+                  body='Internal Server Error', status=500,
+                  content_type='text/html', match_querystring=True)
+    bugzilla = Bugsy()
+    with pytest.raises(requests.exceptions.HTTPError):
+        r = bugzilla.get(123456)
+
+
+# Currently returns a ValueError instead - see issue #27.
+@pytest.mark.xfail
+@responses.activate
+def test_httperror_raised_for_http_500_when_creating_a_bug():
+    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login?login=foo&password=bar',
+                  body='{"token": "foobar"}', status=200,
+                  content_type='application/json', match_querystring=True)
+    responses.add(responses.POST, 'https://bugzilla.mozilla.org/rest/bug',
+                  body='Internal Server Error', status=500,
+                  content_type='text/html')
+    bugzilla = Bugsy("foo", "bar")
+    bug_dict = example_return['bugs'][0].copy()
+    # Delete the bug ID so we create a new bug rather than updating an existing one.
+    del bug_dict['id']
+    bug = Bug(**bug_dict)
+    with pytest.raises(requests.exceptions.HTTPError):
+        bugzilla.put(bug)
+
+
+# Currently returns a ValueError instead - see issue #27.
+@pytest.mark.xfail
+@responses.activate
+def test_httperror_raised_for_http_500_when_updating_a_bug():
+    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login?login=foo&password=bar',
+                  body='{"token": "foobar"}', status=200,
+                  content_type='application/json', match_querystring=True)
+    responses.add(responses.PUT, 'https://bugzilla.mozilla.org/rest/bug/1017315',
+                  body='Internal Server Error', status=500,
+                  content_type='text/html')
+    bugzilla = Bugsy("foo", "bar")
+    bug = Bug(**example_return['bugs'][0])
+    with pytest.raises(requests.exceptions.HTTPError):
+        bugzilla.put(bug)

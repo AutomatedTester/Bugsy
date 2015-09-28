@@ -1,4 +1,6 @@
 import datetime
+import pytest
+import requests
 import responses
 import json
 
@@ -272,6 +274,27 @@ def test_we_raise_an_exception_if_commenting_on_a_bug_that_returns_an_error():
         assert str(e) == "Message: Bug 1017315 does not exist."
 
     assert len(responses.calls) == 3
+
+
+# Currently returns a ValueError instead - see issue #27.
+@pytest.mark.xfail
+@responses.activate
+def test_httperror_raised_for_http_500_when_commenting_on_a_bug():
+    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login?login=foo&password=bar',
+                  body='{"token": "foobar"}', status=200,
+                  content_type='application/json', match_querystring=True)
+    responses.add(responses.GET, rest_url('bug', 1017315, token='foobar'),
+                  body=json.dumps(example_return), status=200,
+                  content_type='application/json', match_querystring=True)
+    bugzilla = Bugsy("foo", "bar")
+    bug = bugzilla.get(1017315)
+
+    responses.add(responses.POST, 'https://bugzilla.mozilla.org/rest/bug/1017315/comment?token=foobar',
+                      body='Internal Server Error', status=500,
+                      content_type='text/html', match_querystring=True)
+    with pytest.raises(requests.exceptions.HTTPError):
+        bug.add_comment("I like sausages")
+
 
 @responses.activate
 def test_we_can_add_tags_to_bug_comments():
