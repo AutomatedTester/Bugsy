@@ -35,7 +35,7 @@ def test_we_cant_post_without_a_username_or_password():
 @responses.activate
 def test_we_get_a_login_exception_when_details_are_wrong():
     responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login?login=foo&password=bar',
-                      body='{"message": "The username or password you entered is not valid."}', status=200,
+                      body='{"message": "The username or password you entered is not valid."}', status=400,
                       content_type='application/json', match_querystring=True)
     try:
         Bugsy("foo", "bar")
@@ -152,7 +152,7 @@ def test_we_handle_errors_from_bugzilla_when_posting():
                     body='{"token": "foobar"}', status=200,
                     content_type='application/json', match_querystring=True)
   responses.add(responses.POST, 'https://bugzilla.mozilla.org/rest/bug',
-                    body='{"error":true,"code":50,"message":"You must select/enter a component."}', status=200,
+                    body='{"error":true,"code":50,"message":"You must select/enter a component."}', status=400,
                     content_type='application/json')
 
   bugzilla = Bugsy("foo", "bar")
@@ -169,7 +169,7 @@ def test_we_handle_errors_from_bugzilla_when_updating_a_bug():
                     body='{"token": "foobar"}', status=200,
                     content_type='application/json', match_querystring=True)
   responses.add(responses.PUT, 'https://bugzilla.mozilla.org/rest/bug/1017315',
-                    body='{"error":true,"code":50,"message":"You must select/enter a component."}', status=200,
+                    body='{"error":true,"code":50,"message":"You must select/enter a component."}', status=400,
                     content_type='application/json')
   bugzilla = Bugsy("foo", "bar")
 
@@ -198,7 +198,7 @@ def test_we_can_handle_errors_when_retrieving_bugs():
     "message" : "Bug 111111111111 does not exist."
     }
     responses.add(responses.GET, rest_url('bug', 111111111),
-                      body=json.dumps(error_response), status=200,
+                      body=json.dumps(error_response), status=404,
                       content_type='application/json', match_querystring=True)
     bugzilla = Bugsy()
     try:
