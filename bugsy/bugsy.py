@@ -167,8 +167,9 @@ class Bugsy(object):
         return self._handle_errors(self.session.request(method, url, **kwargs))
 
     def _handle_errors(self, response):
-        if response.status_code == 500:
-            raise BugsyException("We received a 500 error with the following: %s" % response.text)
+        if response.status_code >= 500:
+            raise BugsyException("We received a {0} error with the following: {1}"
+                                 .format(response.status_code, response.text))
         if response.status_code > 399 and response.status_code < 500:
             result = response.json()
             if "API key" in result['message'] or "username or password" in result['message']:

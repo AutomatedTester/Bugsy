@@ -276,14 +276,9 @@ class Bug(object):
         # If we have a key post immediately otherwise hold onto it until
         # put(bug) is called
         if 'id' in self._bug:
-            result = self._bugsy.session.post(
-                '%s/bug/%s/comment' % (self._bugsy.bugzilla_url,
-                                       self._bug['id']),
-                data={"comment": comment}
-            ).json()
-
-            if "error" in result:
-                raise BugException(result["message"])
+            result = self._bugsy.request('bug/{}/comment'.format(self._bug['id']),
+                                         method='POST', data={"comment": comment}
+                                        )
         else:
             self._bug['comment'] = comment
 
@@ -397,11 +392,8 @@ class Comment(object):
         """
         if not isinstance(tags, list):
             tags = [tags]
-        result = self._bugsy.session.put(
-            '%s/bug/comment/%s/tags' % (self._bugsy.bugzilla_url,
-                                        self._comment['id']), data={"add": tags})
-        if "error" in result:
-            raise BugException(result["message"])
+        result = self._bugsy.request('bug/comment/%s/tags' % self._comment['id'],
+                                     method='PUT', data={"add": tags})
 
     def remove_tags(self, tags):
         """
@@ -409,8 +401,7 @@ class Comment(object):
         """
         if not isinstance(tags, list):
             tags = [tags]
-        result = self._bugsy.session.put(
-            '%s/bug/comment/%s/tags' % (self._bugsy.bugzilla_url,
-                                        self._comment['id']), data={"remove": tags})
+        result = self._bugsy.request('bug/comment/%s/tags' % self._comment['id'],
+                                     method='PUT', data={"remove": tags})
         if "error" in result:
             raise BugException(result["message"])
