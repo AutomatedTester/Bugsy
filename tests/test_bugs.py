@@ -297,7 +297,7 @@ def test_we_raise_an_exception_if_commenting_on_a_bug_that_returns_an_error():
     except BugsyException as e:
         assert str(e) == "Message: Bug 1017315 does not exist."
 
-    assert len(responses.calls) == 3
+    assert len(responses.calls) == 2
 
 @responses.activate
 def test_we_can_add_tags_to_bug_comments():
