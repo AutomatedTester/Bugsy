@@ -111,8 +111,6 @@ class Bugsy(object):
             'bug/%s' % bug_number,
             params={"include_fields": self. DEFAULT_SEARCH}
         )
-        if "error" in bug:
-            raise BugsyException(bug["message"])
         return Bug(self, **bug['bugs'][0])
 
     def put(self, bug):
@@ -151,8 +149,6 @@ class Bugsy(object):
         else:
             result = self.request('bug/%s' % bug.id, 'PUT',
                                   data=bug.to_dict())
-            if "error" in result:
-                raise BugsyException(result['message'])
 
     @property
     def search_for(self):
@@ -171,4 +167,13 @@ class Bugsy(object):
         return self._handle_errors(self.session.request(method, url, **kwargs))
 
     def _handle_errors(self, response):
+        if response.status_code == 500:
+            raise BugsyException("We received a 500 error with the following: {}"
+                                 .format(response.text))
+        if response.status_code > 399 and response.status_code < 500:
+            result = response.json()
+            if "API key" in result['message'] or "username or password" in result['message']:
+                raise LoginException(result['message'])
+            else:
+                raise BugsyException(result["message"])
         return response.json()

@@ -4,7 +4,7 @@ import json
 
 from . import rest_url
 from bugsy import Bugsy, Bug
-from bugsy.errors import BugException
+from bugsy.errors import (BugsyException, BugException)
 
 example_return = {u'faults': [], u'bugs': [{u'cf_tracking_firefox29': u'---', u'classification': u'Other', u'creator': u'jgriffin@mozilla.com', u'cf_status_firefox30':
 u'---', u'depends_on': [], u'cf_status_firefox32': u'---', u'creation_time': u'2014-05-28T23:57:58Z', u'product': u'Release Engineering', u'cf_user_story': u'', u'dupe_of': None, u'cf_tracking_firefox_relnote': u'---', u'keywords': [], u'cf_tracking_b2g18': u'---', u'summary': u'Schedule Mn tests on o\
@@ -243,6 +243,32 @@ def test_comment_retrieval():
     assert c1.text == u'text 1'
     assert c1.tags == set([u'tag1', u'tag2'])
     assert c1.time == datetime.datetime(2014, 03, 27, 23, 47, 45)
+
+@responses.activate
+def test_we_raise_an_exception_when_getting_comments_and_bugzilla_errors():
+    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login?login=foo&password=bar',
+                          body='{"token": "foobar"}', status=200,
+                          content_type='application/json', match_querystring=True)
+
+    responses.add(responses.GET, rest_url('bug', 1017315, token='foobar'),
+                      body=json.dumps(example_return), status=200,
+                      content_type='application/json', match_querystring=True)
+    bugzilla = Bugsy("foo", "bar")
+    bug = bugzilla.get(1017315)
+
+    error_response = {'code': 67399,
+                      'message': "The requested method 'Bug.comments' was not found.",
+                      'documentation': u'http://www.bugzilla.org/docs/tip/en/html/api/',
+                       'error': True}
+
+    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/bug/1017315/comment?token=foobar',
+                    body=json.dumps(error_response), status=400,
+                    content_type='application/json', match_querystring=True)
+    try:
+        comments = bug.get_comments()
+        assert False, "Should have raised an BugException for the bug not existing"
+    except BugsyException as e:
+        assert str(e) == "Message: The requested method 'Bug.comments' was not found."
 
 @responses.activate
 def test_we_raise_an_exception_if_commenting_on_a_bug_that_returns_an_error():
