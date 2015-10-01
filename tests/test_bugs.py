@@ -294,7 +294,7 @@ def test_we_raise_an_exception_if_commenting_on_a_bug_that_returns_an_error():
     try:
         bug.add_comment("I like sausages")
         assert False, "Should have raised an BugException for the bug not existing"
-    except BugException as e:
+    except BugsyException as e:
         assert str(e) == "Message: Bug 1017315 does not exist."
 
     assert len(responses.calls) == 3
