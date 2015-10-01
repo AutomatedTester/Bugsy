@@ -1,7 +1,6 @@
-import bugsy
 from . import rest_url
-from bugsy import Bugsy, BugsyException, LoginException
-from bugsy import Bug
+from bugsy import (Bugsy, Bug)
+from bugsy.errors import (BugsyException, LoginException)
 
 import responses
 import json

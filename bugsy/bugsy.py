@@ -169,4 +169,7 @@ class Bugsy(object):
         headers = {"User-Agent": "Bugsy"}
         kwargs['headers'] = headers
         url = '%s/%s' % (self.bugzilla_url, path)
-        return self.session.request(method, url, **kwargs).json()
+        return self._handle_errors(self.session.request(method, url, **kwargs))
+
+    def _handle_errors(self, response):
+        return response.json()
