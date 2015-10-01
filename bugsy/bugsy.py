@@ -4,7 +4,6 @@ from errors import (BugsyException, LoginException)
 from search import Search
 
 
-
 class Bugsy(object):
     """
         Bugsy allows easy getting and putting of Bugzilla bugs

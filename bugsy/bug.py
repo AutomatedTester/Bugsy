@@ -11,9 +11,6 @@ def str2datetime(s):
     return datetime.datetime.strptime(s, '%Y-%m-%dT%H:%M:%SZ')
 
 
-
-
-
 class Bug(object):
     """This represents a Bugzilla Bug"""
 

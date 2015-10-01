@@ -25,6 +25,7 @@ class BugException(BugsyException):
     """
     pass
 
+
 class SearchException(BugsyException):
     """
         If while interacting with Bugzilla and we try do something that is not

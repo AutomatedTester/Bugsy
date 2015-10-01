@@ -4,8 +4,6 @@ from bug import Bug
 from errors import SearchException
 
 
-
-
 class Search(object):
     """
         This allows searching for bugs in Bugzilla
