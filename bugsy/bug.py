@@ -1,4 +1,5 @@
 import datetime
+from errors import BugException
 
 
 VALID_STATUS = ["RESOLVED", "ASSIGNED", "NEW", "UNCONFIRMED"]
@@ -10,16 +11,7 @@ def str2datetime(s):
     return datetime.datetime.strptime(s, '%Y-%m-%dT%H:%M:%SZ')
 
 
-class BugException(Exception):
-    """
-        If we try do something that is not allowed to a bug then
-        this error is raised
-    """
-    def __init__(self, msg):
-        self.msg = msg
 
-    def __str__(self):
-        return "Message: %s" % self.msg
 
 
 class Bug(object):

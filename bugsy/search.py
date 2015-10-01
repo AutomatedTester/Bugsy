@@ -1,18 +1,9 @@
 import copy
 
 from bug import Bug
+from errors import SearchException
 
 
-class SearchException(Exception):
-    """
-        If while interacting with Bugzilla and we try do something that is not
-        supported this error will be raised.
-    """
-    def __init__(self, msg):
-        self.msg = msg
-
-    def __str__(self):
-        return "%s" % self.msg
 
 
 class Search(object):

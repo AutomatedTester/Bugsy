@@ -1,30 +1,8 @@
 import requests
 from bug import Bug
+from errors import (BugsyException, LoginException)
 from search import Search
 
-
-class BugsyException(Exception):
-    """
-        If while interacting with Bugzilla and we try do something that is not
-        supported this error will be raised.
-    """
-    def __init__(self, msg):
-        self.msg = msg
-
-    def __str__(self):
-        return "Message: %s" % self.msg
-
-
-class LoginException(Exception):
-    """
-        If a username and password are passed in but we don't receive a token
-        then this error will be raised.
-    """
-    def __init__(self, msg):
-        self.msg = msg
-
-    def __str__(self):
-        return "Message: %s" % self.msg
 
 
 class Bugsy(object):
