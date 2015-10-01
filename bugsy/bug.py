@@ -251,7 +251,7 @@ class Bug(object):
             'FIXED'
         """
         if 'id' in self._bug:
-            result = self._bugsy.request('bug/%s' % self._bug['id']).json()
+            result = self._bugsy.request('bug/%s' % self._bug['id'])
             self._bug = dict(**result['bugs'][0])
         else:
             raise BugException("Unable to update bug that isn't in Bugzilla")
@@ -263,7 +263,7 @@ class Bug(object):
             Returns a list of Comment instances.
         """
         bug = unicode(self._bug['id'])
-        res = self._bugsy.request('bug/%s/comment' % bug).json()
+        res = self._bugsy.request('bug/%s/comment' % bug)
 
         return [Comment(bugsy=self._bugsy, **comments) for comments
                 in res['bugs'][bug]['comments']]
@@ -410,7 +410,7 @@ class Comment(object):
             tags = [tags]
         result = self._bugsy.session.put(
             '%s/bug/comment/%s/tags' % (self._bugsy.bugzilla_url,
-                                        self._comment['id']), data={"add": tags}).json()
+                                        self._comment['id']), data={"add": tags})
         if "error" in result:
             raise BugException(result["message"])
 
@@ -422,6 +422,6 @@ class Comment(object):
             tags = [tags]
         result = self._bugsy.session.put(
             '%s/bug/comment/%s/tags' % (self._bugsy.bugzilla_url,
-                                        self._comment['id']), data={"remove": tags}).json()
+                                        self._comment['id']), data={"remove": tags})
         if "error" in result:
             raise BugException(result["message"])

@@ -168,7 +168,7 @@ class Search(object):
             bugs = []
             for bug in self._bug_numbers:
                 result = self._bugsy.request('bug/%s' % bug,
-                                             params=params).json()
+                                             params=params)
                 bugs.append(Bug(self._bugsy, **result['bugs'][0]))
 
             return bugs
@@ -188,7 +188,7 @@ class Search(object):
             if self._change_history.get('value', None):
                 params['chfieldvalue'] = self._change_history['value']
 
-            results = self._bugsy.request('bug', params=params).json()
+            results = self._bugsy.request('bug', params=params)
             error = results.get("error", None)
             if error:
                 raise SearchException(results['message'])
