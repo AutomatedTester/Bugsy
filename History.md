@@ -1,4 +1,21 @@
 
+0.6.0 / 2015-10-08
+==================
+
+  * Update flake8 config to only check the correct items.
+  * Fix flake8 errors.
+  * Move final requests to use central request and handler methods
+  * Move Exception to BugsyException
+  * Add more tests for resiliency against HTTP errors during API requests
+  * Remove support for Python 2.6. I won't be actively working against it but won't be mindful of errors
+  * Fix formatting to work with python 2.6
+  * Update error handling for the majority of cases so that it is handled centrally
+  * Clean up imports of tests
+  * Remove duplication in Exception handling
+  * Move Errors to their own file and update imports for others.
+  * Move JSON handling into request method
+  * Use correct response HTTP code for Bugzilla error handling tests
+
 0.5.0 / 2015-09-26
 ==================
 
