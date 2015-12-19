@@ -222,6 +222,17 @@ class Bug(object):
         """
         self._bug['assigned_to'] = value
 
+    @property
+    def cc(self):
+        """
+            Property to get the cc list for the bug. It returns emails for people
+
+            >>> bug.cc
+            [u'dburns@mozilla.com', u'automatedtester@mozilla.com']
+        """
+        cc_list = [cc_detail['email'] for cc_detail in self._bug['cc_detail']]
+        return cc_list
+
     def to_dict(self):
         """
             Return the raw dict that is used inside this object

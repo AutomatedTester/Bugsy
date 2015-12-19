@@ -90,6 +90,14 @@ def test_we_can_get_Product_we_set():
     bug = Bug(product="firefox")
     assert bug.product == "firefox"
 
+def test_we_can_get_get_cc_list():
+    bug = Bug(**example_return['bugs'][0])
+    cced = bug.cc
+    assert isinstance(cced, list)
+    assert [u"coop@mozilla.com", u"dburns@mozilla.com",
+            u"jlund@mozilla.com", u"mdas@mozilla.com"] == cced
+
+
 def test_we_throw_an_error_for_invalid_status_types():
     bug = Bug(**example_return['bugs'][0])
     try:
