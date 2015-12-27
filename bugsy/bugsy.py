@@ -76,6 +76,7 @@ class Bugsy(object):
                 'login',
                 params={'login': username, 'password': password}
             )
+
             if 'token' in result:
                 self.session.params['token'] = result['token']
                 self.token = result['token']
