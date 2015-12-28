@@ -144,11 +144,14 @@ class Bugsy(object):
             if 'error' not in result:
                 bug._bug['id'] = result['id']
                 bug._bugsy = self
+                bug._bug.pop('comment')
             else:
                 raise BugsyException(result['message'])
         else:
             result = self.request('bug/%s' % bug.id, 'PUT',
                                   data=bug.to_dict())
+            updated_bug = self.get(bug.id)
+            return updated_bug
 
     @property
     def search_for(self):
