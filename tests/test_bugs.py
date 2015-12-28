@@ -7,7 +7,7 @@ from bugsy import Bugsy, Bug
 from bugsy.errors import (BugsyException, BugException)
 
 example_return = {u'faults': [], u'bugs': [{u'cf_tracking_firefox29': u'---', u'classification': u'Other', u'creator': u'jgriffin@mozilla.com', u'cf_status_firefox30':
-u'---', u'depends_on': [], u'cf_status_firefox32': u'---', u'creation_time': u'2014-05-28T23:57:58Z', u'product': u'Release Engineering', u'cf_user_story': u'', u'dupe_of': None, u'cf_tracking_firefox_relnote': u'---', u'keywords': [], u'cf_tracking_b2g18': u'---', u'summary': u'Schedule Mn tests on o\
+u'---', u'depends_on': [], u'cf_status_firefox32': u'---', u'creation_time': u'2014-05-28T23:57:58Z', u'product': u'Release Engineering', u'cf_user_story': u'', u'dupe_of': None, u'cf_tracking_firefox_relnote': u'---', u'keywords': [u'regression'], u'cf_tracking_b2g18': u'---', u'summary': u'Schedule Mn tests on o\
 pt Linux builds on cedar', u'id': 1017315, u'assigned_to_detail': {u'id': 347295, u'email': u'jgriffin@mozilla.com', u'name': u'jgriffin@mozilla.com',
 u'real_name': u'Jonathan Griffin (:jgriffin)'}, u'severity': u'normal', u'is_confirmed': True, u'is_creator_accessible': True, u'cf_status_b2g_1_1_hd':
  u'---', u'qa_contact_detail': {u'id': 20203, u'email': u'catlee@mozilla.com', u'name': u'catlee@mozilla.com', u'real_name': u'Chris AtLee [:catlee]'},
@@ -85,6 +85,11 @@ def test_we_can_get_OS_we_set():
 def test_we_can_get_Product_set_from_default():
     bug = Bug()
     assert bug.product == "core"
+
+def test_we_can_get_get_the_keywords():
+    bug = Bug(**example_return['bugs'][0])
+    keywords = bug.keywords
+    assert [u'regression'] == keywords
 
 def test_we_can_get_Product_we_set():
     bug = Bug(product="firefox")

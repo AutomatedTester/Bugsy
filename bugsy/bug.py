@@ -233,6 +233,18 @@ class Bug(object):
         cc_list = [cc_detail['email'] for cc_detail in self._bug['cc_detail']]
         return cc_list
 
+    @property
+    def keywords(self):
+        """
+            Property to get the keywords list for the bug. It returns multiple
+            keywords in a list.
+
+            >>> bug.keywords
+            [u"ateam-marionette-runner", u"regression"]
+        """
+        keywords = [keyword for keyword in self._bug['keywords']]
+        return keywords
+
     def to_dict(self):
         """
             Return the raw dict that is used inside this object
