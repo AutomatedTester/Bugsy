@@ -260,7 +260,6 @@ class Bug(object):
             else:
                 result = {"add": [value]}
         else:
-
             addin = []
             removin = []
             for val in value:
