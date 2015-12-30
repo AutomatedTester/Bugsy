@@ -136,6 +136,9 @@ def test_we_can_put_a_current_bug():
     responses.add(responses.PUT, 'https://bugzilla.mozilla.org/rest/bug/1017315',
                       body=json.dumps(bug_dict), status=200,
                       content_type='application/json')
+    responses.add(responses.GET, rest_url('bug', 1017315, token="foobar"),
+                      body=json.dumps(example_return), status=200,
+                      content_type='application/json', match_querystring=True)
     bugzilla = Bugsy("foo", "bar")
     bug = Bug(**example_return['bugs'][0])
     bug.summary = 'I love foo but hate bar'
