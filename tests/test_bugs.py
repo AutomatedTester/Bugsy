@@ -7,13 +7,13 @@ from bugsy import Bugsy, Bug
 from bugsy.errors import (BugsyException, BugException)
 
 example_return = {u'faults': [], u'bugs': [{u'cf_tracking_firefox29': u'---', u'classification': u'Other', u'creator': u'jgriffin@mozilla.com', u'cf_status_firefox30':
-u'---', u'depends_on': [], u'cf_status_firefox32': u'---', u'creation_time': u'2014-05-28T23:57:58Z', u'product': u'Release Engineering', u'cf_user_story': u'', u'dupe_of': None, u'cf_tracking_firefox_relnote': u'---', u'keywords': [u'regression'], u'cf_tracking_b2g18': u'---', u'summary': u'Schedule Mn tests on o\
+u'---', u'depends_on': [123456], u'cf_status_firefox32': u'---', u'creation_time': u'2014-05-28T23:57:58Z', u'product': u'Release Engineering', u'cf_user_story': u'', u'dupe_of': None, u'cf_tracking_firefox_relnote': u'---', u'keywords': [u'regression'], u'cf_tracking_b2g18': u'---', u'summary': u'Schedule Mn tests on o\
 pt Linux builds on cedar', u'id': 1017315, u'assigned_to_detail': {u'id': 347295, u'email': u'jgriffin@mozilla.com', u'name': u'jgriffin@mozilla.com',
 u'real_name': u'Jonathan Griffin (:jgriffin)'}, u'severity': u'normal', u'is_confirmed': True, u'is_creator_accessible': True, u'cf_status_b2g_1_1_hd':
  u'---', u'qa_contact_detail': {u'id': 20203, u'email': u'catlee@mozilla.com', u'name': u'catlee@mozilla.com', u'real_name': u'Chris AtLee [:catlee]'},
  u'priority': u'--', u'platform': u'All', u'cf_crash_signature': u'', u'version': u'unspecified', u'cf_qa_whiteboard': u'', u'cf_status_b2g_1_3t': u'--\
 -', u'cf_status_firefox31': u'---', u'is_open': False, u'cf_blocking_fx': u'---', u'status': u'RESOLVED', u'cf_tracking_relnote_b2g': u'---', u'cf_stat\
-us_firefox29': u'---', u'blocks': [], u'qa_contact': u'catlee@mozilla.com', u'see_also': [], u'component': u'General Automation', u'cf_tracking_firefox\
+us_firefox29': u'---', u'blocks': [654321], u'qa_contact': u'catlee@mozilla.com', u'see_also': [], u'component': u'General Automation', u'cf_tracking_firefox\
 32': u'---', u'cf_tracking_firefox31': u'---', u'cf_tracking_firefox30': u'---', u'op_sys': u'All', u'groups': [], u'cf_blocking_b2g': u'---', u'target\
 _milestone': u'---', u'is_cc_accessible': True, u'cf_tracking_firefox_esr24': u'---', u'cf_status_b2g_1_2': u'---', u'cf_status_b2g_1_3': u'---', u'cf_\
 status_b2g18': u'---', u'cf_status_b2g_1_4': u'---', u'url': u'', u'creator_detail': {u'id': 347295, u'email': u'jgriffin@mozilla.com', u'name': u'jgri\
@@ -139,6 +139,18 @@ def test_we_can_get_a_dict_version_of_the_bug():
     bug = Bug(**example_return['bugs'][0])
     result = bug.to_dict()
     assert example_return['bugs'][0]['id'] == result['id']
+
+def test_we_can_get_depends_on_list():
+    bug = Bug(**example_return['bugs'][0])
+    depends_on = bug.depends_on
+    assert isinstance(depends_on, list)
+    assert depends_on == [123456]
+
+def test_we_can_get_blocks_list():
+    bug = Bug(**example_return['bugs'][0])
+    blocks = bug.blocks
+    assert isinstance(blocks, list)
+    assert blocks == [654321]
 
 @responses.activate
 def test_we_can_update_a_bug_from_bugzilla():
