@@ -144,7 +144,12 @@ class Bugsy(object):
             if 'error' not in result:
                 bug._bug['id'] = result['id']
                 bug._bugsy = self
-                bug._bug.pop('comment')
+                try:
+                    bug._bug.pop('comment')
+                except Exception:
+                    # If we don't have a `comment` we will error so let's just
+                    # swallow it.
+                    pass
             else:
                 raise BugsyException(result['message'])
         else:
