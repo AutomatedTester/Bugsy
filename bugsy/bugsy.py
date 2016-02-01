@@ -180,8 +180,8 @@ class Bugsy(object):
                                  .format(response.status_code, response.text))
         result = response.json()
         if (response.status_code > 399 and response.status_code < 500) \
-            or (isinstance(result, dict) and 'error' in result
-                and result.get('error', False) is True):
+            or (isinstance(result, dict) and 'error' in result and
+                result.get('error', False) is True):
 
             if "API key" in result['message'] or "username or password" in result['message']:
                 raise LoginException(result['message'], result.get("code"))
