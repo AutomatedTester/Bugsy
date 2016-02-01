@@ -72,7 +72,7 @@ def test_we_cant_set_status_unless_there_is_a_bug_id():
     try:
         bug.status = 'RESOLVED'
     except BugException as e:
-        assert str(e) == "Message: Can not set status unless there is a bug id. Please call Update() before setting"
+        assert str(e) == "Message: Can not set status unless there is a bug id. Please call Update() before setting Code: None"
 
 def test_we_can_get_OS_set_from_default():
     bug = Bug()
@@ -109,7 +109,7 @@ def test_we_throw_an_error_for_invalid_status_types():
         bug.status = "foo"
         assert 1 == 0, "Should have thrown an error about invalid type"
     except BugException as e:
-        assert str(e) == "Message: Invalid status type was used"
+        assert str(e) == "Message: Invalid status type was used Code: None"
 
 def test_we_can_get_the_resolution():
     bug = Bug(**example_return['bugs'][0])
@@ -126,7 +126,7 @@ def test_we_cant_set_the_resolution_when_not_valid():
         bug.resolution = 'FOO'
         assert 1==0, "Should thrown an error"
     except BugException as e:
-        assert str(e) == "Message: Invalid resolution type was used"
+        assert str(e) == "Message: Invalid resolution type was used Code: None"
 
 def test_we_can_pass_in_dict_and_get_a_bug():
     bug = Bug(**example_return['bugs'][0])
@@ -174,7 +174,7 @@ def test_we_cant_update_unless_we_have_a_bug_id():
     try:
         bug.update()
     except BugException as e:
-        assert str(e) == "Message: Unable to update bug that isn't in Bugzilla"
+        assert str(e) == "Message: Unable to update bug that isn't in Bugzilla Code: None"
 
 @responses.activate
 def test_we_can_update_a_bug_with_login_token():
@@ -293,7 +293,7 @@ def test_we_raise_an_exception_when_getting_comments_and_bugzilla_errors():
         comments = bug.get_comments()
         assert False, "Should have raised an BugException for the bug not existing"
     except BugsyException as e:
-        assert str(e) == "Message: The requested method 'Bug.comments' was not found."
+        assert str(e) == "Message: The requested method 'Bug.comments' was not found. Code: 67399"
 
 @responses.activate
 def test_we_raise_an_exception_if_commenting_on_a_bug_that_returns_an_error():
@@ -320,7 +320,7 @@ def test_we_raise_an_exception_if_commenting_on_a_bug_that_returns_an_error():
         bug.add_comment("I like sausages")
         assert False, "Should have raised an BugException for the bug not existing"
     except BugsyException as e:
-        assert str(e) == "Message: Bug 1017315 does not exist."
+        assert str(e) == "Message: Bug 1017315 does not exist. Code: 101"
 
     assert len(responses.calls) == 3
 

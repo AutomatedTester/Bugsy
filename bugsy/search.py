@@ -180,6 +180,6 @@ class Search(object):
             try:
                 results = self._bugsy.request('bug', params=params)
             except Exception as e:
-                raise SearchException(e.msg)
+                raise SearchException(e.msg, e.code)
 
             return [Bug(self._bugsy, **bug) for bug in results['bugs']]

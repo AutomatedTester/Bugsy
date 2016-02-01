@@ -184,7 +184,7 @@ class Bugsy(object):
                 and result.get('error', False) is True):
 
             if "API key" in result['message'] or "username or password" in result['message']:
-                raise LoginException(result['message'])
+                raise LoginException(result['message'], result.get("code"))
             else:
-                raise BugsyException(result["message"])
+                raise BugsyException(result["message"], result.get("code"))
         return result
