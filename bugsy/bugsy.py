@@ -95,6 +95,16 @@ class Bugsy(object):
 
             self._have_auth = True
 
+    @property
+    def authenticated(self):
+        """
+            True if this instance is authenticated against the server.
+
+            >>> bugzilla = Bugsy()
+            >>> assert not bugzilla.authenticated
+        """
+        return self._have_auth
+
     def get(self, bug_number):
         """
             Get a bug from Bugzilla. If there is a login token created during

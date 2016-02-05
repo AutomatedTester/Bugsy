@@ -210,3 +210,24 @@ def test_we_can_handle_errors_when_retrieving_bugs():
         assert str(e) == "Message: Bug 111111111111 does not exist. Code: 101"
     except Exception as e:
         assert False, "Wrong type of exception was thrown"
+
+def test_we_can_know_when_bugsy_is_not_authenticated():
+    bugzilla = Bugsy()
+    assert not bugzilla.authenticated
+
+@responses.activate
+def test_we_can_know_when_bugsy_is_authenticated_using_password():
+    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login?login=foo&password=bar',
+                    body='{"token": "foobar"}', status=200,
+                    content_type='application/json', match_querystring=True)
+    bugzilla = Bugsy("foo", "bar")
+    assert bugzilla.authenticated
+
+@responses.activate
+def test_we_can_know_when_bugsy_is_authenticated_using_apikey():
+    responses.add(responses.GET,
+                  'https://bugzilla.mozilla.org/rest/valid_login?login=foo&api_key=goodkey',
+                  body='true', status=200, content_type='application/json',
+                  match_querystring=True)
+    bugzilla = Bugsy(username='foo', api_key='goodkey')
+    assert bugzilla.authenticated
