@@ -114,7 +114,6 @@ To see further details look at:
 .. toctree::
    :maxdepth: 2
 
-   index.rst
    bugsy.rst
    bug.rst
    comment.rst
