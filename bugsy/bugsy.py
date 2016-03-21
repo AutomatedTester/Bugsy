@@ -63,22 +63,26 @@ class Bugsy(object):
             if self.username:
                 result = self.request(
                     'valid_login',
-                    params={'login': username, 'api_key': api_key}
+                    headers={'X-Bugzilla-API-Key': self.api_key},
+                    params={'login': self.username}
                 )
 
                 if result is not True:
                     raise LoginException(result['message'])
 
-            self.session.params['api_key'] = self.api_key
+            self.session.headers['X-Bugzilla-API-Key'] = self.api_key
             self._have_auth = True
         elif self.username and self.password:
             result = self.request(
                 'login',
-                params={'login': username, 'password': password}
+                headers={
+                    'X-Bugzilla-Login': username,
+                    'X-Bugzilla-Password': password
+                }
             )
 
             if 'token' in result:
-                self.session.params['token'] = result['token']
+                self.session.headers['X-Bugzilla-Token'] = result['token']
                 self.token = result['token']
             else:
                 raise LoginException(result['message'])
@@ -86,7 +90,7 @@ class Bugsy(object):
         elif self.userid and self.cookie:
             # The token is crafted from the userid and cookie.
             self.token = '%s-%s' % (self.userid, self.cookie)
-            self.session.params['token'] = self.token
+            self.session.headers['X-Bugzilla-Token'] = self.token
             if not self.username:
                 result = self.request('user/%s' % self.userid)
                 if result.get('users', []):
@@ -173,14 +177,15 @@ class Bugsy(object):
     def search_for(self):
         return Search(self)
 
-    def request(self, path, method='GET', **kwargs):
+    def request(self, path, method='GET', headers=None, **kwargs):
         """Perform a HTTP request.
 
         Given a relative Bugzilla URL path, an optional request method,
         and arguments suitable for requests.Request(), perform a
         HTTP request.
         """
-        headers = {"User-Agent": "Bugsy"}
+        headers = {} if headers is None else headers.copy()
+        headers["User-Agent"] = "Bugsy"
         kwargs['headers'] = headers
         url = '%s/%s' % (self.bugzilla_url, path)
         return self._handle_errors(self.session.request(method, url, **kwargs))

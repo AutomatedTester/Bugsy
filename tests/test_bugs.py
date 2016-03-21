@@ -107,10 +107,10 @@ def test_we_can_add_single_email_to_cc_list():
     bug = None
     bugzilla = None
     with responses.RequestsMock() as rsps:
-        rsps.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login?login=foo&password=bar',
+        rsps.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login',
                           body='{"token": "foobar"}', status=200,
                           content_type='application/json', match_querystring=True)
-        rsps.add(responses.GET, rest_url('bug', 1017315, token="foobar"),
+        rsps.add(responses.GET, rest_url('bug', 1017315),
                       body=json.dumps(example_return), status=200,
                       content_type='application/json', match_querystring=True)
         bugzilla = Bugsy("foo", "bar")
@@ -122,11 +122,11 @@ def test_we_can_add_single_email_to_cc_list():
 
     updated_bug = None
     with responses.RequestsMock() as rsps:
-        rsps.add(responses.PUT, 'https://bugzilla.mozilla.org/rest/bug/1017315?token=foobar',
+        rsps.add(responses.PUT, 'https://bugzilla.mozilla.org/rest/bug/1017315',
                     body=json.dumps(bug_dict), status=200,
                     content_type='application/json', match_querystring=True)
 
-        rsps.add(responses.GET, rest_url('bug', 1017315, token="foobar"),
+        rsps.add(responses.GET, rest_url('bug', 1017315),
                       body=json.dumps(bug_dict), status=200,
                       content_type='application/json', match_querystring=True)
 
@@ -144,10 +144,10 @@ def test_we_can_add_multiple_emails_to_cc_list():
     bug = None
     bugzilla = None
     with responses.RequestsMock() as rsps:
-        rsps.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login?login=foo&password=bar',
+        rsps.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login',
                           body='{"token": "foobar"}', status=200,
                           content_type='application/json', match_querystring=True)
-        rsps.add(responses.GET, rest_url('bug', 1017315, token="foobar"),
+        rsps.add(responses.GET, rest_url('bug', 1017315),
                       body=json.dumps(example_return), status=200,
                       content_type='application/json', match_querystring=True)
         bugzilla = Bugsy("foo", "bar")
@@ -161,11 +161,11 @@ def test_we_can_add_multiple_emails_to_cc_list():
 
     updated_bug = None
     with responses.RequestsMock() as rsps:
-        rsps.add(responses.PUT, 'https://bugzilla.mozilla.org/rest/bug/1017315?token=foobar',
+        rsps.add(responses.PUT, 'https://bugzilla.mozilla.org/rest/bug/1017315',
                     body=json.dumps(bug_dict), status=200,
                     content_type='application/json', match_querystring=True)
 
-        rsps.add(responses.GET, rest_url('bug', 1017315, token="foobar"),
+        rsps.add(responses.GET, rest_url('bug', 1017315),
                       body=json.dumps(bug_dict), status=200,
                       content_type='application/json', match_querystring=True)
 
@@ -183,10 +183,10 @@ def test_we_can_add_remove_an_email_to_cc_list():
     bug = None
     bugzilla = None
     with responses.RequestsMock() as rsps:
-        rsps.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login?login=foo&password=bar',
+        rsps.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login',
                           body='{"token": "foobar"}', status=200,
                           content_type='application/json', match_querystring=True)
-        rsps.add(responses.GET, rest_url('bug', 1017315, token="foobar"),
+        rsps.add(responses.GET, rest_url('bug', 1017315),
                       body=json.dumps(example_return), status=200,
                       content_type='application/json', match_querystring=True)
 
@@ -200,11 +200,11 @@ def test_we_can_add_remove_an_email_to_cc_list():
 
     updated_bug = None
     with responses.RequestsMock() as rsps:
-        rsps.add(responses.PUT, 'https://bugzilla.mozilla.org/rest/bug/1017315?token=foobar',
+        rsps.add(responses.PUT, 'https://bugzilla.mozilla.org/rest/bug/1017315',
                     body=json.dumps(bug_dict), status=200,
                     content_type='application/json', match_querystring=True)
 
-        rsps.add(responses.GET, rest_url('bug', 1017315, token="foobar"),
+        rsps.add(responses.GET, rest_url('bug', 1017315),
                       body=json.dumps(bug_dict), status=200,
                       content_type='application/json', match_querystring=True)
 
@@ -221,10 +221,10 @@ def test_we_can_remove_an_email_to_cc_list():
     bug = None
     bugzilla = None
     with responses.RequestsMock() as rsps:
-        rsps.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login?login=foo&password=bar',
+        rsps.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login',
                           body='{"token": "foobar"}', status=200,
                           content_type='application/json', match_querystring=True)
-        rsps.add(responses.GET, rest_url('bug', 1017315, token="foobar"),
+        rsps.add(responses.GET, rest_url('bug', 1017315),
                       body=json.dumps(example_return), status=200,
                       content_type='application/json', match_querystring=True)
 
@@ -237,11 +237,11 @@ def test_we_can_remove_an_email_to_cc_list():
 
     updated_bug = None
     with responses.RequestsMock() as rsps:
-        rsps.add(responses.PUT, 'https://bugzilla.mozilla.org/rest/bug/1017315?token=foobar',
+        rsps.add(responses.PUT, 'https://bugzilla.mozilla.org/rest/bug/1017315',
                     body=json.dumps(bug_dict), status=200,
                     content_type='application/json', match_querystring=True)
 
-        rsps.add(responses.GET, rest_url('bug', 1017315, token="foobar"),
+        rsps.add(responses.GET, rest_url('bug', 1017315),
                       body=json.dumps(bug_dict), status=200,
                       content_type='application/json', match_querystring=True)
 
@@ -327,11 +327,11 @@ def test_we_cant_update_unless_we_have_a_bug_id():
 
 @responses.activate
 def test_we_can_update_a_bug_with_login_token():
-  responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login?login=foo&password=bar',
+  responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login',
                         body='{"token": "foobar"}', status=200,
                         content_type='application/json', match_querystring=True)
 
-  responses.add(responses.GET, rest_url('bug', 1017315, token='foobar'),
+  responses.add(responses.GET, rest_url('bug', 1017315),
                     body=json.dumps(example_return), status=200,
                     content_type='application/json', match_querystring=True)
   bugzilla = Bugsy("foo", "bar")
@@ -340,7 +340,7 @@ def test_we_can_update_a_bug_with_login_token():
   bug_dict = copy.deepcopy(example_return)
   bug_dict['bugs'][0]['status'] = "REOPENED"
   responses.reset()
-  responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/bug/1017315?token=foobar',
+  responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/bug/1017315',
                     body=json.dumps(bug_dict), status=200,
                     content_type='application/json', match_querystring=True)
   bug.update()
@@ -350,11 +350,11 @@ def test_we_can_update_a_bug_with_login_token():
 
 @responses.activate
 def test_that_we_can_add_a_comment_to_a_bug_before_it_is_put():
-    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login?login=foo&password=bar',
+    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login',
                           body='{"token": "foobar"}', status=200,
                           content_type='application/json', match_querystring=True)
 
-    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/bug/1017315?token=foobar&include_fields=version&include_fields=id&include_fields=summary&include_fields=status&include_fields=op_sys&include_fields=resolution&include_fields=product&include_fields=component&include_fields=platform',
+    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/bug/1017315?include_fields=version&include_fields=id&include_fields=summary&include_fields=status&include_fields=op_sys&include_fields=resolution&include_fields=product&include_fields=component&include_fields=platform',
                       body=json.dumps(example_return), status=200,
                       content_type='application/json', match_querystring=True)
     bugzilla = Bugsy("foo", "bar")
@@ -365,24 +365,24 @@ def test_that_we_can_add_a_comment_to_a_bug_before_it_is_put():
     bug_dict = bug.to_dict().copy()
     bug_dict['id'] = 123123
 
-    responses.add(responses.POST, 'https://bugzilla.mozilla.org/rest/bug?token=foobar',
+    responses.add(responses.POST, 'https://bugzilla.mozilla.org/rest/bug',
                       body=json.dumps(bug_dict), status=200,
                       content_type='application/json', match_querystring=True)
     bugzilla.put(bug)
 
 @responses.activate
 def test_that_we_can_add_a_comment_to_an_existing_bug():
-    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login?login=foo&password=bar',
+    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login',
                           body='{"token": "foobar"}', status=200,
                           content_type='application/json', match_querystring=True)
 
-    responses.add(responses.GET, rest_url('bug', 1017315, token='foobar'),
+    responses.add(responses.GET, rest_url('bug', 1017315),
                       body=json.dumps(example_return), status=200,
                       content_type='application/json', match_querystring=True)
     bugzilla = Bugsy("foo", "bar")
     bug = bugzilla.get(1017315)
 
-    responses.add(responses.POST, 'https://bugzilla.mozilla.org/rest/bug/1017315/comment?token=foobar',
+    responses.add(responses.POST, 'https://bugzilla.mozilla.org/rest/bug/1017315/comment',
                       body=json.dumps({}), status=200,
                       content_type='application/json', match_querystring=True)
 
@@ -392,13 +392,13 @@ def test_that_we_can_add_a_comment_to_an_existing_bug():
 
 @responses.activate
 def test_comment_retrieval():
-    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login?login=foo&password=bar',
+    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login',
                         body='{"token": "foobar"}', status=200,
                         content_type='application/json', match_querystring=True)
-    responses.add(responses.GET, rest_url('bug', 1017315, token='foobar'),
+    responses.add(responses.GET, rest_url('bug', 1017315),
                       body=json.dumps(example_return), status=200,
                       content_type='application/json', match_querystring=True)
-    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/bug/1017315/comment?token=foobar',
+    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/bug/1017315/comment',
                     body=json.dumps(comments_return), status=200,
                     content_type='application/json', match_querystring=True)
 
@@ -420,11 +420,11 @@ def test_comment_retrieval():
 
 @responses.activate
 def test_we_raise_an_exception_when_getting_comments_and_bugzilla_errors():
-    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login?login=foo&password=bar',
+    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login',
                           body='{"token": "foobar"}', status=200,
                           content_type='application/json', match_querystring=True)
 
-    responses.add(responses.GET, rest_url('bug', 1017315, token='foobar'),
+    responses.add(responses.GET, rest_url('bug', 1017315),
                       body=json.dumps(example_return), status=200,
                       content_type='application/json', match_querystring=True)
     bugzilla = Bugsy("foo", "bar")
@@ -435,7 +435,7 @@ def test_we_raise_an_exception_when_getting_comments_and_bugzilla_errors():
                       'documentation': u'http://www.bugzilla.org/docs/tip/en/html/api/',
                        'error': True}
 
-    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/bug/1017315/comment?token=foobar',
+    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/bug/1017315/comment',
                     body=json.dumps(error_response), status=400,
                     content_type='application/json', match_querystring=True)
     try:
@@ -446,11 +446,11 @@ def test_we_raise_an_exception_when_getting_comments_and_bugzilla_errors():
 
 @responses.activate
 def test_we_raise_an_exception_if_commenting_on_a_bug_that_returns_an_error():
-    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login?login=foo&password=bar',
+    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login',
                           body='{"token": "foobar"}', status=200,
                           content_type='application/json', match_querystring=True)
 
-    responses.add(responses.GET, rest_url('bug', 1017315, token='foobar'),
+    responses.add(responses.GET, rest_url('bug', 1017315),
                       body=json.dumps(example_return), status=200,
                       content_type='application/json', match_querystring=True)
     bugzilla = Bugsy("foo", "bar")
@@ -462,7 +462,7 @@ def test_we_raise_an_exception_if_commenting_on_a_bug_that_returns_an_error():
                       'message': 'Bug 1017315 does not exist.',
                       'documentation': 'http://www.bugzilla.org/docs/tip/en/html/api/',
                       'error': True}
-    responses.add(responses.POST, 'https://bugzilla.mozilla.org/rest/bug/1017315/comment?token=foobar',
+    responses.add(responses.POST, 'https://bugzilla.mozilla.org/rest/bug/1017315/comment',
                       body=json.dumps(error_response), status=404,
                       content_type='application/json', match_querystring=True)
     try:
@@ -475,23 +475,23 @@ def test_we_raise_an_exception_if_commenting_on_a_bug_that_returns_an_error():
 
 @responses.activate
 def test_we_can_add_tags_to_bug_comments():
-    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login?login=foo&password=bar',
+    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login',
                           body='{"token": "foobar"}', status=200,
                           content_type='application/json', match_querystring=True)
 
-    responses.add(responses.GET, rest_url('bug', 1017315, token='foobar'),
+    responses.add(responses.GET, rest_url('bug', 1017315),
                       body=json.dumps(example_return), status=200,
                       content_type='application/json', match_querystring=True)
     bugzilla = Bugsy("foo", "bar")
     bug = bugzilla.get(1017315)
 
-    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/bug/1017315/comment?token=foobar',
+    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/bug/1017315/comment',
                     body=json.dumps(comments_return), status=200,
                     content_type='application/json', match_querystring=True)
 
     comments = bug.get_comments()
 
-    responses.add(responses.PUT, 'https://bugzilla.mozilla.org/rest/bug/comment/8589785/tags?token=foobar',
+    responses.add(responses.PUT, 'https://bugzilla.mozilla.org/rest/bug/comment/8589785/tags',
                     body=json.dumps(["spam","foo"]), status=200,
                     content_type='application/json', match_querystring=True)
     comments[0].add_tags("foo")
@@ -500,23 +500,23 @@ def test_we_can_add_tags_to_bug_comments():
 
 @responses.activate
 def test_we_can_remove_tags_to_bug_comments():
-    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login?login=foo&password=bar',
+    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login',
                           body='{"token": "foobar"}', status=200,
                           content_type='application/json', match_querystring=True)
 
-    responses.add(responses.GET, rest_url('bug', 1017315, token='foobar'),
+    responses.add(responses.GET, rest_url('bug', 1017315),
                       body=json.dumps(example_return), status=200,
                       content_type='application/json', match_querystring=True)
     bugzilla = Bugsy("foo", "bar")
     bug = bugzilla.get(1017315)
 
-    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/bug/1017315/comment?token=foobar',
+    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/bug/1017315/comment',
                     body=json.dumps(comments_return), status=200,
                     content_type='application/json', match_querystring=True)
 
     comments = bug.get_comments()
 
-    responses.add(responses.PUT, 'https://bugzilla.mozilla.org/rest/bug/comment/8589785/tags?token=foobar',
+    responses.add(responses.PUT, 'https://bugzilla.mozilla.org/rest/bug/comment/8589785/tags',
                     body=json.dumps(["spam","foo"]), status=200,
                     content_type='application/json', match_querystring=True)
     comments[0].remove_tags("foo")

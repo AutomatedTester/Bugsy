@@ -108,12 +108,11 @@ def test_we_only_ask_for_the_include_fields_while_logged_in():
             }
          ]
       }
-  responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login?login=foo&password=bar',
+  responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login',
                     body='{"token": "foobar"}', status=200,
                     content_type='application/json', match_querystring=True)
 
   url_params = dict(
-    token='foobar',
     include_fields=Bugsy.DEFAULT_SEARCH + ['flags'],
   )
   responses.add(responses.GET, rest_url('bug', **url_params),

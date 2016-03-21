@@ -40,16 +40,16 @@ def test_bugsyexception_raised_for_http_503_when_verifying_api_key():
 
 @responses.activate
 def test_bugsyexception_raised_for_http_500_when_commenting_on_a_bug():
-    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login?login=foo&password=bar',
+    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login',
                   body='{"token": "foobar"}', status=200,
                   content_type='application/json', match_querystring=True)
-    responses.add(responses.GET, rest_url('bug', 1017315, token='foobar'),
+    responses.add(responses.GET, rest_url('bug', 1017315),
                   body=json.dumps(example_return), status=200,
                   content_type='application/json', match_querystring=True)
     bugzilla = Bugsy("foo", "bar")
     bug = bugzilla.get(1017315)
 
-    responses.add(responses.POST, 'https://bugzilla.mozilla.org/rest/bug/1017315/comment?token=foobar',
+    responses.add(responses.POST, 'https://bugzilla.mozilla.org/rest/bug/1017315/comment',
                       body='Internal Server Error', status=500,
                       content_type='text/html', match_querystring=True)
     with pytest.raises(BugsyException) as e:
@@ -59,25 +59,25 @@ def test_bugsyexception_raised_for_http_500_when_commenting_on_a_bug():
 
 @responses.activate
 def test_bugsyexception_raised_for_http_500_when_adding_tags_to_bug_comments():
-    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login?login=foo&password=bar',
+    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login',
                           body='{"token": "foobar"}', status=200,
                           content_type='application/json', match_querystring=True)
 
-    responses.add(responses.GET, rest_url('bug', 1017315, token='foobar'),
+    responses.add(responses.GET, rest_url('bug', 1017315),
                       body=json.dumps(example_return), status=200,
                       content_type='application/json', match_querystring=True)
     bugzilla = Bugsy("foo", "bar")
     bug = bugzilla.get(1017315)
 
-    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/bug/1017315/comment?token=foobar',
+    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/bug/1017315/comment',
                     body=json.dumps(comments_return), status=200,
                     content_type='application/json', match_querystring=True)
 
     comments = bug.get_comments()
 
-    responses.add(responses.PUT, 'https://bugzilla.mozilla.org/rest/bug/comment/8589785/tags?token=foobar',
+    responses.add(responses.PUT, 'https://bugzilla.mozilla.org/rest/bug/comment/8589785/tags',
                     body='Internal Server Error', status=500,
-                    content_type='text/html', match_querystring=True)
+                    content_type='application/json', match_querystring=True)
     with pytest.raises(BugsyException) as e:
         comments[0].add_tags("foo")
     assert str(e.value) == "Message: We received a 500 error with the following: Internal Server Error Code: None"
