@@ -102,6 +102,155 @@ def test_we_can_get_get_cc_list():
     assert [u"coop@mozilla.com", u"dburns@mozilla.com",
             u"jlund@mozilla.com", u"mdas@mozilla.com"] == cced
 
+@responses.activate
+def test_we_can_add_single_email_to_cc_list():
+    bug = None
+    bugzilla = None
+    with responses.RequestsMock() as rsps:
+        rsps.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login?login=foo&password=bar',
+                          body='{"token": "foobar"}', status=200,
+                          content_type='application/json', match_querystring=True)
+        rsps.add(responses.GET, rest_url('bug', 1017315, token="foobar"),
+                      body=json.dumps(example_return), status=200,
+                      content_type='application/json', match_querystring=True)
+        bugzilla = Bugsy("foo", "bar")
+        bug = bugzilla.get(1017315)
+    import copy
+    bug_dict = copy.deepcopy(example_return)
+    bug_dict['bugs'][0]['cc_detail'].append({u'id': 438921, u'email': u'automatedtester@mozilla.com',
+                                u'name': u'automatedtester@mozilla.com ', u'real_name': u'AutomatedTester'})
+
+    updated_bug = None
+    with responses.RequestsMock() as rsps:
+        rsps.add(responses.PUT, 'https://bugzilla.mozilla.org/rest/bug/1017315?token=foobar',
+                    body=json.dumps(bug_dict), status=200,
+                    content_type='application/json', match_querystring=True)
+
+        rsps.add(responses.GET, rest_url('bug', 1017315, token="foobar"),
+                      body=json.dumps(bug_dict), status=200,
+                      content_type='application/json', match_querystring=True)
+
+        bug.cc = "automatedtester@mozilla.com"
+        updated_bug = bugzilla.put(bug)
+
+    cced = updated_bug.cc
+    assert isinstance(cced, list)
+    assert [u"coop@mozilla.com", u"dburns@mozilla.com",
+            u"jlund@mozilla.com", u"mdas@mozilla.com",
+            u"automatedtester@mozilla.com"] == cced
+
+@responses.activate
+def test_we_can_add_multiple_emails_to_cc_list():
+    bug = None
+    bugzilla = None
+    with responses.RequestsMock() as rsps:
+        rsps.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login?login=foo&password=bar',
+                          body='{"token": "foobar"}', status=200,
+                          content_type='application/json', match_querystring=True)
+        rsps.add(responses.GET, rest_url('bug', 1017315, token="foobar"),
+                      body=json.dumps(example_return), status=200,
+                      content_type='application/json', match_querystring=True)
+        bugzilla = Bugsy("foo", "bar")
+        bug = bugzilla.get(1017315)
+    import copy
+    bug_dict = copy.deepcopy(example_return)
+    bug_dict['bugs'][0]['cc_detail'].append({u'id': 438921, u'email': u'automatedtester@mozilla.com',
+                                u'name': u'automatedtester@mozilla.com ', u'real_name': u'AutomatedTester'})
+    bug_dict['bugs'][0]['cc_detail'].append({u'id': 438922, u'email': u'foobar@mozilla.com',
+                                u'name': u'foobar@mozilla.com ', u'real_name': u'Foobar'})
+
+    updated_bug = None
+    with responses.RequestsMock() as rsps:
+        rsps.add(responses.PUT, 'https://bugzilla.mozilla.org/rest/bug/1017315?token=foobar',
+                    body=json.dumps(bug_dict), status=200,
+                    content_type='application/json', match_querystring=True)
+
+        rsps.add(responses.GET, rest_url('bug', 1017315, token="foobar"),
+                      body=json.dumps(bug_dict), status=200,
+                      content_type='application/json', match_querystring=True)
+
+        bug.cc = ["automatedtester@mozilla.com", "foobar@mozilla.com"]
+        updated_bug = bugzilla.put(bug)
+
+    cced = updated_bug.cc
+    assert isinstance(cced, list)
+    assert [u"coop@mozilla.com", u"dburns@mozilla.com",
+            u"jlund@mozilla.com", u"mdas@mozilla.com",
+            u"automatedtester@mozilla.com", u"foobar@mozilla.com"] == cced
+
+@responses.activate
+def test_we_can_add_remove_an_email_to_cc_list():
+    bug = None
+    bugzilla = None
+    with responses.RequestsMock() as rsps:
+        rsps.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login?login=foo&password=bar',
+                          body='{"token": "foobar"}', status=200,
+                          content_type='application/json', match_querystring=True)
+        rsps.add(responses.GET, rest_url('bug', 1017315, token="foobar"),
+                      body=json.dumps(example_return), status=200,
+                      content_type='application/json', match_querystring=True)
+
+        bugzilla = Bugsy("foo", "bar")
+        bug = bugzilla.get(1017315)
+    import copy
+    bug_dict = copy.deepcopy(example_return)
+    bug_dict['bugs'][0]['cc_detail'].remove([person for person in bug_dict['bugs'][0]['cc_detail'] if person['id'] == 397261][0])
+    bug_dict['bugs'][0]['cc_detail'].append({u'id': 438921, u'email': u'automatedtester@mozilla.com',
+                                u'name': u'automatedtester@mozilla.com ', u'real_name': u'AutomatedTester'})
+
+    updated_bug = None
+    with responses.RequestsMock() as rsps:
+        rsps.add(responses.PUT, 'https://bugzilla.mozilla.org/rest/bug/1017315?token=foobar',
+                    body=json.dumps(bug_dict), status=200,
+                    content_type='application/json', match_querystring=True)
+
+        rsps.add(responses.GET, rest_url('bug', 1017315, token="foobar"),
+                      body=json.dumps(bug_dict), status=200,
+                      content_type='application/json', match_querystring=True)
+
+        bug.cc = ["automatedtester@mozilla.com", "dburns@mozilla.com-"]
+        updated_bug = bugzilla.put(bug)
+
+    cced = updated_bug.cc
+    assert isinstance(cced, list)
+    assert [u"coop@mozilla.com", u"jlund@mozilla.com",
+            u"mdas@mozilla.com", u"automatedtester@mozilla.com"] == cced
+
+@responses.activate
+def test_we_can_remove_an_email_to_cc_list():
+    bug = None
+    bugzilla = None
+    with responses.RequestsMock() as rsps:
+        rsps.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login?login=foo&password=bar',
+                          body='{"token": "foobar"}', status=200,
+                          content_type='application/json', match_querystring=True)
+        rsps.add(responses.GET, rest_url('bug', 1017315, token="foobar"),
+                      body=json.dumps(example_return), status=200,
+                      content_type='application/json', match_querystring=True)
+
+        bugzilla = Bugsy("foo", "bar")
+        bug = bugzilla.get(1017315)
+    import copy
+    bug_dict = copy.deepcopy(example_return)
+    bug_dict['bugs'][0]['cc_detail'].remove([person for person in bug_dict['bugs'][0]['cc_detail'] if person['id'] == 397261][0])
+    bug_dict['bugs'][0]['cc_detail'].remove([person for person in bug_dict['bugs'][0]['cc_detail'] if person['id'] == 418814][0])
+
+    updated_bug = None
+    with responses.RequestsMock() as rsps:
+        rsps.add(responses.PUT, 'https://bugzilla.mozilla.org/rest/bug/1017315?token=foobar',
+                    body=json.dumps(bug_dict), status=200,
+                    content_type='application/json', match_querystring=True)
+
+        rsps.add(responses.GET, rest_url('bug', 1017315, token="foobar"),
+                      body=json.dumps(bug_dict), status=200,
+                      content_type='application/json', match_querystring=True)
+
+        bug.cc = ["automatedtester@mozilla.com", "dburns@mozilla.com-"]
+        updated_bug = bugzilla.put(bug)
+
+    cced = updated_bug.cc
+    assert isinstance(cced, list)
+    assert [u"coop@mozilla.com", u"jlund@mozilla.com"] == cced
 
 def test_we_throw_an_error_for_invalid_status_types():
     bug = Bug(**example_return['bugs'][0])

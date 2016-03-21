@@ -233,6 +233,45 @@ class Bug(object):
         cc_list = [cc_detail['email'] for cc_detail in self._bug['cc_detail']]
         return cc_list
 
+    @cc.setter
+    def cc(self, value):
+        """
+            Property to add or remove people from the cc list.
+
+            To add people to the cc list
+            >>> bug.cc = "automatedtester@mozilla.com"
+
+            or
+            >>> bug.cc = ["automatedtester@mozilla.com", "dburns@mozilla.com"]
+
+            If you want to remove an email from the list, the last character of
+            the email address nees to be a `-`. For Example:
+
+            >>> bug.cc = "automatedtester@mozilla.com-"
+            # Removes an email.
+
+            You can mix adding and removing
+            >>> bug.cc = ["automatedtester@mozilla.com", "dburns@mozilla.com-"]
+        """
+        result = {}
+        if not isinstance(value, list):
+            if value[-1] == "-":
+                result = {"remove": [value[:-1]]}
+            else:
+                result = {"add": [value]}
+        else:
+            addin = []
+            removin = []
+            for val in value:
+                if val[-1] == "-":
+                    removin.append(val[:-1])
+                else:
+                    addin.append(val)
+
+            result = {"add": addin,
+                      "remove": removin}
+        self._bug['cc'] = result
+
     @property
     def keywords(self):
         """
