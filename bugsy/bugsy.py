@@ -150,7 +150,7 @@ class Bugsy(object):
                                  " to Bugzilla")
 
         if not bug.id:
-            result = self.request('bug', 'POST', data=bug.to_dict())
+            result = self.request('bug', 'POST', json=bug.to_dict())
             if 'error' not in result:
                 bug._bug['id'] = result['id']
                 bug._bugsy = self
@@ -164,7 +164,7 @@ class Bugsy(object):
                 raise BugsyException(result['message'])
         else:
             result = self.request('bug/%s' % bug.id, 'PUT',
-                                  data=bug.to_dict())
+                                  json=bug.to_dict())
             updated_bug = self.get(bug.id)
             return updated_bug
 
