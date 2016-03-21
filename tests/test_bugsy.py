@@ -33,7 +33,7 @@ def test_we_cant_post_without_a_username_or_password():
 
 @responses.activate
 def test_we_get_a_login_exception_when_details_are_wrong():
-    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login?login=foo&password=bar',
+    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login',
                       body='{"message": "The username or password you entered is not valid."}', status=400,
                       content_type='application/json', match_querystring=True)
     try:
@@ -41,11 +41,14 @@ def test_we_get_a_login_exception_when_details_are_wrong():
         assert 1 == 0, "Should have thrown an error"
     except LoginException as e:
         assert str(e) == "Message: The username or password you entered is not valid. Code: None"
+        assert responses.calls[0].request.headers['X-Bugzilla-Login'] == 'foo'
+        assert (responses.calls[0].request.headers['X-Bugzilla-Password'] ==
+                'bar')
 
 @responses.activate
 def test_bad_api_key():
     responses.add(responses.GET,
-                  'https://bugzilla.mozilla.org/rest/valid_login?login=foo&api_key=badkey',
+                  'https://bugzilla.mozilla.org/rest/valid_login?login=foo',
                   body='{"documentation":"http://www.bugzilla.org/docs/tip/en/html/api/","error":true,"code":306,"message":"The API key you specified is invalid. Please check that you typed it correctly."}',
                   status=400,
                   content_type='application/json', match_querystring=True)
@@ -54,18 +57,22 @@ def test_bad_api_key():
         assert False, 'Should have thrown'
     except LoginException as e:
         assert str(e) == 'Message: The API key you specified is invalid. Please check that you typed it correctly. Code: 306'
+    assert (responses.calls[0].request.headers['X-Bugzilla-API-Key'] ==
+            'badkey')
 
 @responses.activate
 def test_validate_api_key():
     responses.add(responses.GET,
-                  'https://bugzilla.mozilla.org/rest/valid_login?login=foo&api_key=goodkey',
+                  'https://bugzilla.mozilla.org/rest/valid_login?login=foo',
                   body='true', status=200, content_type='application/json',
                   match_querystring=True)
     Bugsy(username='foo', api_key='goodkey')
+    assert (responses.calls[0].request.headers['X-Bugzilla-API-Key'] ==
+            'goodkey')
 
 @responses.activate
 def test_we_cant_post_without_passing_a_bug_object():
-    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login?login=foo&password=bar',
+    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login',
                       body='{"token": "foobar"}', status=200,
                       content_type='application/json', match_querystring=True)
     bugzilla = Bugsy("foo", "bar")
@@ -88,11 +95,10 @@ def test_we_can_get_a_bug():
 
 @responses.activate
 def test_we_can_get_a_bug_with_login_token():
-  responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login?login=foo&password=bar',
+  responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login',
                         body='{"token": "foobar"}', status=200,
                         content_type='application/json', match_querystring=True)
-
-  responses.add(responses.GET, rest_url('bug', 1017315, token='foobar'),
+  responses.add(responses.GET, rest_url('bug', 1017315),
                     body=json.dumps(example_return), status=200,
                     content_type='application/json', match_querystring=True)
   bugzilla = Bugsy("foo", "bar")
@@ -100,21 +106,23 @@ def test_we_can_get_a_bug_with_login_token():
   assert bug.id == 1017315
   assert bug.status == 'RESOLVED'
   assert bug.summary == 'Schedule Mn tests on opt Linux builds on cedar'
+  assert responses.calls[1].request.headers['X-Bugzilla-Token'] == 'foobar'
 
 @responses.activate
 def test_we_can_get_username_with_userid_cookie():
-  responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/user/1234?token=1234-abcd',
+  responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/user/1234',
                         body='{"users": [{"name": "user@example.com"}]}', status=200,
                         content_type='application/json', match_querystring=True)
 
   bugzilla = Bugsy(userid='1234', cookie='abcd')
   assert bugzilla.username == 'user@example.com'
+  assert responses.calls[0].request.headers['X-Bugzilla-Token'] == '1234-abcd'
 
 @responses.activate
 def test_we_can_create_a_new_remote_bug():
     bug = Bug()
     bug.summary = "I like foo"
-    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login?login=foo&password=bar',
+    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login',
                       body='{"token": "foobar"}', status=200,
                       content_type='application/json', match_querystring=True)
     bug_dict = bug.to_dict().copy()
@@ -128,7 +136,7 @@ def test_we_can_create_a_new_remote_bug():
 
 @responses.activate
 def test_we_can_put_a_current_bug():
-    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login?login=foo&password=bar',
+    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login',
                       body='{"token": "foobar"}', status=200,
                       content_type='application/json', match_querystring=True)
     bug_dict = example_return.copy()
@@ -136,7 +144,7 @@ def test_we_can_put_a_current_bug():
     responses.add(responses.PUT, 'https://bugzilla.mozilla.org/rest/bug/1017315',
                       body=json.dumps(bug_dict), status=200,
                       content_type='application/json')
-    responses.add(responses.GET, rest_url('bug', 1017315, token="foobar"),
+    responses.add(responses.GET, rest_url('bug', 1017315),
                       body=json.dumps(example_return), status=200,
                       content_type='application/json', match_querystring=True)
     bugzilla = Bugsy("foo", "bar")
@@ -150,7 +158,7 @@ def test_we_can_put_a_current_bug():
 
 @responses.activate
 def test_we_handle_errors_from_bugzilla_when_posting():
-  responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login?login=foo&password=bar',
+  responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login',
                     body='{"token": "foobar"}', status=200,
                     content_type='application/json', match_querystring=True)
   responses.add(responses.POST, 'https://bugzilla.mozilla.org/rest/bug',
@@ -167,7 +175,7 @@ def test_we_handle_errors_from_bugzilla_when_posting():
 
 @responses.activate
 def test_we_handle_errors_from_bugzilla_when_updating_a_bug():
-  responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login?login=foo&password=bar',
+  responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login',
                     body='{"token": "foobar"}', status=200,
                     content_type='application/json', match_querystring=True)
   responses.add(responses.PUT, 'https://bugzilla.mozilla.org/rest/bug/1017315',
@@ -185,7 +193,7 @@ def test_we_handle_errors_from_bugzilla_when_updating_a_bug():
 
 @responses.activate
 def test_we_can_set_the_user_agent_to_bugsy():
-  responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login?login=foo&password=bar',
+  responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login',
                     body='{"token": "foobar"}', status=200,
                     content_type='application/json', match_querystring=True)
   Bugsy("foo", "bar")
@@ -217,7 +225,7 @@ def test_we_can_know_when_bugsy_is_not_authenticated():
 
 @responses.activate
 def test_we_can_know_when_bugsy_is_authenticated_using_password():
-    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login?login=foo&password=bar',
+    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login',
                     body='{"token": "foobar"}', status=200,
                     content_type='application/json', match_querystring=True)
     bugzilla = Bugsy("foo", "bar")
@@ -226,7 +234,7 @@ def test_we_can_know_when_bugsy_is_authenticated_using_password():
 @responses.activate
 def test_we_can_know_when_bugsy_is_authenticated_using_apikey():
     responses.add(responses.GET,
-                  'https://bugzilla.mozilla.org/rest/valid_login?login=foo&api_key=goodkey',
+                  'https://bugzilla.mozilla.org/rest/valid_login?login=foo',
                   body='true', status=200, content_type='application/json',
                   match_querystring=True)
     bugzilla = Bugsy(username='foo', api_key='goodkey')
