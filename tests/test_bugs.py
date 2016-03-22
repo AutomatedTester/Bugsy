@@ -399,11 +399,83 @@ def test_we_can_get_depends_on_list():
     assert isinstance(depends_on, list)
     assert depends_on == [123456]
 
+@responses.activate
+def test_we_can_add_and_remove_depends_on():
+    bug = None
+    bugzilla = None
+    with responses.RequestsMock() as rsps:
+        rsps.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login',
+                          body='{"token": "foobar"}', status=200,
+                          content_type='application/json', match_querystring=True)
+        rsps.add(responses.GET, rest_url('bug', 1017315),
+                      body=json.dumps(example_return), status=200,
+                      content_type='application/json', match_querystring=True)
+
+        bugzilla = Bugsy("foo", "bar")
+        bug = bugzilla.get(1017315)
+    import copy
+    bug_dict = copy.deepcopy(example_return)
+    bug_dict['bugs'][0]['depends_on'].remove(123456)
+    bug_dict['bugs'][0]['depends_on'].append(145123)
+
+    updated_bug = None
+    with responses.RequestsMock() as rsps:
+        rsps.add(responses.PUT, 'https://bugzilla.mozilla.org/rest/bug/1017315',
+                    body=json.dumps(bug_dict), status=200,
+                    content_type='application/json', match_querystring=True)
+
+        rsps.add(responses.GET, rest_url('bug', 1017315),
+                      body=json.dumps(bug_dict), status=200,
+                      content_type='application/json', match_querystring=True)
+
+        bug.depends_on = ["123456-", "145123"]
+        updated_bug = bugzilla.put(bug)
+
+    deps = updated_bug.depends_on
+    assert isinstance(deps, list)
+    assert [145123] == deps
+
 def test_we_can_get_blocks_list():
     bug = Bug(**example_return['bugs'][0])
     blocks = bug.blocks
     assert isinstance(blocks, list)
     assert blocks == [654321]
+
+@responses.activate
+def test_we_can_add_and_remove_blocks():
+    bug = None
+    bugzilla = None
+    with responses.RequestsMock() as rsps:
+        rsps.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login',
+                          body='{"token": "foobar"}', status=200,
+                          content_type='application/json', match_querystring=True)
+        rsps.add(responses.GET, rest_url('bug', 1017315),
+                      body=json.dumps(example_return), status=200,
+                      content_type='application/json', match_querystring=True)
+
+        bugzilla = Bugsy("foo", "bar")
+        bug = bugzilla.get(1017315)
+    import copy
+    bug_dict = copy.deepcopy(example_return)
+    bug_dict['bugs'][0]['blocks'].remove(654321)
+    bug_dict['bugs'][0]['blocks'].append(145123)
+
+    updated_bug = None
+    with responses.RequestsMock() as rsps:
+        rsps.add(responses.PUT, 'https://bugzilla.mozilla.org/rest/bug/1017315',
+                    body=json.dumps(bug_dict), status=200,
+                    content_type='application/json', match_querystring=True)
+
+        rsps.add(responses.GET, rest_url('bug', 1017315),
+                      body=json.dumps(bug_dict), status=200,
+                      content_type='application/json', match_querystring=True)
+
+        bug.blocks = ["654321-", "145123"]
+        updated_bug = bugzilla.put(bug)
+
+    deps = updated_bug.blocks
+    assert isinstance(deps, list)
+    assert [145123] == deps
 
 @responses.activate
 def test_we_can_update_a_bug_from_bugzilla():

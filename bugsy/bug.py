@@ -301,6 +301,28 @@ class Bug(object):
         depends_on = [dep for dep in self._bug['depends_on']]
         return depends_on
 
+    @depends_on.setter
+    def depends_on(self, value):
+        """
+            Property to add or remove dependent bugs.
+
+            To add dependent bugs
+            >>> bug.depends_on = 145678
+
+            or
+            >>> bug.depends_on = [145678, 999999]
+
+            If you want to remove a depends on from the list, the last character of
+            the keyword  needs to be a `-`. For Example:
+
+            >>> bug.depends_on = "123456-"
+            # Removes a dependent bug.
+
+            You can mix adding and removing
+            >>> bug.depends_on = ["99999", "123456-"]
+        """
+        self._bug['depends_on'] = self._process_setter(value)
+
     @property
     def blocks(self):
         """
@@ -312,6 +334,27 @@ class Bug(object):
         """
         depends_on = [dep for dep in self._bug['blocks']]
         return depends_on
+
+    @blocks.setter
+    def blocks(self, value):
+        """
+            Property to add or remove blocking bugs.
+
+            To add blocking bugs
+            >>> bug.blocks = 145678
+
+            or
+            >>> bug.blocks = [145678, 999999]
+
+            If you want to remove a blocking bug on from the list, the last character of
+            the keyword  needs to be a `-`. For Example:
+
+            >>> bug.blocks = "123456-"
+            # Removes a blocking bug.
+
+            You can mix adding and removing
+        """
+        self._bug['blocks'] = self._process_setter(value)
 
     def to_dict(self):
         """
@@ -376,6 +419,8 @@ class Bug(object):
     def _process_setter(self, value):
         result = {}
         if not isinstance(value, list):
+            if isinstance(value, int):
+                value = str(value)
             if value[-1] == "-":
                 result = {"remove": [value[:-1]]}
             else:
@@ -384,6 +429,8 @@ class Bug(object):
             addin = []
             removin = []
             for val in value:
+                if isinstance(value, int):
+                    value = str(value)
                 if val[-1] == "-":
                     removin.append(val[:-1])
                 else:
