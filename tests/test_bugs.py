@@ -91,6 +91,110 @@ def test_we_can_get_get_the_keywords():
     keywords = bug.keywords
     assert [u'regression'] == keywords
 
+@responses.activate
+def test_we_can_add_single_keyword():
+    bug = None
+    bugzilla = None
+    with responses.RequestsMock() as rsps:
+        rsps.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login',
+                          body='{"token": "foobar"}', status=200,
+                          content_type='application/json', match_querystring=True)
+        rsps.add(responses.GET, rest_url('bug', 1017315),
+                      body=json.dumps(example_return), status=200,
+                      content_type='application/json', match_querystring=True)
+        bugzilla = Bugsy("foo", "bar")
+        bug = bugzilla.get(1017315)
+    import copy
+    bug_dict = copy.deepcopy(example_return)
+    bug_dict['bugs'][0]['keywords'].append("ateam-marionette-server")
+
+    updated_bug = None
+    with responses.RequestsMock() as rsps:
+        rsps.add(responses.PUT, 'https://bugzilla.mozilla.org/rest/bug/1017315',
+                    body=json.dumps(bug_dict), status=200,
+                    content_type='application/json', match_querystring=True)
+
+        rsps.add(responses.GET, rest_url('bug', 1017315),
+                      body=json.dumps(bug_dict), status=200,
+                      content_type='application/json', match_querystring=True)
+
+        bug.keywords = "ateam-marionette-server"
+        updated_bug = bugzilla.put(bug)
+
+    keywords = updated_bug.keywords
+    assert isinstance(keywords, list)
+    assert [u"regression", u"ateam-marionette-server"] == keywords
+
+@responses.activate
+def test_we_can_add_multiple_keywords_to_list():
+    bug = None
+    bugzilla = None
+    with responses.RequestsMock() as rsps:
+        rsps.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login',
+                          body='{"token": "foobar"}', status=200,
+                          content_type='application/json', match_querystring=True)
+        rsps.add(responses.GET, rest_url('bug', 1017315),
+                      body=json.dumps(example_return), status=200,
+                      content_type='application/json', match_querystring=True)
+        bugzilla = Bugsy("foo", "bar")
+        bug = bugzilla.get(1017315)
+    import copy
+    bug_dict = copy.deepcopy(example_return)
+    bug_dict['bugs'][0]['keywords'].append("intermittent")
+    bug_dict['bugs'][0]['keywords'].append("ateam-marionette-server")
+
+    updated_bug = None
+    with responses.RequestsMock() as rsps:
+        rsps.add(responses.PUT, 'https://bugzilla.mozilla.org/rest/bug/1017315',
+                    body=json.dumps(bug_dict), status=200,
+                    content_type='application/json', match_querystring=True)
+
+        rsps.add(responses.GET, rest_url('bug', 1017315),
+                      body=json.dumps(bug_dict), status=200,
+                      content_type='application/json', match_querystring=True)
+
+        bug.keywords = ["intermittent", "ateam-marionette-server"]
+        updated_bug = bugzilla.put(bug)
+
+    keywords = updated_bug.keywords
+    assert isinstance(keywords, list)
+    assert ["regression", "intermittent", "ateam-marionette-server"] == keywords
+
+@responses.activate
+def test_we_can_add_remove_a_keyword_list():
+    bug = None
+    bugzilla = None
+    with responses.RequestsMock() as rsps:
+        rsps.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login',
+                          body='{"token": "foobar"}', status=200,
+                          content_type='application/json', match_querystring=True)
+        rsps.add(responses.GET, rest_url('bug', 1017315),
+                      body=json.dumps(example_return), status=200,
+                      content_type='application/json', match_querystring=True)
+
+        bugzilla = Bugsy("foo", "bar")
+        bug = bugzilla.get(1017315)
+    import copy
+    bug_dict = copy.deepcopy(example_return)
+    bug_dict['bugs'][0]['keywords'].remove("regression")
+
+    updated_bug = None
+    with responses.RequestsMock() as rsps:
+        rsps.add(responses.PUT, 'https://bugzilla.mozilla.org/rest/bug/1017315',
+                    body=json.dumps(bug_dict), status=200,
+                    content_type='application/json', match_querystring=True)
+
+        rsps.add(responses.GET, rest_url('bug', 1017315),
+                      body=json.dumps(bug_dict), status=200,
+                      content_type='application/json', match_querystring=True)
+
+        bug.keyword = ["regression-"]
+        updated_bug = bugzilla.put(bug)
+
+    keywords = updated_bug.keywords
+    assert isinstance(keywords, list)
+    assert [] == keywords
+
 def test_we_can_get_Product_we_set():
     bug = Bug(product="firefox")
     assert bug.product == "firefox"

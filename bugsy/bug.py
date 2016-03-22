@@ -245,7 +245,7 @@ class Bug(object):
             >>> bug.cc = ["automatedtester@mozilla.com", "dburns@mozilla.com"]
 
             If you want to remove an email from the list, the last character of
-            the email address nees to be a `-`. For Example:
+            the email address needs to be a `-`. For Example:
 
             >>> bug.cc = "automatedtester@mozilla.com-"
             # Removes an email.
@@ -266,6 +266,28 @@ class Bug(object):
         """
         keywords = [keyword for keyword in self._bug['keywords']]
         return keywords
+
+    @keywords.setter
+    def keywords(self, value):
+        """
+            Property to add or remove keywords.
+
+            To add keywords
+            >>> bug.keywords = "ateam-marionette-runner"
+
+            or
+            >>> bug.keywords = ["intermittent", ateam-marionette-runner]
+
+            If you want to remove a keyword from the list, the last character of
+            the keyword  needs to be a `-`. For Example:
+
+            >>> bug.keyword = "regression-"
+            # Removes a keyword.
+
+            You can mix adding and removing
+            >>> bug.keywords = ["intermittent", "regression-"]
+        """
+        self._bug['keywords'] = self._process_setter(value)
 
     @property
     def depends_on(self):
