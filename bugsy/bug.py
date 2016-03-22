@@ -253,24 +253,7 @@ class Bug(object):
             You can mix adding and removing
             >>> bug.cc = ["automatedtester@mozilla.com", "dburns@mozilla.com-"]
         """
-        result = {}
-        if not isinstance(value, list):
-            if value[-1] == "-":
-                result = {"remove": [value[:-1]]}
-            else:
-                result = {"add": [value]}
-        else:
-            addin = []
-            removin = []
-            for val in value:
-                if val[-1] == "-":
-                    removin.append(val[:-1])
-                else:
-                    addin.append(val)
-
-            result = {"add": addin,
-                      "remove": removin}
-        self._bug['cc'] = result
+        self._bug['cc'] = self._process_setter(value)
 
     @property
     def keywords(self):
@@ -367,6 +350,27 @@ class Bug(object):
                                 )
         else:
             self._bug['comment'] = comment
+
+    def _process_setter(self, value):
+        result = {}
+        if not isinstance(value, list):
+            if value[-1] == "-":
+                result = {"remove": [value[:-1]]}
+            else:
+                result = {"add": [value]}
+        else:
+            addin = []
+            removin = []
+            for val in value:
+                if val[-1] == "-":
+                    removin.append(val[:-1])
+                else:
+                    addin.append(val)
+
+            result = {"add": addin,
+                      "remove": removin}
+
+        return result
 
 
 class Comment(object):
