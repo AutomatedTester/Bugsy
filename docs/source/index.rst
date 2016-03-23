@@ -22,7 +22,7 @@ To use you will do
 Installing Bugsy
 ----------------
 
-To install Bugsy, simply use pip or easy install
+To install Bugsy, simply run this simple command in your terminal of choice
 
 Pip
 
@@ -30,12 +30,33 @@ Pip
 
     pip install bugsy
 
+If you don't have pip installed then do
 
 easy_install
 
 .. code-block:: bash
 
-    easy_install bugsy
+    easy_install pip
+    pip install bugsy
+
+Bugsy is actively developed on GitHub, where the code is always available.
+
+You can either clone the public repository:
+
+.. code-block:: bash
+
+    $ git clone git://github.com/AutomatedTester/bugsy.git
+
+Or, download the tarball:
+
+.. code-block:: bash
+    $ curl -OL https://github.com/AutomatedTester/bugsy/tarball/master
+    # optionally, zipball is also available (for Windows users).
+
+Once you have a copy of the source, you can embed it in your own Python package, or install it into your site-packages easily:
+
+.. code-block:: bash
+    $ python setup.py install
 
 Using Bugsy
 -----------
