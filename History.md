@@ -1,3 +1,17 @@
+0.8.0 / 2016-03-27
+==================
+
+  * Updated installation documentation
+  * Adds the ability to set or remove dependent/blocking bugs Fixes #32
+  * Property to add or remove keywords. Fixes #31
+  * split the code for setting bug updates into it's own method
+  * Use headers for auth instead of URL parameters. Fixes #29.
+  * Use JSON instead of form encoding when posting comments and tags.
+  * Add the ability to set the cc list. Fixes #33
+  * Send data in POSTs and PUTs as JSON, not form-encoded.
+  * Remove link to index document as that creates infinite recursion in Sphinx
+  * Add a Bugsy.authenticated property
+
 0.7.0 / 2016-02-01
 ==================
 
