@@ -1,7 +1,7 @@
 import copy
 
-from bug import Bug
-from errors import SearchException
+from .bug import Bug
+from .errors import SearchException
 
 
 class Search(object):

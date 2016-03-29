@@ -1,5 +1,5 @@
 import datetime
-from errors import BugException
+from .errors import BugException
 
 
 VALID_STATUS = ["RESOLVED", "ASSIGNED", "NEW", "UNCONFIRMED"]

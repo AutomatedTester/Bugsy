@@ -1,7 +1,7 @@
 import requests
-from bug import Bug
-from errors import (BugsyException, LoginException)
-from search import Search
+from .bug import Bug
+from .errors import (BugsyException, LoginException)
+from .search import Search
 
 
 class Bugsy(object):
