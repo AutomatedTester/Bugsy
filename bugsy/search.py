@@ -149,7 +149,7 @@ class Search(object):
             ...                .search()
         """
         params = {}
-        params = dict(params.items() + self._time_frame.items())
+        params.update(self._time_frame.items())
 
         if self._includefields:
             params['include_fields'] = list(self._includefields)

@@ -385,7 +385,7 @@ class Bug(object):
 
             Returns a list of Comment instances.
         """
-        bug = unicode(self._bug['id'])
+        bug = str(self._bug['id'])
         res = self._bugsy.request('bug/%s/comment' % bug)
 
         return [Comment(bugsy=self._bugsy, **comments) for comments

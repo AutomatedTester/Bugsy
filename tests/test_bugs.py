@@ -586,13 +586,13 @@ def test_comment_retrieval():
     assert c1.attachment_id is None
     assert c1.author == u'gps@mozilla.com'
     assert c1.bug_id == 1017315
-    assert c1.creation_time == datetime.datetime(2014, 03, 27, 23, 47, 45)
+    assert c1.creation_time == datetime.datetime(2014, 3, 27, 23, 47, 45)
     assert c1.creator == u'gps@mozilla.com'
     assert c1.id == 8589785
     assert c1.is_private is False
     assert c1.text == u'text 1'
     assert c1.tags == set([u'tag1', u'tag2'])
-    assert c1.time == datetime.datetime(2014, 03, 27, 23, 47, 45)
+    assert c1.time == datetime.datetime(2014, 3, 27, 23, 47, 45)
 
 @responses.activate
 def test_we_raise_an_exception_when_getting_comments_and_bugzilla_errors():
