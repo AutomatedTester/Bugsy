@@ -13,6 +13,7 @@ REQUEST = "?"
 APPROVE = "+"
 DENY = "-"
 
+
 class Flags(object):
     """This is a base class for all Flags that can be used"""
     def __init__(self, status, requestee, name=None):
