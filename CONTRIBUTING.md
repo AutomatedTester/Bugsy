@@ -27,6 +27,8 @@ in the review process.
 * Check for python pep8 compliance: `flake8 bugsy`
 * Make sure you have added the necessary tests for your changes.
 * Run _all_ the tests to assure nothing else was accidentally broken.
+  * Call `tox` and that will test all version of python for you (if they are installed)
+
 
 ## Submitting Changes
 
