@@ -1,3 +1,10 @@
+
+0.9.0 / 2016-04-04
+==================
+
+* Adding Python 3 Support
+* Added more support for testing
+
 0.8.0 / 2016-03-27
 ==================
 
