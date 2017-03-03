@@ -17,6 +17,8 @@ class Search(object):
         self._bugsy = bugsy
         self._includefields = copy.copy(bugsy.DEFAULT_SEARCH)
         self._keywords = []
+        self._component = []
+        self._product = []
         self._assigned = []
         self._summaries = []
         self._whiteboard = []
@@ -41,6 +43,28 @@ class Search(object):
         """
         for arg in args:
             self._includefields.append(arg)
+        return self
+
+    def component(self, *components):
+        r"""
+            When search() is called it will limit results to items in a component.
+
+            :param component: items passed in will be turned into a list
+            :returns: :class:`Search`
+        """
+        for component in components:
+            self._component.append(component)
+        return self
+
+    def product(self, *products):
+        r"""
+            When search is called, it will limit the results to items in a Product.
+
+            :param product: items passed in will be turned into a list
+            :returns: :class:`Search`
+        """
+        for product in products:
+            self._product.append(product)
         return self
 
     def keywords(self, *args):
@@ -162,6 +186,10 @@ class Search(object):
 
             return bugs
         else:
+            if self._component:
+                params['component'] = list(self._component)
+            if self._product:
+                params['product'] = list(self._product)
             if self._keywords:
                 params['keywords'] = list(self._keywords)
             if self._assigned:

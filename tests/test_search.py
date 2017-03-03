@@ -67,6 +67,125 @@ def test_we_only_ask_for_the_include_fields():
   assert len(bugs) == 2
   assert bugs[0].to_dict()['flags'] == include_return['bugs'][0]['flags']
 
+
+@responses.activate
+def test_we_can_search_components():
+  include_return = {
+         "bugs" : [
+            {
+               "component" : "Marionette",
+               "flags" : [],
+               "id" : 861874,
+               "op_sys" : "Gonk (Firefox OS)",
+               "platform" : "Other",
+               "product" : "Testing",
+               "resolution" : "",
+               "status" : "REOPENED",
+               "summary" : "Tracking bug for uplifting is_displayed issue fix for WebDriver",
+               "version" : "unspecified"
+            },
+            {
+               "component" : "Marionette",
+               "flags" : [
+                  {
+                     "creation_date" : "2013-11-26T14:16:09Z",
+                     "id" : 758758,
+                     "modification_date" : "2013-11-26T14:16:09Z",
+                     "name" : "needinfo",
+                     "requestee" : "dkuo@mozilla.com",
+                     "setter" : "bob.silverberg@gmail.com",
+                     "status" : "?",
+                     "type_id" : 800
+                  }
+               ],
+               "id" : 862156,
+               "op_sys" : "Gonk (Firefox OS)",
+               "platform" : "ARM",
+               "product" : "Testing",
+               "resolution" : "",
+               "status" : "NEW",
+               "summary" : "Marionette thinks that the play button in the music app is not displayed",
+               "version" : "unspecified"
+            }
+         ]
+      }
+
+  url_params = dict(
+    component="Marionette"
+  )
+  responses.add(responses.GET, rest_url('bug', **url_params),
+                    body=json.dumps(include_return), status=200,
+                    content_type='application/json', match_querystring=True)
+
+  bugzilla = Bugsy()
+  bugs = bugzilla.search_for\
+          .component('Marionette')\
+          .search()
+
+  assert len(responses.calls) == 1
+  assert len(bugs) == 2
+  assert bugs[0].to_dict()['flags'] == include_return['bugs'][0]['flags']
+
+
+@responses.activate
+def test_we_can_search_products():
+  include_return = {
+         "bugs" : [
+            {
+               "component" : "Marionette",
+               "flags" : [],
+               "id" : 861874,
+               "op_sys" : "Gonk (Firefox OS)",
+               "platform" : "Other",
+               "product" : "Testing",
+               "resolution" : "",
+               "status" : "REOPENED",
+               "summary" : "Tracking bug for uplifting is_displayed issue fix for WebDriver",
+               "version" : "unspecified"
+            },
+            {
+               "component" : "Marionette",
+               "flags" : [
+                  {
+                     "creation_date" : "2013-11-26T14:16:09Z",
+                     "id" : 758758,
+                     "modification_date" : "2013-11-26T14:16:09Z",
+                     "name" : "needinfo",
+                     "requestee" : "dkuo@mozilla.com",
+                     "setter" : "bob.silverberg@gmail.com",
+                     "status" : "?",
+                     "type_id" : 800
+                  }
+               ],
+               "id" : 862156,
+               "op_sys" : "Gonk (Firefox OS)",
+               "platform" : "ARM",
+               "product" : "Testing",
+               "resolution" : "",
+               "status" : "NEW",
+               "summary" : "Marionette thinks that the play button in the music app is not displayed",
+               "version" : "unspecified"
+            }
+         ]
+      }
+
+  url_params = dict(
+    product="Testing"
+  )
+  responses.add(responses.GET, rest_url('bug', **url_params),
+                    body=json.dumps(include_return), status=200,
+                    content_type='application/json', match_querystring=True)
+
+  bugzilla = Bugsy()
+  bugs = bugzilla.search_for\
+          .product('Testing')\
+          .search()
+
+  assert len(responses.calls) == 1
+  assert len(bugs) == 2
+  assert bugs[0].to_dict()['flags'] == include_return['bugs'][0]['flags']
+
+
 @responses.activate
 def test_we_only_ask_for_the_include_fields_while_logged_in():
   include_return = {
