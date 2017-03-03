@@ -1,4 +1,10 @@
 
+0.10.0 / 2017-03-03
+==================
+
+  * Add the ability to search via Product and components.
+  * add python 3.6 support
+
 0.9.0 / 2016-04-04
 ==================
 
