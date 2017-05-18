@@ -6,53 +6,53 @@ from . import rest_url
 from bugsy import Bugsy, Bug
 from bugsy.errors import (BugsyException, BugException)
 
-example_return = {'faults': [], 'bugs': [{'cf_tracking_firefox29': '---', 'classification': 'Other', 'creator': 'jgriffin@mozilla.com', 'cf_status_firefox30':
-'---', 'depends_on': [123456], 'cf_status_firefox32': '---', 'creation_time': '2014-05-28T23:57:58Z', 'product': 'Release Engineering', 'cf_user_story': '', 'dupe_of': None, 'cf_tracking_firefox_relnote': '---', 'keywords': ['regression'], 'cf_tracking_b2g18': '---', 'summary': 'Schedule Mn tests on o\
-pt Linux builds on cedar', 'id': 1017315, 'assigned_to_detail': {'id': 347295, 'email': 'jgriffin@mozilla.com', 'name': 'jgriffin@mozilla.com',
-'real_name': 'Jonathan Griffin (:jgriffin)'}, 'severity': 'normal', 'is_confirmed': True, 'is_creator_accessible': True, 'cf_status_b2g_1_1_hd':
- '---', 'qa_contact_detail': {'id': 20203, 'email': 'catlee@mozilla.com', 'name': 'catlee@mozilla.com', 'real_name': 'Chris AtLee [:catlee]'},
- 'priority': '--', 'platform': 'All', 'cf_crash_signature': '', 'version': 'unspecified', 'cf_qa_whiteboard': '', 'cf_status_b2g_1_3t': '--\
--', 'cf_status_firefox31': '---', 'is_open': False, 'cf_blocking_fx': '---', 'status': 'RESOLVED', 'cf_tracking_relnote_b2g': '---', 'cf_stat\
-us_firefox29': '---', 'blocks': [654321], 'qa_contact': 'catlee@mozilla.com', 'see_also': [], 'component': 'General Automation', 'cf_tracking_firefox\
-32': '---', 'cf_tracking_firefox31': '---', 'cf_tracking_firefox30': '---', 'op_sys': 'All', 'groups': [], 'cf_blocking_b2g': '---', 'target\
-_milestone': '---', 'is_cc_accessible': True, 'cf_tracking_firefox_esr24': '---', 'cf_status_b2g_1_2': '---', 'cf_status_b2g_1_3': '---', 'cf_\
-status_b2g18': '---', 'cf_status_b2g_1_4': '---', 'url': '', 'creator_detail': {'id': 347295, 'email': 'jgriffin@mozilla.com', 'name': 'jgri\
-ffin@mozilla.com', 'real_name': 'Jonathan Griffin (:jgriffin)'}, 'whiteboard': '', 'cf_status_b2g_2_0': '---', 'cc_detail': [{'id': 30066, 'em\
-ail': 'coop@mozilla.com', 'name': 'coop@mozilla.com', 'real_name': 'Chris Cooper [:coop]'}, {'id': 397261, 'email': 'dburns@mozilla.com', 'nam\
-e': 'dburns@mozilla.com', 'real_name': 'David Burns :automatedtester'}, {'id': 438921, 'email': 'jlund@mozilla.com', 'name': 'jlund@mozilla.com ', 'real_name': 'Jordan Lund (:jlund)'}, {'id': 418814, 'email': 'mdas@mozilla.com', 'name': 'mdas@mozilla.com', 'real_name': 'Malini Das [:md\
-as]'}], 'alias': None, 'cf_tracking_b2g_v1_2': '---', 'cf_tracking_b2g_v1_3': '---', 'flags': [], 'assigned_to': 'jgriffin@mozilla.com', 'cf_s\
-tatus_firefox_esr24': '---', 'resolution': 'FIXED', 'last_change_time': '2014-05-30T21:20:17Z', 'cc': ['coop@mozilla.com', 'dburns@mozilla.com'
-, 'jlund@mozilla.com', 'mdas@mozilla.com'], 'cf_blocking_fennec': '---'}]}
+example_return = {u'faults': [], u'bugs': [{u'cf_tracking_firefox29': u'---', u'classification': u'Other', u'creator': u'jgriffin@mozilla.com', u'cf_status_firefox30':
+u'---', u'depends_on': [123456], u'cf_status_firefox32': u'---', u'creation_time': u'2014-05-28T23:57:58Z', u'product': u'Release Engineering', u'cf_user_story': u'', u'dupe_of': None, u'cf_tracking_firefox_relnote': u'---', u'keywords': [u'regression'], u'cf_tracking_b2g18': u'---', u'summary': u'Schedule Mn tests on o\
+pt Linux builds on cedar', u'id': 1017315, u'assigned_to_detail': {u'id': 347295, u'email': u'jgriffin@mozilla.com', u'name': u'jgriffin@mozilla.com',
+u'real_name': u'Jonathan Griffin (:jgriffin)'}, u'severity': u'normal', u'is_confirmed': True, u'is_creator_accessible': True, u'cf_status_b2g_1_1_hd':
+ u'---', u'qa_contact_detail': {u'id': 20203, u'email': u'catlee@mozilla.com', u'name': u'catlee@mozilla.com', u'real_name': u'Chris AtLee [:catlee]'},
+ u'priority': u'--', u'platform': u'All', u'cf_crash_signature': u'', u'version': u'unspecified', u'cf_qa_whiteboard': u'', u'cf_status_b2g_1_3t': u'--\
+-', u'cf_status_firefox31': u'---', u'is_open': False, u'cf_blocking_fx': u'---', u'status': u'RESOLVED', u'cf_tracking_relnote_b2g': u'---', u'cf_stat\
+us_firefox29': u'---', u'blocks': [654321], u'qa_contact': u'catlee@mozilla.com', u'see_also': [], u'component': u'General Automation', u'cf_tracking_firefox\
+32': u'---', u'cf_tracking_firefox31': u'---', u'cf_tracking_firefox30': u'---', u'op_sys': u'All', u'groups': [], u'cf_blocking_b2g': u'---', u'target\
+_milestone': u'---', u'is_cc_accessible': True, u'cf_tracking_firefox_esr24': u'---', u'cf_status_b2g_1_2': u'---', u'cf_status_b2g_1_3': u'---', u'cf_\
+status_b2g18': u'---', u'cf_status_b2g_1_4': u'---', u'url': u'', u'creator_detail': {u'id': 347295, u'email': u'jgriffin@mozilla.com', u'name': u'jgri\
+ffin@mozilla.com', u'real_name': u'Jonathan Griffin (:jgriffin)'}, u'whiteboard': u'', u'cf_status_b2g_2_0': u'---', u'cc_detail': [{u'id': 30066, u'em\
+ail': u'coop@mozilla.com', u'name': u'coop@mozilla.com', u'real_name': u'Chris Cooper [:coop]'}, {u'id': 397261, u'email': u'dburns@mozilla.com', u'nam\
+e': u'dburns@mozilla.com', u'real_name': u'David Burns :automatedtester'}, {u'id': 438921, u'email': u'jlund@mozilla.com', u'name': u'jlund@mozilla.com ', u'real_name': u'Jordan Lund (:jlund)'}, {u'id': 418814, u'email': u'mdas@mozilla.com', u'name': u'mdas@mozilla.com', u'real_name': u'Malini Das [:md\
+as]'}], u'alias': None, u'cf_tracking_b2g_v1_2': u'---', u'cf_tracking_b2g_v1_3': u'---', u'flags': [], u'assigned_to': u'jgriffin@mozilla.com', u'cf_s\
+tatus_firefox_esr24': u'---', u'resolution': u'FIXED', u'last_change_time': u'2014-05-30T21:20:17Z', u'cc': [u'coop@mozilla.com', u'dburns@mozilla.com'
+, u'jlund@mozilla.com', u'mdas@mozilla.com'], u'cf_blocking_fennec': u'---'}]}
 
 comments_return = {
-    'bugs': {
-        '1017315': {
-            'comments': [
+    u'bugs': {
+        u'1017315': {
+            u'comments': [
                 {
-                   'attachment_id': None,
-                   'author': 'gps@mozilla.com',
-                   'bug_id': 1017315,
-                   'creation_time': '2014-03-27T23:47:45Z',
-                   'creator': 'gps@mozilla.com',
-                   'id': 8589785,
-                   'is_private': False,
-                   'raw_text': 'raw text 1',
-                   'tags': ['tag1', 'tag2'],
-                   'text': 'text 1',
-                   'time': '2014-03-27T23:47:45Z'
+                   u'attachment_id': None,
+                   u'author': u'gps@mozilla.com',
+                   u'bug_id': 1017315,
+                   u'creation_time': u'2014-03-27T23:47:45Z',
+                   u'creator': u'gps@mozilla.com',
+                   u'id': 8589785,
+                   u'is_private': False,
+                   u'raw_text': u'raw text 1',
+                   u'tags': [u'tag1', u'tag2'],
+                   u'text': u'text 1',
+                   u'time': u'2014-03-27T23:47:45Z'
                 },
                 {
-                   'attachment_id': 8398207,
-                   'author': 'gps@mozilla.com',
-                   'bug_id': 1017315,
-                   'creation_time': '2014-03-27T23:56:34Z',
-                   'creator': 'gps@mozilla.com',
-                   'id': 8589812,
-                   'is_private': True,
-                   'raw_text': 'raw text 2',
-                   'tags': [],
-                   'text': 'text 2',
-                   'time': '2014-03-27T23:56:34Z'
+                   u'attachment_id': 8398207,
+                   u'author': u'gps@mozilla.com',
+                   u'bug_id': 1017315,
+                   u'creation_time': u'2014-03-27T23:56:34Z',
+                   u'creator': u'gps@mozilla.com',
+                   u'id': 8589812,
+                   u'is_private': True,
+                   u'raw_text': u'raw text 2',
+                   u'tags': [],
+                   u'text': u'text 2',
+                   u'time': u'2014-03-27T23:56:34Z'
                 },
             ],
         },
@@ -89,7 +89,7 @@ def test_we_can_get_Product_set_from_default():
 def test_we_can_get_get_the_keywords():
     bug = Bug(**example_return['bugs'][0])
     keywords = bug.keywords
-    assert ['regression'] == keywords
+    assert [u'regression'] == keywords
 
 @responses.activate
 def test_we_can_add_single_keyword():
@@ -123,7 +123,7 @@ def test_we_can_add_single_keyword():
 
     keywords = updated_bug.keywords
     assert isinstance(keywords, list)
-    assert ["regression", "ateam-marionette-server"] == keywords
+    assert [u"regression", u"ateam-marionette-server"] == keywords
 
 @responses.activate
 def test_we_can_add_multiple_keywords_to_list():
@@ -203,8 +203,8 @@ def test_we_can_get_get_cc_list():
     bug = Bug(**example_return['bugs'][0])
     cced = bug.cc
     assert isinstance(cced, list)
-    assert ["coop@mozilla.com", "dburns@mozilla.com",
-            "jlund@mozilla.com", "mdas@mozilla.com"] == cced
+    assert [u"coop@mozilla.com", u"dburns@mozilla.com",
+            u"jlund@mozilla.com", u"mdas@mozilla.com"] == cced
 
 @responses.activate
 def test_we_can_add_single_email_to_cc_list():
@@ -221,8 +221,8 @@ def test_we_can_add_single_email_to_cc_list():
         bug = bugzilla.get(1017315)
     import copy
     bug_dict = copy.deepcopy(example_return)
-    bug_dict['bugs'][0]['cc_detail'].append({'id': 438921, 'email': 'automatedtester@mozilla.com',
-                                'name': 'automatedtester@mozilla.com ', 'real_name': 'AutomatedTester'})
+    bug_dict['bugs'][0]['cc_detail'].append({u'id': 438921, u'email': u'automatedtester@mozilla.com',
+                                u'name': u'automatedtester@mozilla.com ', u'real_name': u'AutomatedTester'})
 
     updated_bug = None
     with responses.RequestsMock() as rsps:
@@ -239,9 +239,9 @@ def test_we_can_add_single_email_to_cc_list():
 
     cced = updated_bug.cc
     assert isinstance(cced, list)
-    assert ["coop@mozilla.com", "dburns@mozilla.com",
-            "jlund@mozilla.com", "mdas@mozilla.com",
-            "automatedtester@mozilla.com"] == cced
+    assert [u"coop@mozilla.com", u"dburns@mozilla.com",
+            u"jlund@mozilla.com", u"mdas@mozilla.com",
+            u"automatedtester@mozilla.com"] == cced
 
 @responses.activate
 def test_we_can_add_multiple_emails_to_cc_list():
@@ -258,10 +258,10 @@ def test_we_can_add_multiple_emails_to_cc_list():
         bug = bugzilla.get(1017315)
     import copy
     bug_dict = copy.deepcopy(example_return)
-    bug_dict['bugs'][0]['cc_detail'].append({'id': 438921, 'email': 'automatedtester@mozilla.com',
-                                'name': 'automatedtester@mozilla.com ', 'real_name': 'AutomatedTester'})
-    bug_dict['bugs'][0]['cc_detail'].append({'id': 438922, 'email': 'foobar@mozilla.com',
-                                'name': 'foobar@mozilla.com ', 'real_name': 'Foobar'})
+    bug_dict['bugs'][0]['cc_detail'].append({u'id': 438921, u'email': u'automatedtester@mozilla.com',
+                                u'name': u'automatedtester@mozilla.com ', u'real_name': u'AutomatedTester'})
+    bug_dict['bugs'][0]['cc_detail'].append({u'id': 438922, u'email': u'foobar@mozilla.com',
+                                u'name': u'foobar@mozilla.com ', u'real_name': u'Foobar'})
 
     updated_bug = None
     with responses.RequestsMock() as rsps:
@@ -278,9 +278,9 @@ def test_we_can_add_multiple_emails_to_cc_list():
 
     cced = updated_bug.cc
     assert isinstance(cced, list)
-    assert ["coop@mozilla.com", "dburns@mozilla.com",
-            "jlund@mozilla.com", "mdas@mozilla.com",
-            "automatedtester@mozilla.com", "foobar@mozilla.com"] == cced
+    assert [u"coop@mozilla.com", u"dburns@mozilla.com",
+            u"jlund@mozilla.com", u"mdas@mozilla.com",
+            u"automatedtester@mozilla.com", u"foobar@mozilla.com"] == cced
 
 @responses.activate
 def test_we_can_add_remove_an_email_to_cc_list():
@@ -299,8 +299,8 @@ def test_we_can_add_remove_an_email_to_cc_list():
     import copy
     bug_dict = copy.deepcopy(example_return)
     bug_dict['bugs'][0]['cc_detail'].remove([person for person in bug_dict['bugs'][0]['cc_detail'] if person['id'] == 397261][0])
-    bug_dict['bugs'][0]['cc_detail'].append({'id': 438921, 'email': 'automatedtester@mozilla.com',
-                                'name': 'automatedtester@mozilla.com ', 'real_name': 'AutomatedTester'})
+    bug_dict['bugs'][0]['cc_detail'].append({u'id': 438921, u'email': u'automatedtester@mozilla.com',
+                                u'name': u'automatedtester@mozilla.com ', u'real_name': u'AutomatedTester'})
 
     updated_bug = None
     with responses.RequestsMock() as rsps:
@@ -317,8 +317,8 @@ def test_we_can_add_remove_an_email_to_cc_list():
 
     cced = updated_bug.cc
     assert isinstance(cced, list)
-    assert ["coop@mozilla.com", "jlund@mozilla.com",
-            "mdas@mozilla.com", "automatedtester@mozilla.com"] == cced
+    assert [u"coop@mozilla.com", u"jlund@mozilla.com",
+            u"mdas@mozilla.com", u"automatedtester@mozilla.com"] == cced
 
 @responses.activate
 def test_we_can_remove_an_email_to_cc_list():
@@ -354,7 +354,7 @@ def test_we_can_remove_an_email_to_cc_list():
 
     cced = updated_bug.cc
     assert isinstance(cced, list)
-    assert ["coop@mozilla.com", "jlund@mozilla.com"] == cced
+    assert [u"coop@mozilla.com", u"jlund@mozilla.com"] == cced
 
 def test_we_throw_an_error_for_invalid_status_types():
     bug = Bug(**example_return['bugs'][0])
@@ -584,14 +584,14 @@ def test_comment_retrieval():
     assert len(comments) == 2
     c1 = comments[0]
     assert c1.attachment_id is None
-    assert c1.author == 'gps@mozilla.com'
+    assert c1.author == u'gps@mozilla.com'
     assert c1.bug_id == 1017315
     assert c1.creation_time == datetime.datetime(2014, 3, 27, 23, 47, 45)
-    assert c1.creator == 'gps@mozilla.com'
+    assert c1.creator == u'gps@mozilla.com'
     assert c1.id == 8589785
     assert c1.is_private is False
-    assert c1.text == 'text 1'
-    assert c1.tags == set(['tag1', 'tag2'])
+    assert c1.text == u'text 1'
+    assert c1.tags == set([u'tag1', u'tag2'])
     assert c1.time == datetime.datetime(2014, 3, 27, 23, 47, 45)
 
 @responses.activate
@@ -608,7 +608,7 @@ def test_we_raise_an_exception_when_getting_comments_and_bugzilla_errors():
 
     error_response = {'code': 67399,
                       'message': "The requested method 'Bug.comments' was not found.",
-                      'documentation': 'http://www.bugzilla.org/docs/tip/en/html/api/',
+                      'documentation': u'http://www.bugzilla.org/docs/tip/en/html/api/',
                        'error': True}
 
     responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/bug/1017315/comment',
