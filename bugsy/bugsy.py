@@ -67,7 +67,9 @@ class Bugsy(object):
                     params={'login': self.username}
                 )
 
-                if result is not True:
+                if type(result) == bool and not result:
+                    raise LoginException("login name doesn't match api key")
+                elif type(result) == dict:
                     raise LoginException(result['message'])
 
             self.session.headers['X-Bugzilla-API-Key'] = self.api_key
