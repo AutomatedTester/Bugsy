@@ -264,8 +264,7 @@ class Bug(object):
             >>> bug.keywords
             [u"ateam-marionette-runner", u"regression"]
         """
-        keywords = [keyword for keyword in self._bug['keywords']]
-        return keywords
+        return self._bug['keywords']
 
     @keywords.setter
     def keywords(self, value):
@@ -298,8 +297,7 @@ class Bug(object):
             >>> bug.depends_on
             [123456, 678901]
         """
-        depends_on = [dep for dep in self._bug['depends_on']]
-        return depends_on
+        return self._bug['depends_on']
 
     @depends_on.setter
     def depends_on(self, value):
@@ -332,8 +330,7 @@ class Bug(object):
             >>> bug.blocks
             [123456, 678901]
         """
-        depends_on = [dep for dep in self._bug['blocks']]
-        return depends_on
+        return self._bug['blocks']
 
     @blocks.setter
     def blocks(self, value):
