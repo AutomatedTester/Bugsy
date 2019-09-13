@@ -110,7 +110,7 @@ class Bugsy(object):
         """
         return self._have_auth
 
-    def get(self, bug_number):
+    def get(self, bug_number, ext_fields=[]):
         """
             Get a bug from Bugzilla. If there is a login token created during
             object initialisation it will be part of the query string passed to
@@ -118,13 +118,19 @@ class Bugsy(object):
 
             :param bug_number: Bug Number that will be searched. If found will
                                return a Bug object.
+            :param ext_fields: Optional array allowing for additional fields to
+                               be included in the Bug object.
 
             >>> bugzilla = Bugsy()
             >>> bug = bugzilla.get(123456)
         """
+        fields = self.DEFAULT_SEARCH
+        if ext_fields and isinstance(ext_fields, list):
+            fields.extend(ext_fields)
+
         bug = self.request(
             'bug/%s' % bug_number,
-            params={"include_fields": self. DEFAULT_SEARCH}
+            params={"include_fields": fields}
         )
         return Bug(self, **bug['bugs'][0])
 
