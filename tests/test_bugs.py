@@ -76,11 +76,11 @@ def test_we_cant_set_status_unless_there_is_a_bug_id():
 
 def test_we_can_get_OS_set_from_default():
     bug = Bug()
-    assert bug.OS == "All"
+    assert bug.op_sys == "All"
 
 def test_we_can_get_OS_we_set():
     bug = Bug(op_sys="Linux")
-    assert bug.OS == "Linux"
+    assert bug.op_sys == "Linux"
 
 def test_we_can_get_Product_set_from_default():
     bug = Bug()
