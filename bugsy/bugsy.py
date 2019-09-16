@@ -159,7 +159,7 @@ class Bugsy(object):
         if not bug.id:
             result = self.request('bug', 'POST', json=bug.to_dict())
             if 'error' not in result:
-                bug._bug['id'] = result['id']
+                bug.id = result['id']
                 bug._bugsy = self
                 try:
                     bug._bug.pop('comment')
@@ -171,7 +171,7 @@ class Bugsy(object):
                 raise BugsyException(result['message'])
         else:
             result = self.request('bug/%s' % bug.id, 'PUT',
-                                  json=bug.to_dict())
+                                  json=bug.diff())
             updated_bug = self.get(bug.id)
             return updated_bug
 
