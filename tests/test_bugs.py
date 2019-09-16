@@ -118,7 +118,7 @@ def test_we_can_add_single_keyword():
                       body=json.dumps(bug_dict), status=200,
                       content_type='application/json', match_querystring=True)
 
-        bug.keywords = "ateam-marionette-server"
+        bug.keywords = ["ateam-marionette-server"]
         updated_bug = bugzilla.put(bug)
 
     keywords = updated_bug.keywords
@@ -234,7 +234,7 @@ def test_we_can_add_single_email_to_cc_list():
                       body=json.dumps(bug_dict), status=200,
                       content_type='application/json', match_querystring=True)
 
-        bug.cc = "automatedtester@mozilla.com"
+        bug.cc.append("automatedtester@mozilla.com")
         updated_bug = bugzilla.put(bug)
 
     cced = updated_bug.cc
@@ -312,7 +312,8 @@ def test_we_can_add_remove_an_email_to_cc_list():
                       body=json.dumps(bug_dict), status=200,
                       content_type='application/json', match_querystring=True)
 
-        bug.cc = ["automatedtester@mozilla.com", "dburns@mozilla.com-"]
+        bug.cc.append("automatedtester@mozilla.com")
+        bug.cc.remove("dburns@mozilla.com")
         updated_bug = bugzilla.put(bug)
 
     cced = updated_bug.cc
@@ -428,7 +429,8 @@ def test_we_can_add_and_remove_depends_on():
                       body=json.dumps(bug_dict), status=200,
                       content_type='application/json', match_querystring=True)
 
-        bug.depends_on = ["123456-", "145123"]
+        bug.depends_on.remove(123456)
+        bug.depends_on.append(145123)
         updated_bug = bugzilla.put(bug)
 
     deps = updated_bug.depends_on
