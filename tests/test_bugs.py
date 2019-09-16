@@ -61,11 +61,11 @@ comments_return = {
 
 def test_can_create_bug_and_set_summary_afterwards():
     bug = Bug()
-    assert bug.id == None, "Id has been set"
-    assert bug.summary == '', "Summary is not set to nothing on plain initialisation"
+    assert bug.id is None, "Id has been set"
+    assert bug.summary is None, "Summary is not set to nothing on plain initialisation"
     bug.summary = "Foo"
     assert bug.summary == 'Foo', "Summary is not being set"
-    assert bug.status == '', 'Status has been set'
+    assert bug.status is None, 'Status has been set'
 
 def test_we_cant_set_status_unless_there_is_a_bug_id():
     bug = Bug()
