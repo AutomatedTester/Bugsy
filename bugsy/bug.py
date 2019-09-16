@@ -1,14 +1,25 @@
+import copy
 import datetime
 from .errors import BugException
-
 
 VALID_STATUS = ["RESOLVED", "ASSIGNED", "NEW", "UNCONFIRMED"]
 VALID_RESOLUTION = ["FIXED", "INCOMPLETE", "INVALID", "WORKSFORME",
                     "DUPLICATE", "WONTFIX"]
+ARRAY_TYPES = ["alias", "blocks", "cc", "cc_detail", "depends_on",
+               "flags", "groups", "keywords", "see_also"]
 
 
 def str2datetime(s):
     return datetime.datetime.strptime(s, '%Y-%m-%dT%H:%M:%SZ')
+
+
+def unpack(src):
+    result = copy.deepcopy(src)
+    if 'cc_detail' in result:
+        result['cc'] = [item['email'] for item in result['cc_detail']]
+        del result['cc_detail']
+
+    return result
 
 
 class Bug(object):
@@ -23,335 +34,47 @@ class Bug(object):
 
             >>> bug = Bug(**myDict)
         """
-        self._bugsy = bugsy
-        self._bug = dict(**kwargs)
+        object.__setattr__(self, '_bugsy', bugsy)
+        object.__setattr__(self, '_bug', unpack(dict(**kwargs)))
+        object.__setattr__(self, '_copy', unpack(dict(**kwargs)))
         self._bug['op_sys'] = kwargs.get('op_sys', 'All')
         self._bug['product'] = kwargs.get('product', 'core')
         self._bug['component'] = kwargs.get('component', 'general')
         self._bug['platform'] = kwargs.get('platform', 'All')
         self._bug['version'] = kwargs.get('version', 'unspecified')
 
-    @property
-    def id(self):
-        """
-        Property for getting the ID of a bug.
-
-        >>> bug.id
-        123456
-        """
-        return self._bug.get('id', None)
-
-    @property
-    def summary(self):
-        """
-            Property for getting and setting the bug summary
-
-            >>> bug.summary
-            "I like cheese"
-        """
-        return self._bug.get('summary', '')
-
-    @summary.setter
-    def summary(self, value):
-        """
-            Property for getting and setting the bug summary
-
-            >>> bug.summary = "I like cheese"
-        """
-        self._bug['summary'] = value
-
-    @property
-    def status(self):
-        """
-            Property for getting or setting the bug status
-
-            >>> bug.status
-            "REOPENED"
-        """
-        return self._bug.get('status', '')
-
-    @status.setter
-    def status(self, value):
-        """
-            Property for getting or setting the bug status
-
-            >>> bug.status = "REOPENED"
-        """
-        if self._bug.get('id', None):
-            if value in VALID_STATUS:
-                self._bug['status'] = value
+    def __getattr__(self, attr):
+        if attr not in self._bug:
+            if attr in ARRAY_TYPES:
+                return []
             else:
-                raise BugException("Invalid status type was used")
+                return None
+
+        return self._bug[attr]
+
+    def __setattr__(self, attr, value):
+        if attr == '_bug' or attr == '_copy':
+            object.__setattr__(self, attr, unpack(value))
+        elif attr == '_bugsy':
+            object.__setattr__(self, attr, value)
+        elif attr == 'status':
+            if self._bug.get('id', None):
+                if value in VALID_STATUS:
+                    self._bug['status'] = value
+                else:
+                    raise BugException("Invalid status type was used")
+            else:
+                raise BugException("Can not set status unless there is a bug id."
+                                   " Please call Update() before setting")
+        elif attr == 'resolution':
+            if value in VALID_RESOLUTION:
+                self._bug['resolution'] = value
+            else:
+                raise BugException("Invalid resolution type was used")
+        elif attr in ARRAY_TYPES and not isinstance(value, list):
+            raise BugException("Cannot set value to non-list type")
         else:
-            raise BugException("Can not set status unless there is a bug id."
-                               " Please call Update() before setting")
-
-    @property
-    def OS(self):
-        """
-            Property for getting or setting the OS that the bug occured on
-
-            >>> bug.OS
-            "All"
-        """
-        return self._bug['op_sys']
-
-    @OS.setter
-    def OS(self, value):
-        """
-            Property for getting or setting the OS that the bug occured on
-
-            >>> bug.OS = "Linux"
-        """
-        self._bug['op_sys']
-
-    @property
-    def resolution(self):
-        """
-            Property for getting or setting the bug resolution
-
-            >>> bug.resolution
-            "FIXED"
-        """
-        return self._bug['resolution']
-
-    @resolution.setter
-    def resolution(self, value):
-        """
-            Property for getting or setting the bug resolution
-
-            >>> bug.resolution = "FIXED"
-        """
-        if value in VALID_RESOLUTION:
-            self._bug['resolution'] = value
-        else:
-            raise BugException("Invalid resolution type was used")
-
-    @property
-    def product(self):
-        """
-            Property for getting the bug product
-
-            >>> bug.product
-            Core
-        """
-        return self._bug['product']
-
-    @product.setter
-    def product(self, value):
-        """
-            Property for getting the bug product
-
-            >>> bug.product = "DOM"
-        """
-        self._bug['product'] = value
-
-    @property
-    def component(self):
-        """
-            Property for getting the bug component
-
-            >>> bug.component
-            General
-        """
-        return self._bug['component']
-
-    @component.setter
-    def component(self, value):
-        """
-            Property for getting the bug component
-
-            >>> bug.component = "Marionette"
-        """
-        self._bug['component'] = value
-
-    @property
-    def platform(self):
-        """
-            Property for getting the bug platform
-
-            >>> bug.platform
-            "ARM"
-        """
-        return self._bug['platform']
-
-    @platform.setter
-    def platform(self, value):
-        """
-            Property for getting the bug platform
-
-            >>> bug.platform = "OSX"
-        """
-        self._bug['platform'] = value
-
-    @property
-    def version(self):
-        """
-            Property for getting the bug platform
-
-            >>> bug.version
-            "TRUNK"
-        """
-        return self._bug['version']
-
-    @version.setter
-    def version(self, value):
-        """
-            Property for getting the bug platform
-
-            >>> bug.version = "0.3"
-        """
-        self._bug['version'] = value
-
-    @property
-    def assigned_to(self):
-        """
-            Property for getting the bug assignee
-
-            >>> bug.assigned_to
-            "automatedtester@mozilla.com"
-        """
-        return self._bug['assigned_to']
-
-    @assigned_to.setter
-    def assigned_to(self, value):
-        """
-            Property to set the bug assignee
-
-            >>> bug.assigned_to = "automatedtester@mozilla.com"
-        """
-        self._bug['assigned_to'] = value
-
-    @property
-    def cc(self):
-        """
-            Property to get the cc list for the bug. It returns emails for people
-
-            >>> bug.cc
-            [u'dburns@mozilla.com', u'automatedtester@mozilla.com']
-        """
-        cc_list = [cc_detail['email'] for cc_detail in self._bug['cc_detail']]
-        return cc_list
-
-    @cc.setter
-    def cc(self, value):
-        """
-            Property to add or remove people from the cc list.
-
-            To add people to the cc list
-            >>> bug.cc = "automatedtester@mozilla.com"
-
-            or
-            >>> bug.cc = ["automatedtester@mozilla.com", "dburns@mozilla.com"]
-
-            If you want to remove an email from the list, the last character of
-            the email address needs to be a `-`. For Example:
-
-            >>> bug.cc = "automatedtester@mozilla.com-"
-            # Removes an email.
-
-            You can mix adding and removing
-            >>> bug.cc = ["automatedtester@mozilla.com", "dburns@mozilla.com-"]
-        """
-        self._bug['cc'] = self._process_setter(value)
-
-    @property
-    def keywords(self):
-        """
-            Property to get the keywords list for the bug. It returns multiple
-            keywords in a list.
-
-            >>> bug.keywords
-            [u"ateam-marionette-runner", u"regression"]
-        """
-        return self._bug['keywords']
-
-    @keywords.setter
-    def keywords(self, value):
-        """
-            Property to add or remove keywords.
-
-            To add keywords
-            >>> bug.keywords = "ateam-marionette-runner"
-
-            or
-            >>> bug.keywords = ["intermittent", ateam-marionette-runner]
-
-            If you want to remove a keyword from the list, the last character of
-            the keyword  needs to be a `-`. For Example:
-
-            >>> bug.keyword = "regression-"
-            # Removes a keyword.
-
-            You can mix adding and removing
-            >>> bug.keywords = ["intermittent", "regression-"]
-        """
-        self._bug['keywords'] = self._process_setter(value)
-
-    @property
-    def depends_on(self):
-        """
-            Property to get the bug numbers that depend on the current bug. It returns multiple
-            bug numbers in a list.
-
-            >>> bug.depends_on
-            [123456, 678901]
-        """
-        return self._bug['depends_on']
-
-    @depends_on.setter
-    def depends_on(self, value):
-        """
-            Property to add or remove dependent bugs.
-
-            To add dependent bugs
-            >>> bug.depends_on = 145678
-
-            or
-            >>> bug.depends_on = [145678, 999999]
-
-            If you want to remove a depends on from the list, the last character of
-            the keyword  needs to be a `-`. For Example:
-
-            >>> bug.depends_on = "123456-"
-            # Removes a dependent bug.
-
-            You can mix adding and removing
-            >>> bug.depends_on = ["99999", "123456-"]
-        """
-        self._bug['depends_on'] = self._process_setter(value)
-
-    @property
-    def blocks(self):
-        """
-            Property to get the bug numbers that block on the current bug. It returns multiple
-            bug numbers in a list.
-
-            >>> bug.blocks
-            [123456, 678901]
-        """
-        return self._bug['blocks']
-
-    @blocks.setter
-    def blocks(self, value):
-        """
-            Property to add or remove blocking bugs.
-
-            To add blocking bugs
-            >>> bug.blocks = 145678
-
-            or
-            >>> bug.blocks = [145678, 999999]
-
-            If you want to remove a blocking bug on from the list, the last character of
-            the keyword  needs to be a `-`. For Example:
-
-            >>> bug.blocks = "123456-"
-            # Removes a blocking bug.
-
-            You can mix adding and removing
-        """
-        self._bug['blocks'] = self._process_setter(value)
+            self._bug[attr] = value
 
     def to_dict(self):
         """
@@ -413,30 +136,42 @@ class Bug(object):
         else:
             self._bug['comment'] = comment
 
-    def _process_setter(self, value):
-        result = {}
-        if not isinstance(value, list):
-            if isinstance(value, int):
-                value = str(value)
-            if value[-1] == "-":
-                result = {"remove": [value[:-1]]}
+    def diff(self):
+        """
+            Generates a dictionary containing only the changed values
+
+            Special handling of ARRAY_TYPES fields is required to only PUT changed objects
+
+            >>> bug.cc
+            ['foo@bar.com']
+            >>> bug.cc.append('abc@xyz.com')
+            >>> bug.cc
+            ['foo@bar.com', 'abc@xyz.com']
+            >>>bug.diff()
+            {'cc': {'added': ['abc@xyz.com']}}
+        """
+        changed = {}
+        for key in self._bug:
+            if key not in ARRAY_TYPES:
+                if key in self._copy and self._bug[key] != self._copy[key]:
+                    changed[key] = self._bug[key]
             else:
-                result = {"add": [value]}
-        else:
-            addin = []
-            removin = []
-            for val in value:
-                if isinstance(value, int):
-                    value = str(value)
-                if val[-1] == "-":
-                    removin.append(val[:-1])
-                else:
-                    addin.append(val)
-
-            result = {"add": addin,
-                      "remove": removin}
-
-        return result
+                additions = []
+                for item in self._bug[key]:
+                    if key not in self._copy or not self._copy[key] or item not in self._copy[key]:
+                        additions.append(item)
+                subtractions = []
+                if key in self._copy:
+                    for item in self._copy[key]:
+                        if item not in self._bug[key]:
+                            subtractions.append(item)
+                if len(additions) or len(subtractions):
+                    changed[key] = {}
+                    if len(additions):
+                        changed[key]['added'] = additions
+                    if len(subtractions):
+                        changed[key]['removed'] = subtractions
+        return changed
 
 
 class Comment(object):
