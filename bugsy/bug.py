@@ -18,6 +18,9 @@ def unpack(src):
     if 'cc_detail' in result:
         result['cc'] = [item['email'] for item in result['cc_detail']]
         del result['cc_detail']
+    for field in ARRAY_TYPES:
+        if field not in result:
+            result[field] = []
 
     return result
 
@@ -45,10 +48,7 @@ class Bug(object):
 
     def __getattr__(self, attr):
         if attr not in self._bug:
-            if attr in ARRAY_TYPES:
-                return []
-            else:
-                return None
+            return None
 
         return self._bug[attr]
 
