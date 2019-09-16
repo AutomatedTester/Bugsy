@@ -118,7 +118,7 @@ def test_we_can_add_single_keyword():
                       body=json.dumps(bug_dict), status=200,
                       content_type='application/json', match_querystring=True)
 
-        bug.keywords = ["ateam-marionette-server"]
+        bug.keywords.append("ateam-marionette-server")
         updated_bug = bugzilla.put(bug)
 
     keywords = updated_bug.keywords
@@ -153,7 +153,7 @@ def test_we_can_add_multiple_keywords_to_list():
                       body=json.dumps(bug_dict), status=200,
                       content_type='application/json', match_querystring=True)
 
-        bug.keywords = ["intermittent", "ateam-marionette-server"]
+        bug.keywords.extend(["intermittent", "ateam-marionette-server"])
         updated_bug = bugzilla.put(bug)
 
     keywords = updated_bug.keywords
