@@ -203,8 +203,8 @@ def test_we_can_get_get_cc_list():
     bug = Bug(**example_return['bugs'][0])
     cced = bug.cc
     assert isinstance(cced, list)
-    assert [u"coop@mozilla.com", u"dburns@mozilla.com",
-            u"jlund@mozilla.com", u"mdas@mozilla.com"] == cced
+    assert sorted([u"coop@mozilla.com", u"dburns@mozilla.com",
+            u"jlund@mozilla.com", u"mdas@mozilla.com"]) == sorted(cced)
 
 @responses.activate
 def test_we_can_add_single_email_to_cc_list():
@@ -239,9 +239,9 @@ def test_we_can_add_single_email_to_cc_list():
 
     cced = updated_bug.cc
     assert isinstance(cced, list)
-    assert [u"coop@mozilla.com", u"dburns@mozilla.com",
+    assert sorted([u"coop@mozilla.com", u"dburns@mozilla.com",
             u"jlund@mozilla.com", u"mdas@mozilla.com",
-            u"automatedtester@mozilla.com"] == cced
+            u"automatedtester@mozilla.com"]) == sorted(cced)
 
 @responses.activate
 def test_we_can_add_multiple_emails_to_cc_list():
@@ -278,9 +278,9 @@ def test_we_can_add_multiple_emails_to_cc_list():
 
     cced = updated_bug.cc
     assert isinstance(cced, list)
-    assert [u"coop@mozilla.com", u"dburns@mozilla.com",
+    assert sorted([u"coop@mozilla.com", u"dburns@mozilla.com",
             u"jlund@mozilla.com", u"mdas@mozilla.com",
-            u"automatedtester@mozilla.com", u"foobar@mozilla.com"] == cced
+            u"automatedtester@mozilla.com", u"foobar@mozilla.com"]) == sorted(cced)
 
 @responses.activate
 def test_we_can_add_remove_an_email_to_cc_list():
@@ -318,8 +318,8 @@ def test_we_can_add_remove_an_email_to_cc_list():
 
     cced = updated_bug.cc
     assert isinstance(cced, list)
-    assert [u"coop@mozilla.com", u"jlund@mozilla.com",
-            u"mdas@mozilla.com", u"automatedtester@mozilla.com"] == cced
+    assert sorted([u"coop@mozilla.com", u"jlund@mozilla.com",
+            u"mdas@mozilla.com", u"automatedtester@mozilla.com"]) == sorted(cced)
 
 @responses.activate
 def test_we_can_remove_an_email_to_cc_list():
@@ -355,7 +355,7 @@ def test_we_can_remove_an_email_to_cc_list():
 
     cced = updated_bug.cc
     assert isinstance(cced, list)
-    assert [u"coop@mozilla.com", u"jlund@mozilla.com"] == cced
+    assert sorted([u"coop@mozilla.com", u"jlund@mozilla.com"]) == sorted(cced)
 
 def test_we_throw_an_error_for_invalid_status_types():
     bug = Bug(**example_return['bugs'][0])
