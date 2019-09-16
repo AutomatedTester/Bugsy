@@ -19,7 +19,7 @@ _milestone': u'---', u'is_cc_accessible': True, u'cf_tracking_firefox_esr24': u'
 status_b2g18': u'---', u'cf_status_b2g_1_4': u'---', u'url': u'', u'creator_detail': {u'id': 347295, u'email': u'jgriffin@mozilla.com', u'name': u'jgri\
 ffin@mozilla.com', u'real_name': u'Jonathan Griffin (:jgriffin)'}, u'whiteboard': u'', u'cf_status_b2g_2_0': u'---', u'cc_detail': [{u'id': 30066, u'em\
 ail': u'coop@mozilla.com', u'name': u'coop@mozilla.com', u'real_name': u'Chris Cooper [:coop]'}, {u'id': 397261, u'email': u'dburns@mozilla.com', u'nam\
-e': u'dburns@mozilla.com', u'real_name': u'David Burns :automatedtester'}, {u'id': 438921, u'email': u'jlund@mozilla.com', u'name': u'jlund@mozilla.com ', u'real_name': u'Jordan Lund (:jlund)'}, {u'id': 418814, u'email': u'mdas@mozilla.com', u'name': u'mdas@mozilla.com', u'real_name': u'Malini Das [:md\
+e': u'dburns@mozilla.com', u'real_name': u'David Burns :automatedtester'}, {u'id': 438921, u'email': u'jlund@mozilla.com', u'name': u'jlund@mozilla.com', u'real_name': u'Jordan Lund (:jlund)'}, {u'id': 418814, u'email': u'mdas@mozilla.com', u'name': u'mdas@mozilla.com', u'real_name': u'Malini Das [:md\
 as]'}], u'alias': None, u'cf_tracking_b2g_v1_2': u'---', u'cf_tracking_b2g_v1_3': u'---', u'flags': [], u'assigned_to': u'jgriffin@mozilla.com', u'cf_s\
 tatus_firefox_esr24': u'---', u'resolution': u'FIXED', u'last_change_time': u'2014-05-30T21:20:17Z', u'cc': [u'coop@mozilla.com', u'dburns@mozilla.com'
 , u'jlund@mozilla.com', u'mdas@mozilla.com'], u'cf_blocking_fennec': u'---'}]}
@@ -222,7 +222,7 @@ def test_we_can_add_single_email_to_cc_list():
     import copy
     bug_dict = copy.deepcopy(example_return)
     bug_dict['bugs'][0]['cc_detail'].append({u'id': 438921, u'email': u'automatedtester@mozilla.com',
-                                u'name': u'automatedtester@mozilla.com ', u'real_name': u'AutomatedTester'})
+                                u'name': u'automatedtester@mozilla.com', u'real_name': u'AutomatedTester'})
 
     updated_bug = None
     with responses.RequestsMock() as rsps:
@@ -259,9 +259,9 @@ def test_we_can_add_multiple_emails_to_cc_list():
     import copy
     bug_dict = copy.deepcopy(example_return)
     bug_dict['bugs'][0]['cc_detail'].append({u'id': 438921, u'email': u'automatedtester@mozilla.com',
-                                u'name': u'automatedtester@mozilla.com ', u'real_name': u'AutomatedTester'})
+                                u'name': u'automatedtester@mozilla.com', u'real_name': u'AutomatedTester'})
     bug_dict['bugs'][0]['cc_detail'].append({u'id': 438922, u'email': u'foobar@mozilla.com',
-                                u'name': u'foobar@mozilla.com ', u'real_name': u'Foobar'})
+                                u'name': u'foobar@mozilla.com', u'real_name': u'Foobar'})
 
     updated_bug = None
     with responses.RequestsMock() as rsps:
@@ -300,7 +300,7 @@ def test_we_can_add_remove_an_email_to_cc_list():
     bug_dict = copy.deepcopy(example_return)
     bug_dict['bugs'][0]['cc_detail'].remove([person for person in bug_dict['bugs'][0]['cc_detail'] if person['id'] == 397261][0])
     bug_dict['bugs'][0]['cc_detail'].append({u'id': 438921, u'email': u'automatedtester@mozilla.com',
-                                u'name': u'automatedtester@mozilla.com ', u'real_name': u'AutomatedTester'})
+                                u'name': u'automatedtester@mozilla.com', u'real_name': u'AutomatedTester'})
 
     updated_bug = None
     with responses.RequestsMock() as rsps:
