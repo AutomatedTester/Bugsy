@@ -5,7 +5,7 @@ from .errors import BugException
 VALID_STATUS = ["RESOLVED", "ASSIGNED", "NEW", "UNCONFIRMED"]
 VALID_RESOLUTION = ["FIXED", "INCOMPLETE", "INVALID", "WORKSFORME",
                     "DUPLICATE", "WONTFIX"]
-ARRAY_TYPES = ["alias", "blocks", "cc", "cc_detail", "depends_on",
+ARRAY_TYPES = ["blocks", "cc", "cc_detail", "depends_on",
                "flags", "groups", "keywords", "see_also"]
 
 
@@ -19,7 +19,7 @@ def unpack(src):
         result['cc'] = [item['email'] for item in result['cc_detail']]
         del result['cc_detail']
     for field in ARRAY_TYPES:
-        if field not in result:
+        if field not in result or not result[field]:
             result[field] = []
 
     return result
