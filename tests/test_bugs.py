@@ -172,7 +172,7 @@ def test_we_throw_an_error_for_invalid_status_types():
     bug = Bug(**example_return['bugs'][0])
     try:
         bug.status = "foo"
-        assert 1 == 0, "Should have thrown an error about invalid type"
+        assert False, "Should have thrown an error about invalid type"
     except BugException as e:
         assert str(e) == "Message: Invalid status type was used Code: None"
 
@@ -189,7 +189,7 @@ def test_we_cant_set_the_resolution_when_not_valid():
     bug = Bug(**example_return['bugs'][0])
     try:
         bug.resolution = 'FOO'
-        assert 1==0, "Should thrown an error"
+        assert False, "Should thrown an error"
     except BugException as e:
         assert str(e) == "Message: Invalid resolution type was used Code: None"
 
