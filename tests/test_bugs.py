@@ -252,15 +252,15 @@ def test_we_can_update_a_bug_from_bugzilla():
                       content_type='application/json', match_querystring=True)
     bugzilla = Bugsy()
     bug = bugzilla.get(1017315)
-    import copy
-    bug_dict = copy.deepcopy(example_return)
-    bug_dict['bugs'][0]['status'] = "REOPENED"
     responses.reset()
     responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/bug/1017315',
-                      body=json.dumps(bug_dict), status=200,
+                      body=json.dumps(example_return), status=200,
                       content_type='application/json')
-    bug.update()
-    assert bug.status == 'REOPENED'
+    clone = Bug(bugsy=bugzilla, **bug.to_dict())
+    clone.status = 'NEW'
+    clone.update()
+    assert clone.id == 1017315
+    assert clone.status == 'RESOLVED'
 
 def test_we_cant_update_unless_we_have_a_bug_id():
     bug = Bug()
@@ -278,19 +278,17 @@ def test_we_can_update_a_bug_with_login_token():
   responses.add(responses.GET, rest_url('bug', 1017315),
                     body=json.dumps(example_return), status=200,
                     content_type='application/json', match_querystring=True)
-  bugzilla = Bugsy("foo", "bar")
+  bugzilla = Bugsy()
   bug = bugzilla.get(1017315)
-  import copy
-  bug_dict = copy.deepcopy(example_return)
-  bug_dict['bugs'][0]['status'] = "REOPENED"
   responses.reset()
   responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/bug/1017315',
-                    body=json.dumps(bug_dict), status=200,
-                    content_type='application/json', match_querystring=True)
-  bug.update()
-  assert bug.id == 1017315
-  assert bug.status == 'REOPENED'
-  assert bug.summary == 'Schedule Mn tests on opt Linux builds on cedar'
+                body=json.dumps(example_return), status=200,
+                content_type='application/json')
+  clone = Bug(bugsy=bugzilla, **bug.to_dict())
+  clone.status = 'NEW'
+  clone.update()
+  assert clone.id == 1017315
+  assert clone.status == 'RESOLVED'
 
 @responses.activate
 def test_that_we_can_add_a_comment_to_a_bug_before_it_is_put():
