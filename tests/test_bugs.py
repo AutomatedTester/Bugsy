@@ -86,7 +86,7 @@ def test_we_can_get_Product_set_from_default():
     bug = Bug()
     assert bug.product == "core"
 
-def test_we_can_get_get_the_keywords():
+def test_we_can_get_the_keywords():
     bug = Bug(**example_return['bugs'][0])
     keywords = bug.keywords
     assert [u'regression'] == keywords
