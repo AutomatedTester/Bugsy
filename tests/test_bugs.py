@@ -91,108 +91,36 @@ def test_we_can_get_the_keywords():
     keywords = bug.keywords
     assert ['regression'] == keywords
 
-@responses.activate
 def test_we_can_add_single_keyword():
-    bug = None
-    bugzilla = None
-    with responses.RequestsMock() as rsps:
-        rsps.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login',
-                          body='{"token": "foobar"}', status=200,
-                          content_type='application/json', match_querystring=True)
-        rsps.add(responses.GET, rest_url('bug', 1017315),
-                      body=json.dumps(example_return), status=200,
-                      content_type='application/json', match_querystring=True)
-        bugzilla = Bugsy("foo", "bar")
-        bug = bugzilla.get(1017315)
-    import copy
-    bug_dict = copy.deepcopy(example_return)
-    bug_dict['bugs'][0]['keywords'].append("ateam-marionette-server")
+    bug = Bug(**example_return['bugs'][0])
+    bug.keywords.append('ateam-marionette-server')
+    output = bug.diff()
+    assert isinstance(output, dict)
+    assert output == {'keywords': {
+        'added': ['ateam-marionette-server']
+    }}
+    assert ['regression', 'ateam-marionette-server'] == bug.keywords
 
-    updated_bug = None
-    with responses.RequestsMock() as rsps:
-        rsps.add(responses.PUT, 'https://bugzilla.mozilla.org/rest/bug/1017315',
-                    body=json.dumps(bug_dict), status=200,
-                    content_type='application/json', match_querystring=True)
-
-        rsps.add(responses.GET, rest_url('bug', 1017315),
-                      body=json.dumps(bug_dict), status=200,
-                      content_type='application/json', match_querystring=True)
-
-        bug.keywords.append("ateam-marionette-server")
-        updated_bug = bugzilla.put(bug)
-
-    keywords = updated_bug.keywords
-    assert isinstance(keywords, list)
-    assert [u"regression", u"ateam-marionette-server"] == keywords
-
-@responses.activate
 def test_we_can_add_multiple_keywords_to_list():
-    bug = None
-    bugzilla = None
-    with responses.RequestsMock() as rsps:
-        rsps.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login',
-                          body='{"token": "foobar"}', status=200,
-                          content_type='application/json', match_querystring=True)
-        rsps.add(responses.GET, rest_url('bug', 1017315),
-                      body=json.dumps(example_return), status=200,
-                      content_type='application/json', match_querystring=True)
-        bugzilla = Bugsy("foo", "bar")
-        bug = bugzilla.get(1017315)
-    import copy
-    bug_dict = copy.deepcopy(example_return)
-    bug_dict['bugs'][0]['keywords'].append("intermittent")
-    bug_dict['bugs'][0]['keywords'].append("ateam-marionette-server")
+    bug = Bug(**example_return['bugs'][0])
+    bug.keywords.extend(['intermittent', 'ateam-marionette-server'])
+    output = bug.diff()
+    assert isinstance(output, dict)
+    assert output == {'keywords': {
+        'added': ['intermittent', 'ateam-marionette-server']
+    }}
+    keywords = bug.keywords
+    assert sorted(['regression', 'intermittent', 'ateam-marionette-server']) == sorted(keywords)
 
-    updated_bug = None
-    with responses.RequestsMock() as rsps:
-        rsps.add(responses.PUT, 'https://bugzilla.mozilla.org/rest/bug/1017315',
-                    body=json.dumps(bug_dict), status=200,
-                    content_type='application/json', match_querystring=True)
-
-        rsps.add(responses.GET, rest_url('bug', 1017315),
-                      body=json.dumps(bug_dict), status=200,
-                      content_type='application/json', match_querystring=True)
-
-        bug.keywords.extend(["intermittent", "ateam-marionette-server"])
-        updated_bug = bugzilla.put(bug)
-
-    keywords = updated_bug.keywords
-    assert isinstance(keywords, list)
-    assert ["regression", "intermittent", "ateam-marionette-server"] == keywords
-
-@responses.activate
 def test_we_can_add_remove_a_keyword_list():
-    bug = None
-    bugzilla = None
-    with responses.RequestsMock() as rsps:
-        rsps.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login',
-                          body='{"token": "foobar"}', status=200,
-                          content_type='application/json', match_querystring=True)
-        rsps.add(responses.GET, rest_url('bug', 1017315),
-                      body=json.dumps(example_return), status=200,
-                      content_type='application/json', match_querystring=True)
-
-        bugzilla = Bugsy("foo", "bar")
-        bug = bugzilla.get(1017315)
-    import copy
-    bug_dict = copy.deepcopy(example_return)
-    bug_dict['bugs'][0]['keywords'].remove("regression")
-
-    updated_bug = None
-    with responses.RequestsMock() as rsps:
-        rsps.add(responses.PUT, 'https://bugzilla.mozilla.org/rest/bug/1017315',
-                    body=json.dumps(bug_dict), status=200,
-                    content_type='application/json', match_querystring=True)
-
-        rsps.add(responses.GET, rest_url('bug', 1017315),
-                      body=json.dumps(bug_dict), status=200,
-                      content_type='application/json', match_querystring=True)
-
-        bug.keyword = ["regression-"]
-        updated_bug = bugzilla.put(bug)
-
-    keywords = updated_bug.keywords
-    assert isinstance(keywords, list)
+    bug = Bug(**example_return['bugs'][0])
+    bug.keywords.remove('regression')
+    output = bug.diff()
+    assert isinstance(output, dict)
+    assert output == {'keywords': {
+        'removed': ['regression']
+    }}
+    keywords = bug.keywords
     assert [] == keywords
 
 def test_we_can_get_Product_we_set():
@@ -206,156 +134,39 @@ def test_we_can_get_get_cc_list():
     assert sorted([u"coop@mozilla.com", u"dburns@mozilla.com",
             u"jlund@mozilla.com", u"mdas@mozilla.com"]) == sorted(cced)
 
-@responses.activate
 def test_we_can_add_single_email_to_cc_list():
-    bug = None
-    bugzilla = None
-    with responses.RequestsMock() as rsps:
-        rsps.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login',
-                          body='{"token": "foobar"}', status=200,
-                          content_type='application/json', match_querystring=True)
-        rsps.add(responses.GET, rest_url('bug', 1017315),
-                      body=json.dumps(example_return), status=200,
-                      content_type='application/json', match_querystring=True)
-        bugzilla = Bugsy("foo", "bar")
-        bug = bugzilla.get(1017315)
-    import copy
-    bug_dict = copy.deepcopy(example_return)
-    bug_dict['bugs'][0]['cc_detail'].append({u'id': 438921, u'email': u'automatedtester@mozilla.com',
-                                u'name': u'automatedtester@mozilla.com', u'real_name': u'AutomatedTester'})
+    bug = Bug(**example_return['bugs'][0])
+    bug.cc.append('foo@bar.com')
+    output = bug.diff()
+    assert isinstance(output, dict)
+    assert output == {'cc': {'added': ['foo@bar.com']}}
 
-    updated_bug = None
-    with responses.RequestsMock() as rsps:
-        rsps.add(responses.PUT, 'https://bugzilla.mozilla.org/rest/bug/1017315',
-                    body=json.dumps(bug_dict), status=200,
-                    content_type='application/json', match_querystring=True)
-
-        rsps.add(responses.GET, rest_url('bug', 1017315),
-                      body=json.dumps(bug_dict), status=200,
-                      content_type='application/json', match_querystring=True)
-
-        bug.cc.append("automatedtester@mozilla.com")
-        updated_bug = bugzilla.put(bug)
-
-    cced = updated_bug.cc
-    assert isinstance(cced, list)
-    assert sorted([u"coop@mozilla.com", u"dburns@mozilla.com",
-            u"jlund@mozilla.com", u"mdas@mozilla.com",
-            u"automatedtester@mozilla.com"]) == sorted(cced)
-
-@responses.activate
 def test_we_can_add_multiple_emails_to_cc_list():
-    bug = None
-    bugzilla = None
-    with responses.RequestsMock() as rsps:
-        rsps.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login',
-                          body='{"token": "foobar"}', status=200,
-                          content_type='application/json', match_querystring=True)
-        rsps.add(responses.GET, rest_url('bug', 1017315),
-                      body=json.dumps(example_return), status=200,
-                      content_type='application/json', match_querystring=True)
-        bugzilla = Bugsy("foo", "bar")
-        bug = bugzilla.get(1017315)
-    import copy
-    bug_dict = copy.deepcopy(example_return)
-    bug_dict['bugs'][0]['cc_detail'].append({u'id': 438921, u'email': u'automatedtester@mozilla.com',
-                                u'name': u'automatedtester@mozilla.com', u'real_name': u'AutomatedTester'})
-    bug_dict['bugs'][0]['cc_detail'].append({u'id': 438922, u'email': u'foobar@mozilla.com',
-                                u'name': u'foobar@mozilla.com', u'real_name': u'Foobar'})
+    bug = Bug(**example_return['bugs'][0])
+    bug.cc.extend(['automatedtester@mozilla.com', 'foobar@mozilla.com'])
+    output = bug.diff()
+    assert isinstance(output, dict)
+    assert output == {'cc': {
+        'added': ['automatedtester@mozilla.com', 'foobar@mozilla.com']
+    }}
 
-    updated_bug = None
-    with responses.RequestsMock() as rsps:
-        rsps.add(responses.PUT, 'https://bugzilla.mozilla.org/rest/bug/1017315',
-                    body=json.dumps(bug_dict), status=200,
-                    content_type='application/json', match_querystring=True)
-
-        rsps.add(responses.GET, rest_url('bug', 1017315),
-                      body=json.dumps(bug_dict), status=200,
-                      content_type='application/json', match_querystring=True)
-
-        bug.cc = ["automatedtester@mozilla.com", "foobar@mozilla.com"]
-        updated_bug = bugzilla.put(bug)
-
-    cced = updated_bug.cc
-    assert isinstance(cced, list)
-    assert sorted([u"coop@mozilla.com", u"dburns@mozilla.com",
-            u"jlund@mozilla.com", u"mdas@mozilla.com",
-            u"automatedtester@mozilla.com", u"foobar@mozilla.com"]) == sorted(cced)
-
-@responses.activate
 def test_we_can_add_remove_an_email_to_cc_list():
-    bug = None
-    bugzilla = None
-    with responses.RequestsMock() as rsps:
-        rsps.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login',
-                          body='{"token": "foobar"}', status=200,
-                          content_type='application/json', match_querystring=True)
-        rsps.add(responses.GET, rest_url('bug', 1017315),
-                      body=json.dumps(example_return), status=200,
-                      content_type='application/json', match_querystring=True)
+    bug = Bug(**example_return['bugs'][0])
+    bug.cc.append('automatedtester@mozilla.com')
+    bug.cc.remove('dburns@mozilla.com')
+    output = bug.diff()
+    assert isinstance(output, dict)
+    assert output == {'cc': {
+        'added': ['automatedtester@mozilla.com'],
+        'removed': ['dburns@mozilla.com']
+    }}
 
-        bugzilla = Bugsy("foo", "bar")
-        bug = bugzilla.get(1017315)
-    import copy
-    bug_dict = copy.deepcopy(example_return)
-    bug_dict['bugs'][0]['cc_detail'].remove([person for person in bug_dict['bugs'][0]['cc_detail'] if person['id'] == 397261][0])
-    bug_dict['bugs'][0]['cc_detail'].append({u'id': 438921, u'email': u'automatedtester@mozilla.com',
-                                u'name': u'automatedtester@mozilla.com', u'real_name': u'AutomatedTester'})
-
-    updated_bug = None
-    with responses.RequestsMock() as rsps:
-        rsps.add(responses.PUT, 'https://bugzilla.mozilla.org/rest/bug/1017315',
-                    body=json.dumps(bug_dict), status=200,
-                    content_type='application/json', match_querystring=True)
-
-        rsps.add(responses.GET, rest_url('bug', 1017315),
-                      body=json.dumps(bug_dict), status=200,
-                      content_type='application/json', match_querystring=True)
-
-        bug.cc.append("automatedtester@mozilla.com")
-        bug.cc.remove("dburns@mozilla.com")
-        updated_bug = bugzilla.put(bug)
-
-    cced = updated_bug.cc
-    assert isinstance(cced, list)
-    assert sorted([u"coop@mozilla.com", u"jlund@mozilla.com",
-            u"mdas@mozilla.com", u"automatedtester@mozilla.com"]) == sorted(cced)
-
-@responses.activate
 def test_we_can_remove_an_email_to_cc_list():
-    bug = None
-    bugzilla = None
-    with responses.RequestsMock() as rsps:
-        rsps.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login',
-                          body='{"token": "foobar"}', status=200,
-                          content_type='application/json', match_querystring=True)
-        rsps.add(responses.GET, rest_url('bug', 1017315),
-                      body=json.dumps(example_return), status=200,
-                      content_type='application/json', match_querystring=True)
-
-        bugzilla = Bugsy("foo", "bar")
-        bug = bugzilla.get(1017315)
-    import copy
-    bug_dict = copy.deepcopy(example_return)
-    bug_dict['bugs'][0]['cc_detail'].remove([person for person in bug_dict['bugs'][0]['cc_detail'] if person['id'] == 397261][0])
-    bug_dict['bugs'][0]['cc_detail'].remove([person for person in bug_dict['bugs'][0]['cc_detail'] if person['id'] == 418814][0])
-
-    updated_bug = None
-    with responses.RequestsMock() as rsps:
-        rsps.add(responses.PUT, 'https://bugzilla.mozilla.org/rest/bug/1017315',
-                    body=json.dumps(bug_dict), status=200,
-                    content_type='application/json', match_querystring=True)
-
-        rsps.add(responses.GET, rest_url('bug', 1017315),
-                      body=json.dumps(bug_dict), status=200,
-                      content_type='application/json', match_querystring=True)
-
-        bug.cc = ["automatedtester@mozilla.com", "dburns@mozilla.com-"]
-        updated_bug = bugzilla.put(bug)
-
-    cced = updated_bug.cc
-    assert isinstance(cced, list)
-    assert sorted([u"coop@mozilla.com", u"jlund@mozilla.com"]) == sorted(cced)
+    bug = Bug(**example_return['bugs'][0])
+    bug.cc.remove('dburns@mozilla.com')
+    output = bug.diff()
+    assert isinstance(output, dict)
+    assert output == {'cc': {'removed': ['dburns@mozilla.com']}}
 
 def test_we_throw_an_error_for_invalid_status_types():
     bug = Bug(**example_return['bugs'][0])
@@ -400,40 +211,17 @@ def test_we_can_get_depends_on_list():
     assert isinstance(depends_on, list)
     assert depends_on == [123456]
 
-@responses.activate
 def test_we_can_add_and_remove_depends_on():
-    bug = None
-    bugzilla = None
-    with responses.RequestsMock() as rsps:
-        rsps.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login',
-                          body='{"token": "foobar"}', status=200,
-                          content_type='application/json', match_querystring=True)
-        rsps.add(responses.GET, rest_url('bug', 1017315),
-                      body=json.dumps(example_return), status=200,
-                      content_type='application/json', match_querystring=True)
-
-        bugzilla = Bugsy("foo", "bar")
-        bug = bugzilla.get(1017315)
-    import copy
-    bug_dict = copy.deepcopy(example_return)
-    bug_dict['bugs'][0]['depends_on'].remove(123456)
-    bug_dict['bugs'][0]['depends_on'].append(145123)
-
-    updated_bug = None
-    with responses.RequestsMock() as rsps:
-        rsps.add(responses.PUT, 'https://bugzilla.mozilla.org/rest/bug/1017315',
-                    body=json.dumps(bug_dict), status=200,
-                    content_type='application/json', match_querystring=True)
-
-        rsps.add(responses.GET, rest_url('bug', 1017315),
-                      body=json.dumps(bug_dict), status=200,
-                      content_type='application/json', match_querystring=True)
-
-        bug.depends_on.remove(123456)
-        bug.depends_on.append(145123)
-        updated_bug = bugzilla.put(bug)
-
-    deps = updated_bug.depends_on
+    bug = Bug(**example_return['bugs'][0])
+    bug.depends_on.remove(123456)
+    bug.depends_on.append(145123)
+    output = bug.diff()
+    assert isinstance(output, dict)
+    assert output == {'depends_on': {
+        'added': [145123],
+        'removed': [123456]
+    }}
+    deps = bug.depends_on
     assert isinstance(deps, list)
     assert [145123] == deps
 
@@ -443,39 +231,17 @@ def test_we_can_get_blocks_list():
     assert isinstance(blocks, list)
     assert blocks == [654321]
 
-@responses.activate
 def test_we_can_add_and_remove_blocks():
-    bug = None
-    bugzilla = None
-    with responses.RequestsMock() as rsps:
-        rsps.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login',
-                          body='{"token": "foobar"}', status=200,
-                          content_type='application/json', match_querystring=True)
-        rsps.add(responses.GET, rest_url('bug', 1017315),
-                      body=json.dumps(example_return), status=200,
-                      content_type='application/json', match_querystring=True)
-
-        bugzilla = Bugsy("foo", "bar")
-        bug = bugzilla.get(1017315)
-    import copy
-    bug_dict = copy.deepcopy(example_return)
-    bug_dict['bugs'][0]['blocks'].remove(654321)
-    bug_dict['bugs'][0]['blocks'].append(145123)
-
-    updated_bug = None
-    with responses.RequestsMock() as rsps:
-        rsps.add(responses.PUT, 'https://bugzilla.mozilla.org/rest/bug/1017315',
-                    body=json.dumps(bug_dict), status=200,
-                    content_type='application/json', match_querystring=True)
-
-        rsps.add(responses.GET, rest_url('bug', 1017315),
-                      body=json.dumps(bug_dict), status=200,
-                      content_type='application/json', match_querystring=True)
-
-        bug.blocks = ["654321-", "145123"]
-        updated_bug = bugzilla.put(bug)
-
-    deps = updated_bug.blocks
+    bug = Bug(**example_return['bugs'][0])
+    bug.blocks.remove(654321)
+    bug.blocks.append(145123)
+    output = bug.diff()
+    assert isinstance(output, dict)
+    assert output == {'blocks': {
+        'added': [145123],
+        'removed': [654321]
+    }}
+    deps = bug.blocks
     assert isinstance(deps, list)
     assert [145123] == deps
 
