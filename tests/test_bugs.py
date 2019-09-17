@@ -89,7 +89,7 @@ def test_we_can_get_Product_set_from_default():
 def test_we_can_get_the_keywords():
     bug = Bug(**example_return['bugs'][0])
     keywords = bug.keywords
-    assert [u'regression'] == keywords
+    assert ['regression'] == keywords
 
 @responses.activate
 def test_we_can_add_single_keyword():
