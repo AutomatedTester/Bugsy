@@ -131,8 +131,8 @@ def test_we_can_get_get_cc_list():
     bug = Bug(**example_return['bugs'][0])
     cced = bug.cc
     assert isinstance(cced, list)
-    assert sorted([u"coop@mozilla.com", u"dburns@mozilla.com",
-            u"jlund@mozilla.com", u"mdas@mozilla.com"]) == sorted(cced)
+    assert ['coop@mozilla.com', 'dburns@mozilla.com',
+            'jlund@mozilla.com', 'mdas@mozilla.com'] == cced
 
 def test_we_can_add_single_email_to_cc_list():
     bug = Bug(**example_return['bugs'][0])
