@@ -37,9 +37,9 @@ class Bug(object):
 
             >>> bug = Bug(**myDict)
         """
-        object.__setattr__(self, '_bugsy', bugsy)
-        object.__setattr__(self, '_bug', unpack(dict(**kwargs)))
-        object.__setattr__(self, '_copy', unpack(dict(**kwargs)))
+        self._bugsy = bugsy
+        self._bug = dict(**kwargs)
+        self._copy = dict(**kwargs)
         self._bug['op_sys'] = kwargs.get('op_sys', 'All')
         self._bug['product'] = kwargs.get('product', 'core')
         self._bug['component'] = kwargs.get('component', 'general')
