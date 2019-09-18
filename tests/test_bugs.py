@@ -1,3 +1,4 @@
+import copy
 import datetime
 import responses
 import json
@@ -467,3 +468,27 @@ def test_adding_new_field_to_existing_bug():
     bug.alias = 'foobar'
     diff = bug.diff()
     assert diff['alias'] == 'foobar'
+
+@responses.activate
+def test_bug_update_updates_copy_dict():
+    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login',
+                  body='{"token": "foobar"}', status=200,
+                  content_type='application/json', match_querystring=True)
+    bugzilla = Bugsy("foo", "bar")
+    bug = Bug(bugzilla, **example_return['bugs'][0])
+
+    bug.status = 'NEW'
+    diff = bug.diff()
+    bug_dict = copy.deepcopy(example_return)
+    bug_dict['bugs'][0]['status'] = 'NEW'
+    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/bug/1017315',
+                  body=json.dumps(bug_dict), status=200,
+                  content_type='application/json')
+
+    responses.add(responses.PUT, 'https://bugzilla.mozilla.org/rest/bug/1017315',
+                  body=json.dumps(diff), status=200,
+                  content_type='application/json')
+
+    bugzilla.put(bug)
+    bug.update()
+    assert bug._copy['status'] == 'NEW'
