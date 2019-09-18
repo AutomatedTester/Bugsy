@@ -154,24 +154,19 @@ class Bug(object):
         changed = {}
         for key in self._bug:
             if key not in ARRAY_TYPES:
-                if key in self._copy and self._bug[key] != self._copy[key]:
+                if key not in self._copy or self._bug[key] != self._copy[key]:
                     changed[key] = self._bug[key]
             else:
-                additions = []
-                for item in self._bug[key]:
-                    if key not in self._copy or not self._copy[key] or item not in self._copy[key]:
-                        additions.append(item)
-                subtractions = []
-                if key in self._copy:
-                    for item in self._copy[key]:
-                        if item not in self._bug[key]:
-                            subtractions.append(item)
-                if len(additions) or len(subtractions):
+                values_now = set(self._bug.get(key, []))
+                values_orig = set(self._copy.get(key, []))
+                additions = list(values_now - values_orig)
+                subtractions = list(values_orig - values_now)
+                if additions or subtractions:
                     changed[key] = {}
                     if len(additions):
-                        changed[key]['added'] = additions
+                        changed[key]['add'] = additions
                     if len(subtractions):
-                        changed[key]['removed'] = subtractions
+                        changed[key]['remove'] = subtractions
         return changed
 
 
