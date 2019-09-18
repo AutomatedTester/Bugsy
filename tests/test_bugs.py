@@ -97,7 +97,7 @@ def test_we_can_add_single_keyword():
     output = bug.diff()
     assert isinstance(output, dict)
     assert output == {'keywords': {
-        'added': ['ateam-marionette-server']
+        'add': ['ateam-marionette-server']
     }}
     assert ['regression', 'ateam-marionette-server'] == bug.keywords
 
@@ -106,9 +106,7 @@ def test_we_can_add_multiple_keywords_to_list():
     bug.keywords.extend(['intermittent', 'ateam-marionette-server'])
     output = bug.diff()
     assert isinstance(output, dict)
-    assert output == {'keywords': {
-        'added': ['intermittent', 'ateam-marionette-server']
-    }}
+    assert sorted(output['keywords']['add']) == sorted(['intermittent', 'ateam-marionette-server'])
     keywords = bug.keywords
     assert sorted(['regression', 'intermittent', 'ateam-marionette-server']) == sorted(keywords)
 
@@ -118,7 +116,7 @@ def test_we_can_add_remove_a_keyword_list():
     output = bug.diff()
     assert isinstance(output, dict)
     assert output == {'keywords': {
-        'removed': ['regression']
+        'remove': ['regression']
     }}
     keywords = bug.keywords
     assert [] == keywords
@@ -139,16 +137,14 @@ def test_we_can_add_single_email_to_cc_list():
     bug.cc.append('foo@bar.com')
     output = bug.diff()
     assert isinstance(output, dict)
-    assert output == {'cc': {'added': ['foo@bar.com']}}
+    assert output == {'cc': {'add': ['foo@bar.com']}}
 
 def test_we_can_add_multiple_emails_to_cc_list():
     bug = Bug(**example_return['bugs'][0])
     bug.cc.extend(['automatedtester@mozilla.com', 'foobar@mozilla.com'])
     output = bug.diff()
     assert isinstance(output, dict)
-    assert output == {'cc': {
-        'added': ['automatedtester@mozilla.com', 'foobar@mozilla.com']
-    }}
+    assert sorted(output['cc']['add']) == sorted(['automatedtester@mozilla.com', 'foobar@mozilla.com'])
 
 def test_we_can_add_remove_an_email_to_cc_list():
     bug = Bug(**example_return['bugs'][0])
@@ -157,8 +153,8 @@ def test_we_can_add_remove_an_email_to_cc_list():
     output = bug.diff()
     assert isinstance(output, dict)
     assert output == {'cc': {
-        'added': ['automatedtester@mozilla.com'],
-        'removed': ['dburns@mozilla.com']
+        'add': ['automatedtester@mozilla.com'],
+        'remove': ['dburns@mozilla.com']
     }}
 
 def test_we_can_remove_an_email_to_cc_list():
@@ -166,7 +162,7 @@ def test_we_can_remove_an_email_to_cc_list():
     bug.cc.remove('dburns@mozilla.com')
     output = bug.diff()
     assert isinstance(output, dict)
-    assert output == {'cc': {'removed': ['dburns@mozilla.com']}}
+    assert output == {'cc': {'remove': ['dburns@mozilla.com']}}
 
 def test_we_throw_an_error_for_invalid_status_types():
     bug = Bug(**example_return['bugs'][0])
@@ -218,8 +214,8 @@ def test_we_can_add_and_remove_depends_on():
     output = bug.diff()
     assert isinstance(output, dict)
     assert output == {'depends_on': {
-        'added': [145123],
-        'removed': [123456]
+        'add': [145123],
+        'remove': [123456]
     }}
     deps = bug.depends_on
     assert isinstance(deps, list)
@@ -238,8 +234,8 @@ def test_we_can_add_and_remove_blocks():
     output = bug.diff()
     assert isinstance(output, dict)
     assert output == {'blocks': {
-        'added': [145123],
-        'removed': [654321]
+        'add': [145123],
+        'remove': [654321]
     }}
     deps = bug.blocks
     assert isinstance(deps, list)
