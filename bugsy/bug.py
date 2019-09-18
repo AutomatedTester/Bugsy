@@ -58,7 +58,7 @@ class Bug(object):
         elif attr == '_bugsy':
             object.__setattr__(self, attr, value)
         elif attr == 'status':
-            if self._bug.get('id', None):
+            if self.id:
                 if value in VALID_STATUS:
                     self._bug['status'] = value
                 else:
