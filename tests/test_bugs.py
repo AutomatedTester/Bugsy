@@ -460,3 +460,10 @@ def test_we_can_remove_tags_to_bug_comments():
     comments[0].remove_tags("foo")
 
     assert len(responses.calls) == 4
+
+def test_adding_new_field_to_existing_bug():
+    # This can occur if a bug is retrieved using limited fields
+    bug = Bug({})
+    bug.alias = 'foobar'
+    diff = bug.diff()
+    assert diff['alias'] == 'foobar'
