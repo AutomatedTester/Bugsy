@@ -96,6 +96,7 @@ class Bug(object):
         if 'id' in self._bug:
             result = self._bugsy.request('bug/%s' % self._bug['id'])
             self._bug = dict(**result['bugs'][0])
+            self._copy = dict(**result['bugs'][0])
         else:
             raise BugException("Unable to update bug that isn't in Bugzilla")
 
