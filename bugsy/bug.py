@@ -74,7 +74,7 @@ class Bug(object):
         elif attr in ARRAY_TYPES and not isinstance(value, list):
             raise BugException("Cannot set value to non-list type")
         else:
-            self._bug[attr] = value
+            self._bug[attr] = copy.copy(value)
 
     def to_dict(self):
         """
