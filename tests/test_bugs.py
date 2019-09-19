@@ -1,11 +1,12 @@
 import copy
 import datetime
-import responses
 import json
 
-from . import rest_url
-from bugsy import Bugsy, Bug
+import responses
+
+from bugsy import Bugsy, Bug, Attachment
 from bugsy.errors import (BugsyException, BugException)
+from . import rest_url
 
 
 def test_can_create_bug_and_set_summary_afterwards():

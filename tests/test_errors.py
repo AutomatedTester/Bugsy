@@ -1,11 +1,12 @@
-from . import rest_url
-from .test_bugs import comments_return, example_return
-from bugsy import (Bugsy, Bug)
-from bugsy.errors import (BugsyException, LoginException)
+import json
 
 import pytest
 import responses
-import json
+
+from bugsy import (Bugsy)
+from bugsy.errors import (BugsyException)
+from . import rest_url
+
 
 @responses.activate
 def test_an_exception_is_raised_when_we_hit_an_error():
