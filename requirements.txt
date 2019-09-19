@@ -1,3 +1,4 @@
+six
 pytest
 flake8
 requests

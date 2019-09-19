@@ -1,5 +1,7 @@
 import copy
 import datetime
+
+from .attachment import Attachment
 from .errors import BugException
 
 VALID_STATUS = ["ASSIGNED", "NEW", "RESOLVED", "UNCONFIRMED", "VERIFIED"]
@@ -136,6 +138,36 @@ class Bug(object):
                                 )
         else:
             self._bug['comment'] = comment
+
+    def get_attachments(self):
+        """
+            Obtain comments for this bug.
+
+            Returns a list of Comment instances.
+        """
+        bug = str(self._bug['id'])
+        res = self._bugsy.request(
+            'bug/%s/attachment' % bug,
+        )
+
+        return [Attachment(bugsy=self._bugsy, **attachments) for attachments
+                in res['bugs'][0]['attachments']]
+
+    def add_attachment(self, attachment):
+        if not self.id:
+            raise BugException("Cannot add an attachment without a bug id")
+
+        attach_dict = attachment.to_dict()
+        missing = list(set(Attachment.CREATE_REQUIRED) - set(attach_dict.keys()))
+        if missing:
+            raise BugException("Cannot add attachment without all required fields")
+
+        output = {'ids': [self.id]}
+        for field in list(set(Attachment.CREATE_FIELDS) & set(attach_dict.keys())):
+            output[field] = attach_dict[field]
+
+        self._bugsy.request('bug/%s/attachment' % self._bug['id'],
+                            method='POST', json=output)
 
     def diff(self):
         """
