@@ -20,6 +20,14 @@ class LoginException(BugsyException):
     pass
 
 
+class AttachmentException(BugsyException):
+    """
+        If we try do something that is not allowed to an attachment then
+        this error is raised
+    """
+    pass
+
+
 class BugException(BugsyException):
     """
         If we try do something that is not allowed to a bug then
