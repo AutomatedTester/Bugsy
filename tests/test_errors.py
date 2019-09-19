@@ -39,12 +39,12 @@ def test_bugsyexception_raised_for_http_503_when_verifying_api_key():
 
 
 @responses.activate
-def test_bugsyexception_raised_for_http_500_when_commenting_on_a_bug():
+def test_bugsyexception_raised_for_http_500_when_commenting_on_a_bug(bug_return):
     responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login',
                   body='{"token": "foobar"}', status=200,
                   content_type='application/json', match_querystring=True)
     responses.add(responses.GET, rest_url('bug', 1017315),
-                  body=json.dumps(example_return), status=200,
+                  body=json.dumps(bug_return), status=200,
                   content_type='application/json', match_querystring=True)
     bugzilla = Bugsy("foo", "bar")
     bug = bugzilla.get(1017315)
@@ -58,14 +58,15 @@ def test_bugsyexception_raised_for_http_500_when_commenting_on_a_bug():
 
 
 @responses.activate
-def test_bugsyexception_raised_for_http_500_when_adding_tags_to_bug_comments():
+def test_bugsyexception_raised_for_http_500_when_adding_tags_to_bug_comments(
+        bug_return, comments_return):
     responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login',
                           body='{"token": "foobar"}', status=200,
                           content_type='application/json', match_querystring=True)
 
     responses.add(responses.GET, rest_url('bug', 1017315),
-                      body=json.dumps(example_return), status=200,
-                      content_type='application/json', match_querystring=True)
+                  body=json.dumps(bug_return), status=200,
+                  content_type='application/json', match_querystring=True)
     bugzilla = Bugsy("foo", "bar")
     bug = bugzilla.get(1017315)
 
