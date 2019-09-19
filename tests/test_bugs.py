@@ -441,3 +441,81 @@ def test_bug_update_updates_copy_dict(bug_return, comments_return):
     bugzilla.put(bug)
     bug.update()
     assert bug._copy['status'] == 'NEW'
+
+@responses.activate
+def test_attachment_retrieval(attachment_return, bug_return):
+    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login',
+                        body='{"token": "foobar"}', status=200,
+                        content_type='application/json', match_querystring=True)
+    responses.add(responses.GET, rest_url('bug', 1017315),
+                  json=bug_return, status=200,
+                  content_type='application/json', match_querystring=True)
+    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/bug/1017315/attachment',
+                  json=attachment_return, status=200,
+                  content_type='application/json', match_querystring=True)
+
+    bugzilla = Bugsy("foo", "bar")
+    bug = bugzilla.get(1017315)
+    attachments = bug.get_attachments()
+    assert len(attachments) == 1
+
+    attachment = attachments[0].to_dict()
+    for k, v in attachment.items():
+        if k in ['creation_time', 'last_change_time']:
+            orig = attachment_return['bugs'][0]['attachments'][0][k]
+            assert v == datetime.datetime.strptime(orig, '%Y-%m-%dT%H:%M:%SZ')
+        else:
+            orig = attachment_return['bugs'][0]['attachments'][0][k]
+            assert v == orig
+
+@responses.activate
+def test_add_attachment(attachment_return, bug_return):
+    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login',
+                        body='{"token": "foobar"}', status=200,
+                        content_type='application/json', match_querystring=True)
+    responses.add(responses.GET, rest_url('bug', 1017315),
+                  json=bug_return, status=200,
+                  content_type='application/json', match_querystring=True)
+    responses.add(responses.POST, 'https://bugzilla.mozilla.org/rest/bug/1017315/attachment',
+                  json=attachment_return, status=200,
+                  content_type='application/json', match_querystring=True)
+
+    bugzilla = Bugsy("foo", "bar")
+    bug = bugzilla.get(1017315)
+    attachment = Attachment(bugzilla, **attachment_return['bugs'][0]['attachments'][0])
+    bug.add_attachment(attachment)
+
+    assert len(responses.calls) == 3
+
+@responses.activate
+def test_add_attachment_with_missing_required_fields(attachment_return, bug_return):
+    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login',
+                        body='{"token": "foobar"}', status=200,
+                        content_type='application/json', match_querystring=True)
+    responses.add(responses.GET, rest_url('bug', 1017315),
+                  json=bug_return, status=200,
+                  content_type='application/json', match_querystring=True)
+    responses.add(responses.POST, 'https://bugzilla.mozilla.org/rest/bug/1017315/attachment',
+                  json=attachment_return, status=200,
+                  content_type='application/json', match_querystring=True)
+
+    bugzilla = Bugsy("foo", "bar")
+    bug = bugzilla.get(1017315)
+    clone = copy.deepcopy(attachment_return['bugs'][0]['attachments'][0])
+    del clone['data']
+    attachment = Attachment(bugzilla, **clone)
+
+    try:
+        bug.add_attachment(attachment)
+        assert False, "Should have raised a BugException due to add without data"
+    except BugException as e:
+        assert str(e) == "Message: Cannot add attachment without all required fields Code: None"
+
+def test_we_cant_add_attachment_without_id(attachment_return):
+    bug = Bug()
+    attachment = Attachment(None, **attachment_return['bugs'][0]['attachments'][0])
+
+    try:
+        bug.add_attachment(attachment)
+    except BugException as e:
+        assert str(e) == "Message: Cannot add an attachment without a bug id Code: None"
