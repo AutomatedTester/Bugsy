@@ -1,9 +1,10 @@
-from . import rest_url
-from bugsy import (Bugsy, Bug)
-from bugsy.errors import (BugsyException, LoginException)
+import json
 
 import responses
-import json
+
+from bugsy import (Bugsy, Bug)
+from bugsy.errors import (BugsyException, LoginException)
+from . import rest_url
 
 
 def test_we_cant_post_without_a_username_or_password():

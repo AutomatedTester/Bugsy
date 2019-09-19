@@ -1,8 +1,11 @@
-from . import rest_url
-from bugsy import (Bugsy, Bug)
-from bugsy.errors import SearchException
-import responses
 import json
+
+import responses
+
+from bugsy import (Bugsy)
+from bugsy.errors import SearchException
+from . import rest_url
+
 
 @responses.activate
 def test_we_only_ask_for_the_include_fields():
