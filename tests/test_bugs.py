@@ -462,10 +462,10 @@ def test_attachment_retrieval(attachment_return, bug_return):
     attachment = attachments[0].to_dict()
     for k, v in attachment.items():
         if k in ['creation_time', 'last_change_time']:
-            orig = attachment_return['bugs'][0]['attachments'][0][k]
+            orig = attachment_return['bugs']['1017315'][0][k]
             assert v == datetime.datetime.strptime(orig, '%Y-%m-%dT%H:%M:%SZ')
         else:
-            orig = attachment_return['bugs'][0]['attachments'][0][k]
+            orig = attachment_return['bugs']['1017315'][0][k]
             assert v == orig
 
 @responses.activate
@@ -482,7 +482,7 @@ def test_add_attachment(attachment_return, bug_return):
 
     bugzilla = Bugsy("foo", "bar")
     bug = bugzilla.get(1017315)
-    attachment = Attachment(bugzilla, **attachment_return['bugs'][0]['attachments'][0])
+    attachment = Attachment(bugzilla, **attachment_return['bugs']['1017315'][0])
     bug.add_attachment(attachment)
 
     assert len(responses.calls) == 3
@@ -501,7 +501,7 @@ def test_add_attachment_with_missing_required_fields(attachment_return, bug_retu
 
     bugzilla = Bugsy("foo", "bar")
     bug = bugzilla.get(1017315)
-    clone = copy.deepcopy(attachment_return['bugs'][0]['attachments'][0])
+    clone = copy.deepcopy(attachment_return['bugs']['1017315'][0])
     del clone['data']
     attachment = Attachment(bugzilla, **clone)
 
@@ -513,7 +513,7 @@ def test_add_attachment_with_missing_required_fields(attachment_return, bug_retu
 
 def test_we_cant_add_attachment_without_id(attachment_return):
     bug = Bug()
-    attachment = Attachment(None, **attachment_return['bugs'][0]['attachments'][0])
+    attachment = Attachment(None, **attachment_return['bugs']['1017315'][0])
 
     try:
         bug.add_attachment(attachment)

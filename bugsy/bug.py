@@ -151,7 +151,7 @@ class Bug(object):
         )
 
         return [Attachment(bugsy=self._bugsy, **attachments) for attachments
-                in res['bugs'][0]['attachments']]
+                in res['bugs'][bug]]
 
     def add_attachment(self, attachment):
         if not self.id:
