@@ -113,6 +113,7 @@ def bug_return():
         }]
     }
 
+
 @pytest.fixture(scope="module")
 def comments_return():
     return {
@@ -154,29 +155,27 @@ def comments_return():
 @pytest.fixture(scope="module")
 def attachment_return():
     return {
-        "bugs": [
-            {
-                "attachments": [
-                    {
-                        "is_private": 0,
-                        "creator": "abc@xyz.com",
-                        "bug_id": 1343937,
-                        "last_change_time": "2019-09-18T18:31:57Z",
-                        "size": 0,
-                        "creator_detail": {},
-                        "file_name": "file1.txt",
-                        "summary": "File 1 summary",
-                        "creation_time": "2017-03-02T17:21:23Z",
-                        "id": 8842942,
-                        "is_obsolete": 0,
-                        "flags": [],
-                        "data": "",
-                        "description": "File 2 description",
-                        "content_type": "text/html",
-                        "attacher": "abc@xyz.com",
-                        "is_patch": 0
-                    }
-                ]
-            }
-        ]
+        "bugs": {
+            "1017315": [
+                {
+                    "is_private": 0,
+                    "creator": "abc@xyz.com",
+                    "bug_id": 1017315,
+                    "last_change_time": "2019-09-18T18:31:57Z",
+                    "size": 0,
+                    "creator_detail": {},
+                    "file_name": "file1.txt",
+                    "summary": "File 1 summary",
+                    "creation_time": "2017-03-02T17:21:23Z",
+                    "id": 8842942,
+                    "is_obsolete": 0,
+                    "flags": [],
+                    "data": "",
+                    "description": "File 2 description",
+                    "content_type": "text/html",
+                    "attacher": "abc@xyz.com",
+                    "is_patch": 0
+                }
+            ]
+        }
     }

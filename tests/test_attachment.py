@@ -9,10 +9,10 @@ from bugsy import Bugsy, Attachment, AttachmentException
 
 def test_init(attachment_return):
     bugzilla = Bugsy()
-    source = attachment_return['bugs'][0]['attachments'][0]
+    source = attachment_return['bugs']['1017315'][0]
     attachment = Attachment(bugzilla, **source)
     attach_dict = attachment.to_dict()
-    for k in attachment_return['bugs'][0]['attachments'][0]:
+    for k in attachment_return['bugs']['1017315'][0]:
         if k in ['creation_time', 'last_change_time']:
             continue
         assert attach_dict[k] == source[k]
@@ -20,21 +20,21 @@ def test_init(attachment_return):
 
 def test_retrieve_unset_field(attachment_return):
     bugzilla = Bugsy()
-    source = attachment_return['bugs'][0]['attachments'][0]
+    source = attachment_return['bugs']['1017315'][0]
     attachment = Attachment(bugzilla, **source)
     assert attachment.foo is None
 
 
 def test_we_can_get_a_dict_version_of_the_bug(attachment_return):
     bugzilla = Bugsy()
-    attachment = Attachment(bugzilla, **attachment_return['bugs'][0]['attachments'][0])
+    attachment = Attachment(bugzilla, **attachment_return['bugs']['1017315'][0])
     result = attachment.to_dict()
-    assert attachment_return['bugs'][0]['attachments'][0]['id'] == result['id']
+    assert attachment_return['bugs']['1017315'][0]['id'] == result['id']
 
 
 def test_datetime_conversion(attachment_return):
     bugzilla = Bugsy()
-    source = attachment_return['bugs'][0]['attachments'][0]
+    source = attachment_return['bugs']['1017315'][0]
     attachment = Attachment(bugzilla, **source)
 
     assert isinstance(attachment.creation_time, datetime.datetime)
@@ -42,7 +42,7 @@ def test_datetime_conversion(attachment_return):
 
 def test_setter_validate_base64_types(attachment_return):
     bugzilla = Bugsy()
-    source = attachment_return['bugs'][0]['attachments'][0]
+    source = attachment_return['bugs']['1017315'][0]
     attachment = Attachment(bugzilla, **source)
 
     attachment.data = 'Rm9vYmFy'
@@ -57,7 +57,7 @@ def test_setter_validate_base64_types(attachment_return):
 
 def test_setter_validate_string_types(attachment_return):
     bugzilla = Bugsy()
-    source = attachment_return['bugs'][0]['attachments'][0]
+    source = attachment_return['bugs']['1017315'][0]
     attachment = Attachment(bugzilla, **source)
 
     for field in ['comment', 'content_type', 'file_name', 'summary']:
@@ -74,7 +74,7 @@ def test_setter_validate_string_types(attachment_return):
 
 def test_setter_validate_boolean_types(attachment_return):
     bugzilla = Bugsy()
-    source = attachment_return['bugs'][0]['attachments'][0]
+    source = attachment_return['bugs']['1017315'][0]
     attachment = Attachment(bugzilla, **source)
 
     for field in ['is_patch', 'is_private']:
@@ -91,7 +91,7 @@ def test_setter_validate_boolean_types(attachment_return):
 
 def test_setter_validate_list_types(attachment_return):
     bugzilla = Bugsy()
-    source = attachment_return['bugs'][0]['attachments'][0]
+    source = attachment_return['bugs']['1017315'][0]
     attachment = Attachment(bugzilla, **source)
 
     for field in ['bug_flags', 'flags']:
@@ -109,7 +109,7 @@ def test_setter_validate_list_types(attachment_return):
 @responses.activate
 def test_update_post_required_fields(attachment_return):
     resp_dict = {'attachments': [{}]}
-    for k, v in attachment_return['bugs'][0]['attachments'][0].items():
+    for k, v in attachment_return['bugs']['1017315'][0].items():
         if k in Attachment.UPDATE_FIELDS:
             resp_dict['attachments'][0][k] = copy.deepcopy(v)
     resp_dict['attachments'][0]['summary'] = 'Updated summary'
@@ -122,7 +122,7 @@ def test_update_post_required_fields(attachment_return):
         else:
             return 200, header, json.dumps(resp_dict)
 
-    attach_id = attachment_return['bugs'][0]['attachments'][0]['id']
+    attach_id = attachment_return['bugs']['1017315'][0]['id']
     responses.add_callback(
         responses.PUT, 'https://bugzilla.mozilla.org/rest/bug/attachment/%s' % attach_id,
         callback=request_callback,
@@ -130,7 +130,7 @@ def test_update_post_required_fields(attachment_return):
     )
 
     bugzilla = Bugsy()
-    attachment = Attachment(bugzilla, **attachment_return['bugs'][0]['attachments'][0])
+    attachment = Attachment(bugzilla, **attachment_return['bugs']['1017315'][0])
     attachment.summary = 'Updated summary'
     attachment.update()
 
@@ -139,7 +139,7 @@ def test_update_post_required_fields(attachment_return):
 
 @responses.activate
 def test_update_without_an_id_fails(attachment_return):
-    data = copy.deepcopy(attachment_return['bugs'][0]['attachments'][0])
+    data = copy.deepcopy(attachment_return['bugs']['1017315'][0])
     resp_dict = {'attachments': [data]}
     resp_dict['attachments'][0]['id'] = None
     bugzilla = Bugsy()
