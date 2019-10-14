@@ -2,9 +2,9 @@ import copy
 import datetime
 from .errors import BugException
 
-VALID_STATUS = ["RESOLVED", "ASSIGNED", "NEW", "UNCONFIRMED"]
-VALID_RESOLUTION = ["FIXED", "INCOMPLETE", "INVALID", "WORKSFORME",
-                    "DUPLICATE", "WONTFIX"]
+VALID_STATUS = ["ASSIGNED", "NEW", "RESOLVED", "UNCONFIRMED", "VERIFIED"]
+VALID_RESOLUTION = ["DUPLICATE", "FIXED", "INACTIVE", "INCOMPLETE",
+                    "INVALID", "MOVED", "WONTFIX", "WORKSFORME"]
 ARRAY_TYPES = ["blocks", "cc", "cc_detail", "depends_on",
                "flags", "groups", "keywords", "see_also"]
 
