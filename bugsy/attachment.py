@@ -51,7 +51,10 @@ class Attachment(object):
             if attr == 'data':
                 # Attempt to decode data to ensure it's valid
                 try:
-                    base64.decodestring(value)
+                    if hasattr(base64, 'decodebytes'):
+                        base64.decodebytes(value.encode('utf-8'))
+                    else:
+                        base64.decodestring(value)
                 except binascii.Error:
                     raise AttachmentException('The data field value must be in base64 format')
             elif attr in ['comment', 'content_type', 'file_name', 'summary']:
