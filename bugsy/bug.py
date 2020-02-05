@@ -188,6 +188,9 @@ class Bug(object):
             if key not in ARRAY_TYPES:
                 if key not in self._copy or self._bug[key] != self._copy[key]:
                     changed[key] = self._bug[key]
+            elif key == 'flags':
+                if sorted(self._bug.get(key, [])) != sorted(self._copy.get(key, [])):
+                    changed[key] = self._bug.get(key, [])
             else:
                 values_now = set(self._bug.get(key, []))
                 values_orig = set(self._copy.get(key, []))
