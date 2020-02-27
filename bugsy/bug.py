@@ -189,7 +189,7 @@ class Bug(object):
                 if key not in self._copy or self._bug[key] != self._copy[key]:
                     changed[key] = self._bug[key]
             elif key == 'flags':
-                if sorted(self._bug.get(key, [])) != sorted(self._copy.get(key, [])):
+                if self._bug.get(key, []) != self._copy.get(key, []):
                     changed[key] = self._bug.get(key, [])
             else:
                 values_now = set(self._bug.get(key, []))
