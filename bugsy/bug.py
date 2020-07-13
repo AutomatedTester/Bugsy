@@ -4,7 +4,7 @@ import datetime
 from .attachment import Attachment
 from .errors import BugException
 
-VALID_STATUS = ["ASSIGNED", "NEW", "RESOLVED", "UNCONFIRMED", "VERIFIED"]
+VALID_STATUS = ["ASSIGNED", "NEW", "REOPENED", "RESOLVED", "UNCONFIRMED", "VERIFIED"]
 VALID_RESOLUTION = ["DUPLICATE", "FIXED", "INACTIVE", "INCOMPLETE",
                     "INVALID", "MOVED", "WONTFIX", "WORKSFORME"]
 ARRAY_TYPES = ["blocks", "cc", "cc_detail", "depends_on",
