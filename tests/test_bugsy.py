@@ -137,7 +137,7 @@ def test_bug_create_and_filter_invalid_fields(mocker, bug_return):
     bugzilla = Bugsy(username="user", password="pass")
     spy = mocker.spy(bugzilla, "request")
     bugzilla.put(bug)
-    request_args = spy.call_args_list[0].kwargs["json"].keys()
+    request_args = spy.call_args[1]["json"].keys()
     assert all(key in ALLOWED_FIELDS for key in request_args)
 
 @responses.activate
