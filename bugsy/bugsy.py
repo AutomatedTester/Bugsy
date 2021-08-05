@@ -72,7 +72,11 @@ class Bugsy(object):
                 elif type(result) == dict:
                     raise LoginException(result['message'])
 
+            # Bugzilla 5.1+
             self.session.headers['X-Bugzilla-API-Key'] = self.api_key
+            # Bugzilla 5.0
+            self.session.params["Bugzilla_api_key"] = self.api_key
+
             self._have_auth = True
         elif self.username and self.password:
             result = self.request(
