@@ -3,6 +3,14 @@ from .bug import Bug
 from .errors import (BugsyException, LoginException)
 from .search import Search
 
+ALLOWED_FIELDS = [
+    "alias", "assigned_to", "blocked", "cc", "comment_is_private", "comment_tags",
+    "component", "dependson", "description", "filed_via", "flags", "groups",
+    "is_markdown", "keywords", "op_sys", "platform", "priority", "product",
+    "qa_contact", "regressed_by", "resolution", "severity", "status", "summary",
+    "target_milestone", "type", "version"
+]
+
 
 class Bugsy(object):
     """
@@ -164,7 +172,8 @@ class Bugsy(object):
                                  " to Bugzilla")
 
         if not bug.id:
-            result = self.request('bug', 'POST', json=bug.to_dict())
+            data = {k: v for k, v in bug.to_dict().items() if k in ALLOWED_FIELDS}
+            result = self.request('bug', 'POST', json=data)
             if 'error' not in result:
                 bug.id = result['id']
                 bug._bugsy = self

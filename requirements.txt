@@ -1,5 +1,6 @@
 six
 pytest
+pytest-mock
 flake8
 requests
 responses

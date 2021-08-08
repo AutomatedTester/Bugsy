@@ -2,6 +2,7 @@ import json
 
 import responses
 
+from bugsy.bugsy import ALLOWED_FIELDS
 from bugsy import (Bugsy, Bug)
 from bugsy.errors import (BugsyException, LoginException)
 from . import rest_url
@@ -115,8 +116,29 @@ def test_we_can_create_a_new_remote_bug():
                       body=json.dumps(bug_dict), status=200,
                       content_type='application/json')
     bugzilla = Bugsy("foo", "bar")
+
     bugzilla.put(bug)
     assert bug.id != None
+
+@responses.activate
+def test_bug_create_and_filter_invalid_fields(mocker, bug_return):
+    responses.add(responses.GET, 'https://bugzilla.mozilla.org/rest/login',
+                      body='{"token": "user"}', status=200,
+                      content_type='application/json', match_querystring=True)
+    responses.add(responses.POST, 'https://bugzilla.mozilla.org/rest/bug',
+                      body='{"id": 12345}', status=200,
+                      content_type='application/json')
+
+    # Remove ID
+    bug_dict = bug_return['bugs'][0].copy()
+    del bug_dict["id"]
+    bug = Bug(**bug_dict)
+
+    bugzilla = Bugsy(username="user", password="pass")
+    spy = mocker.spy(bugzilla, "request")
+    bugzilla.put(bug)
+    request_args = spy.call_args[1]["json"].keys()
+    assert all(key in ALLOWED_FIELDS for key in request_args)
 
 @responses.activate
 def test_we_can_put_a_current_bug(bug_return):
