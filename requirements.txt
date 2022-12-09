@@ -4,3 +4,4 @@ flake8
 requests
 responses
 tox
+pre-commit
